@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="Leiningen: com.badlogicgames.gdx/gdx-backend-lwjgl:1.4.1">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/com/badlogicgames/gdx/gdx-backend-lwjgl/1.4.1/gdx-backend-lwjgl-1.4.1.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
