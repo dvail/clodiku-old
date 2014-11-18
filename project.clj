@@ -11,6 +11,6 @@
   :repositories [["sonatype"
                   "https://oss.sonatype.org/content/repositories/releases/"]]
   :main clodiku.core
-  :aot :all
+  :aot [clodiku.MyGame]
   :target-path "target/%s"
   :profiles {:uberjar {:aot :all}})
