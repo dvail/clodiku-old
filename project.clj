@@ -10,6 +10,7 @@
                   :classifier "natives-desktop"] ]
   :repositories [["sonatype"
                   "https://oss.sonatype.org/content/repositories/releases/"]]
-  :main ^:skip-aot clodiku.core
+  :main clodiku.core
+  :aot :all
   :target-path "target/%s"
   :profiles {:uberjar {:aot :all}})
