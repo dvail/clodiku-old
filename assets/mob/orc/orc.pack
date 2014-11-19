@@ -1,0 +1,425 @@
+
+orc.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+orc-walking-west-4
+  rotate: false
+  xy: 1, 192
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+orc-walking-north-5
+  rotate: false
+  xy: 1, 128
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+orc-walking-south-0
+  rotate: false
+  xy: 67, 192
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+orc-walking-north-6
+  rotate: false
+  xy: 1, 64
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+orc-melee-south-5
+  rotate: false
+  xy: 1, 0
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+orc-walking-west-6
+  rotate: false
+  xy: 67, 128
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+orc-melee-west-3
+  rotate: false
+  xy: 133, 192
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+orc-walking-west-1
+  rotate: false
+  xy: 67, 64
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+orc-melee-east-1
+  rotate: false
+  xy: 67, 0
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+orc-melee-north-4
+  rotate: false
+  xy: 133, 128
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+orc-walking-north-1
+  rotate: false
+  xy: 199, 192
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+orc-walking-west-7
+  rotate: false
+  xy: 133, 64
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+orc-standing-south-0
+  rotate: false
+  xy: 133, 0
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+orc-walking-south-4
+  rotate: false
+  xy: 199, 128
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+orc-walking-north-3
+  rotate: false
+  xy: 265, 192
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+orc-melee-south-3
+  rotate: false
+  xy: 199, 64
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+orc-walking-south-6
+  rotate: false
+  xy: 199, 0
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+orc-melee-east-0
+  rotate: false
+  xy: 265, 128
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+orc-melee-east-4
+  rotate: false
+  xy: 331, 192
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+orc-melee-south-0
+  rotate: false
+  xy: 265, 64
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+orc-melee-west-1
+  rotate: false
+  xy: 265, 0
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+orc-walking-south-3
+  rotate: false
+  xy: 331, 128
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+orc-melee-south-1
+  rotate: false
+  xy: 397, 192
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+orc-melee-north-3
+  rotate: false
+  xy: 331, 64
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+orc-melee-north-0
+  rotate: false
+  xy: 331, 0
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+orc-melee-north-5
+  rotate: false
+  xy: 397, 128
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+orc-melee-east-5
+  rotate: false
+  xy: 463, 192
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+orc-walking-north-0
+  rotate: false
+  xy: 397, 64
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+orc-walking-west-3
+  rotate: false
+  xy: 397, 0
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+orc-walking-south-2
+  rotate: false
+  xy: 463, 128
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+orc-walking-north-2
+  rotate: false
+  xy: 529, 192
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+orc-standing-north-0
+  rotate: false
+  xy: 463, 64
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+orc-walking-west-0
+  rotate: false
+  xy: 463, 0
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+orc-walking-west-2
+  rotate: false
+  xy: 529, 128
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+orc-walking-west-5
+  rotate: false
+  xy: 595, 192
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+orc-melee-east-3
+  rotate: false
+  xy: 529, 64
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+orc-melee-west-0
+  rotate: false
+  xy: 529, 0
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+orc-melee-east-2
+  rotate: false
+  xy: 595, 128
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+orc-standing-west-0
+  rotate: false
+  xy: 661, 192
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+orc-walking-south-7
+  rotate: false
+  xy: 595, 64
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+orc-walking-north-7
+  rotate: false
+  xy: 595, 0
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+orc-walking-north-4
+  rotate: false
+  xy: 661, 128
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+orc-melee-north-1
+  rotate: false
+  xy: 727, 192
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+orc-walking-south-5
+  rotate: false
+  xy: 661, 64
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+orc-melee-west-4
+  rotate: false
+  xy: 661, 0
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+orc-melee-west-2
+  rotate: false
+  xy: 727, 128
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+orc-melee-west-5
+  rotate: false
+  xy: 793, 192
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+orc-melee-south-4
+  rotate: false
+  xy: 727, 64
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+orc-melee-south-2
+  rotate: false
+  xy: 727, 0
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+orc-walking-south-1
+  rotate: false
+  xy: 793, 128
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+orc-melee-north-2
+  rotate: false
+  xy: 859, 192
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+orc-walking-east-2
+  rotate: false
+  xy: 793, 65
+  size: 64, 63
+  orig: 64, 63
+  offset: 0, 0
+  index: -1
+orc-walking-east-6
+  rotate: false
+  xy: 859, 129
+  size: 64, 63
+  orig: 64, 63
+  offset: 0, 0
+  index: -1
+orc-walking-east-7
+  rotate: false
+  xy: 925, 193
+  size: 64, 63
+  orig: 64, 63
+  offset: 0, 0
+  index: -1
+orc-walking-east-1
+  rotate: false
+  xy: 793, 2
+  size: 64, 63
+  orig: 64, 63
+  offset: 0, 0
+  index: -1
+orc-walking-east-3
+  rotate: false
+  xy: 859, 66
+  size: 64, 63
+  orig: 64, 63
+  offset: 0, 0
+  index: -1
+orc-walking-east-4
+  rotate: false
+  xy: 925, 130
+  size: 64, 63
+  orig: 64, 63
+  offset: 0, 0
+  index: -1
+orc-standing-east-0
+  rotate: false
+  xy: 859, 3
+  size: 64, 63
+  orig: 64, 63
+  offset: 0, 0
+  index: -1
+orc-walking-east-5
+  rotate: false
+  xy: 925, 67
+  size: 64, 63
+  orig: 64, 63
+  offset: 0, 0
+  index: -1
+orc-walking-east-0
+  rotate: false
+  xy: 925, 4
+  size: 64, 63
+  orig: 64, 63
+  offset: 0, 0
+  index: -1
