@@ -6,6 +6,4 @@
 (defn keys-pressed []
   (filter #(-> Gdx/input (.isKeyPressed (val %))) bound-keys))
 
-(defn update [system delta]
-  (println (keys-pressed))
-  system)
+(defn update [system delta] system)

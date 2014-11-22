@@ -1,44 +1,32 @@
 (ns clodiku.mainscreen
-  (:require [clodiku.maps.map-core :as maps]
-            [clodiku.systems.input :as system-input]
+  (:require [clodiku.components :as comps]
+            [clodiku.systems.input :as sys-input]
+            [clodiku.systems.rendering :as sys-rendering]
             [brute.entity :as be]
             [brute.system :as bs])
-  (:import (com.badlogic.gdx Gdx Screen)
-           (com.badlogic.gdx.graphics GL20 OrthographicCamera)
-           (com.badlogic.gdx.maps.tiled TmxMapLoader TiledMapRenderer TiledMap)
-           (com.badlogic.gdx.graphics.g2d SpriteBatch)
-           (com.badlogic.gdx.maps.tiled.renderers OrthogonalTiledMapRenderer)))
+  (:import (com.badlogic.gdx Gdx Screen)))
 
-(declare ^OrthographicCamera camera)
-(declare ^SpriteBatch batch)
-(declare ^OrthogonalTiledMapRenderer map-renderer)
+; Attach a simple map to the entity system to represent world state
+(def system
+  (atom (assoc (-> (be/create-system)
+                   (bs/add-system-fn sys-input/update)
+                   (bs/add-system-fn sys-rendering/render!)) :world {})))
 
-(declare system)
-
-(defn- init-resources []
-  (def camera (OrthographicCamera. 400 400))
-  (def batch (SpriteBatch.))
-  (def map-renderer (OrthogonalTiledMapRenderer. (^TiledMap maps/load-map) batch)))
-
-(defn- init-systems
-  "Register all the sub systems"
+(defn init-player!
   []
- (def system (->  (be/create-system)
-                    (bs/add-system-fn system-input/update))) )
+  (reset! system (let [player (be/create-entity)]
+    (-> @system
+        (be/add-entity player)
+        (be/add-component player (comps/->Player))
+        (be/add-component player (comps/->Position 0 10))))))
 
 (defn screen []
   (proxy [Screen] []
     (show []
-      (init-resources)
-      (init-systems) )
+      (sys-rendering/init-resources!)
+      (init-player!))
     (render [delta]
-      (doto (Gdx/gl)
-        (.glClearColor 0 0 0.2 0.3)
-        (.glClear GL20/GL_COLOR_BUFFER_BIT))
-      (doto map-renderer
-        (.setView camera)
-        (.render))
-      (bs/process-one-game-tick system delta))
+      (reset! system (bs/process-one-game-tick @system delta)))
     (dispose [])
     (hide [])
     (pause [])
