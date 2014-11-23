@@ -21,7 +21,14 @@
   [atlas-location]
   (let [atlas (TextureAtlas. atlas-location)
         regions (seq (.getRegions atlas))]
-    (map #(.name %) regions)))
+    (reduce (fn [map region]
+              (let [splits (clojure.string/split (.name region) #"-")
+                    stance (keyword (str (first splits) "-" (second splits)))]
+                (if (contains? map stance)
+                  (do
+                    (assoc map stance (conj (stance map) region)))
+                  (do
+                    (assoc map stance [region]))))) {} regions)))
 
 (defn init-resources! []
   (let [graphics Gdx/graphics]
