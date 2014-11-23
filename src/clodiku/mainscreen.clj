@@ -4,7 +4,8 @@
             [clodiku.systems.rendering :as sys-rendering]
             [brute.entity :as be]
             [brute.system :as bs])
-  (:import (com.badlogic.gdx Gdx Screen)))
+  (:import (com.badlogic.gdx Gdx Screen)
+           (com.badlogic.gdx.graphics.g2d TextureAtlas)))
 
 ; Attach a simple map to the entity system to represent world state
 (def system
@@ -14,10 +15,13 @@
 
 (defn init-player!
   []
-  (reset! system (let [player (be/create-entity)]
+  (reset! system (let [player (be/create-entity)
+                       regions (sys-rendering/split-texture-pack "./assets/player/player.pack")]
+                   (println regions)
     (-> @system
         (be/add-entity player)
         (be/add-component player (comps/->Player))
+        (be/add-component player (comps/->Animation regions))
         (be/add-component player (comps/->Position 0 10))))))
 
 (defn screen []
