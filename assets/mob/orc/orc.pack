@@ -3,422 +3,422 @@ orc.png
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
-orc-walking-west-4
+melee-east-2
   rotate: false
-  xy: 1, 192
+  xy: 1, 397
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
-orc-walking-north-5
+melee-east-0
   rotate: false
-  xy: 1, 128
+  xy: 1, 331
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
-orc-walking-south-0
+walking-south-5
   rotate: false
-  xy: 67, 192
+  xy: 67, 397
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
-orc-walking-north-6
+melee-south-1
   rotate: false
-  xy: 1, 64
+  xy: 1, 265
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
-orc-melee-south-5
+melee-west-2
   rotate: false
-  xy: 1, 0
+  xy: 67, 331
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
-orc-walking-west-6
+melee-west-1
   rotate: false
-  xy: 67, 128
+  xy: 133, 397
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
-orc-melee-west-3
+melee-north-1
   rotate: false
-  xy: 133, 192
+  xy: 1, 199
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
-orc-walking-west-1
+walking-south-6
   rotate: false
-  xy: 67, 64
+  xy: 67, 265
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
-orc-melee-east-1
+melee-south-2
   rotate: false
-  xy: 67, 0
+  xy: 133, 331
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
-orc-melee-north-4
+standing-north-0
   rotate: false
-  xy: 133, 128
+  xy: 199, 397
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
-orc-walking-north-1
+standing-south-0
   rotate: false
-  xy: 199, 192
+  xy: 1, 133
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
-orc-walking-west-7
+melee-south-5
   rotate: false
-  xy: 133, 64
+  xy: 67, 199
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
-orc-standing-south-0
+walking-west-1
   rotate: false
-  xy: 133, 0
+  xy: 133, 265
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
-orc-walking-south-4
+walking-south-1
   rotate: false
-  xy: 199, 128
+  xy: 199, 331
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
-orc-walking-north-3
+walking-north-6
   rotate: false
-  xy: 265, 192
+  xy: 265, 397
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
-orc-melee-south-3
+melee-west-3
   rotate: false
-  xy: 199, 64
+  xy: 1, 67
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
-orc-walking-south-6
+walking-west-6
   rotate: false
-  xy: 199, 0
+  xy: 67, 133
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
-orc-melee-east-0
+walking-north-3
   rotate: false
-  xy: 265, 128
+  xy: 133, 199
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
-orc-melee-east-4
+walking-west-3
   rotate: false
-  xy: 331, 192
+  xy: 199, 265
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
-orc-melee-south-0
+melee-west-4
   rotate: false
-  xy: 265, 64
+  xy: 265, 331
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
-orc-melee-west-1
+melee-south-3
   rotate: false
-  xy: 265, 0
+  xy: 331, 397
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
-orc-walking-south-3
+melee-east-1
   rotate: false
-  xy: 331, 128
+  xy: 1, 1
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
-orc-melee-south-1
+walking-north-2
   rotate: false
-  xy: 397, 192
+  xy: 67, 67
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
-orc-melee-north-3
+walking-south-4
   rotate: false
-  xy: 331, 64
+  xy: 133, 133
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
-orc-melee-north-0
+melee-north-5
   rotate: false
-  xy: 331, 0
+  xy: 199, 199
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
-orc-melee-north-5
+walking-west-0
   rotate: false
-  xy: 397, 128
+  xy: 265, 265
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
-orc-melee-east-5
+walking-south-7
   rotate: false
-  xy: 463, 192
+  xy: 331, 331
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
-orc-walking-north-0
+walking-north-1
   rotate: false
-  xy: 397, 64
+  xy: 397, 397
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
-orc-walking-west-3
+walking-west-7
   rotate: false
-  xy: 397, 0
+  xy: 67, 1
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
-orc-walking-south-2
+walking-north-0
   rotate: false
-  xy: 463, 128
+  xy: 133, 67
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
-orc-walking-north-2
+walking-south-0
   rotate: false
-  xy: 529, 192
+  xy: 199, 133
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
-orc-standing-north-0
+walking-west-5
   rotate: false
-  xy: 463, 64
+  xy: 265, 199
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
-orc-walking-west-0
+walking-west-2
   rotate: false
-  xy: 463, 0
+  xy: 331, 265
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
-orc-walking-west-2
+melee-north-2
   rotate: false
-  xy: 529, 128
+  xy: 397, 331
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
-orc-walking-west-5
+walking-north-7
   rotate: false
-  xy: 595, 192
+  xy: 463, 397
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
-orc-melee-east-3
+walking-south-2
   rotate: false
-  xy: 529, 64
+  xy: 133, 1
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
-orc-melee-west-0
+melee-south-4
   rotate: false
-  xy: 529, 0
+  xy: 199, 67
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
-orc-melee-east-2
+walking-north-4
   rotate: false
-  xy: 595, 128
+  xy: 265, 133
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
-orc-standing-west-0
+melee-west-5
   rotate: false
-  xy: 661, 192
+  xy: 331, 199
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
-orc-walking-south-7
+melee-east-4
   rotate: false
-  xy: 595, 64
+  xy: 397, 265
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
-orc-walking-north-7
+melee-north-0
   rotate: false
-  xy: 595, 0
+  xy: 463, 331
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
-orc-walking-north-4
+melee-west-0
   rotate: false
-  xy: 661, 128
+  xy: 529, 397
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
-orc-melee-north-1
+melee-east-3
   rotate: false
-  xy: 727, 192
+  xy: 199, 1
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
-orc-walking-south-5
+melee-south-0
   rotate: false
-  xy: 661, 64
+  xy: 265, 67
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
-orc-melee-west-4
+melee-north-4
   rotate: false
-  xy: 661, 0
+  xy: 331, 133
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
-orc-melee-west-2
+walking-west-4
   rotate: false
-  xy: 727, 128
+  xy: 397, 199
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
-orc-melee-west-5
+standing-west-0
   rotate: false
-  xy: 793, 192
+  xy: 463, 265
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
-orc-melee-south-4
+melee-east-5
   rotate: false
-  xy: 727, 64
+  xy: 529, 331
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
-orc-melee-south-2
+melee-north-3
   rotate: false
-  xy: 727, 0
+  xy: 595, 397
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
-orc-walking-south-1
+walking-north-5
   rotate: false
-  xy: 793, 128
+  xy: 265, 1
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
-orc-melee-north-2
+walking-south-3
   rotate: false
-  xy: 859, 192
+  xy: 331, 67
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
-orc-walking-east-2
+walking-east-1
   rotate: false
-  xy: 793, 65
+  xy: 397, 134
   size: 64, 63
   orig: 64, 63
   offset: 0, 0
   index: -1
-orc-walking-east-6
+walking-east-7
   rotate: false
-  xy: 859, 129
+  xy: 463, 200
   size: 64, 63
   orig: 64, 63
   offset: 0, 0
   index: -1
-orc-walking-east-7
+walking-east-2
   rotate: false
-  xy: 925, 193
+  xy: 529, 266
   size: 64, 63
   orig: 64, 63
   offset: 0, 0
   index: -1
-orc-walking-east-1
+walking-east-3
   rotate: false
-  xy: 793, 2
+  xy: 595, 332
   size: 64, 63
   orig: 64, 63
   offset: 0, 0
   index: -1
-orc-walking-east-3
+standing-east-0
   rotate: false
-  xy: 859, 66
+  xy: 661, 398
   size: 64, 63
   orig: 64, 63
   offset: 0, 0
   index: -1
-orc-walking-east-4
+walking-east-5
   rotate: false
-  xy: 925, 130
+  xy: 331, 2
   size: 64, 63
   orig: 64, 63
   offset: 0, 0
   index: -1
-orc-standing-east-0
+walking-east-0
   rotate: false
-  xy: 859, 3
+  xy: 397, 69
   size: 64, 63
   orig: 64, 63
   offset: 0, 0
   index: -1
-orc-walking-east-5
+walking-east-6
   rotate: false
-  xy: 925, 67
+  xy: 463, 135
   size: 64, 63
   orig: 64, 63
   offset: 0, 0
   index: -1
-orc-walking-east-0
+walking-east-4
   rotate: false
-  xy: 925, 4
+  xy: 529, 201
   size: 64, 63
   orig: 64, 63
   offset: 0, 0
