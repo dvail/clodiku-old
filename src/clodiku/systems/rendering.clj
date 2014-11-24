@@ -20,7 +20,7 @@
   is is facing and maps this information to a texture region."
   [atlas-location]
   (let [atlas (TextureAtlas. atlas-location)
-        regions (seq (.getRegions atlas))]
+        regions (sort #(compare (.name %1) (.name %2)) (seq (.getRegions atlas)))]
     (reduce (fn [map region]
               (let [splits (clojure.string/split (.name region) #"-")
                     stance (keyword (str (first splits) "-" (second splits)))]
