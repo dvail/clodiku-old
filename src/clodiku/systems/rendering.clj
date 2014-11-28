@@ -40,8 +40,8 @@
 (defn init-resources! []
   (let [graphics Gdx/graphics]
     (def camera (OrthographicCamera.
-                  (-> graphics (.getWidth))
-                  (-> graphics (.getHeight))))
+                  (.getWidth graphics)
+                  (.getHeight graphics)))
     (def batch (SpriteBatch.))
     (def map-renderer (OrthogonalTiledMapRenderer. (^TiledMap maps/load-map) batch))))
 
@@ -58,9 +58,9 @@
         state (be/get-component system player State)
         region-map (:regions (be/get-component system player AnimationMap))]
     (doto batch
-      ; TODO Change `delta` here to the state-time of the entity's current state
-      (println region-map)
-      (.draw (.getKeyFrame (:east (:walking region-map)) (:time state)) (.x (:pos pos)) (.y (:pos pos))))))
+      (.draw
+        (.getKeyFrame
+          ((:direction pos) ((:current state) region-map)) (:time state)) (.x (:pos pos)) (.y (:pos pos))))))
 
 (defn render! [system delta]
   (let [camera-pos (-> camera (.position))

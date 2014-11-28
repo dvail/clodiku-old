@@ -16,7 +16,7 @@
         state (be/get-component system player State)
         mov-x (+ (if (is-pressed? :move_east) 2 0) (if (is-pressed? :move_west) -2 0))
         mov-y (+ (if (is-pressed? :move_north) 2 0) (if (is-pressed? :move_south) -2 0))
-        newstate (if (and (= mov-x 0) (= mov-y 0))
+        newstate (if (= mov-x mov-y 0)
                    (comps/states :standing)
                    (comps/states :walking))
         newdelta (if (= newstate (:current state)) (+ delta (:time state)) 0)
@@ -25,7 +25,7 @@
     (-> system
         (be/add-component player (comps/->Spatial (Circle.
                                                     (+ (.x (:pos pos)) mov-x)
-                                                    (+ (.y (:pos pos)) mov-y) 18) (:direction newdirection)))
+                                                    (+ (.y (:pos pos)) mov-y) 18) newdirection))
         (be/add-component player (comps/->State newstate newdelta)))))
 
 (defn update [system delta]
