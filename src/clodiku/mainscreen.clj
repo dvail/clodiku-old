@@ -10,12 +10,17 @@
 
 ; Attach a simple map to the entity system to represent world state
 (def system
-  (atom (assoc (-> (be/create-system)
-                   (bs/add-system-fn sys-input/update)
-                   (bs/add-system-fn sys-rendering/render!)) :world {})))
+  (atom (-> (be/create-system)
+            (bs/add-system-fn sys-input/update)
+            (bs/add-system-fn sys-rendering/render!))))
 
-(defn init-player!
-  []
+(defn init-map! []
+  (reset! system (let [tilemap (be/create-entity)]
+                   (-> @system
+                     (be/add-entity tilemap)
+                     (be/add-component tilemap (clodiku.maps.map-core/load-map))))))
+
+(defn init-player! []
   (reset! system (let [player (be/create-entity)
                        regions (sys-rendering/split-texture-pack "./assets/player/player.pack")]
                    (-> @system
@@ -28,8 +33,9 @@
 (defn screen []
   (proxy [Screen] []
     (show []
-      (sys-rendering/init-resources!)
-      (init-player!))
+      (init-player!)
+      (init-map!)
+      (sys-rendering/init-resources! @system))
     (render [delta]
       (reset! system (bs/process-one-game-tick @system delta)))
     (dispose [])

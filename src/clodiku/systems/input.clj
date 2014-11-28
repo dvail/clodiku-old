@@ -20,12 +20,17 @@
                    (comps/states :standing)
                    (comps/states :walking))
         newdelta (if (= newstate (:current state)) (+ delta (:time state)) 0)
-        newdirection (if (< 0 mov-y) (comps/directions :south) (comps/directions :east))]
+        newdirection (cond
+                       (= mov-x mov-y 0) (:direction pos)
+                       (< 0 mov-y) (comps/directions :north)
+                       (> 0 mov-y) (comps/directions :south)
+                       (< 0 mov-x) (comps/directions :east)
+                       (> 0 mov-x) (comps/directions :west))]
     ; TODO Change this to `be/update-component` -- seems like it must be more efficient
     (-> system
         (be/add-component player (comps/->Spatial (Circle.
-                                                    (+ (.x (:pos pos)) mov-x)
-                                                    (+ (.y (:pos pos)) mov-y) 18) newdirection))
+                                                    (+ (.x ^Circle (:pos pos)) mov-x)
+                                                    (+ (.y ^Circle (:pos pos)) mov-y) 18) newdirection))
         (be/add-component player (comps/->State newstate newdelta)))))
 
 (defn update [system delta]
