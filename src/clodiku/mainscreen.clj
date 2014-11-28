@@ -5,7 +5,8 @@
             [brute.entity :as be]
             [brute.system :as bs])
   (:import (com.badlogic.gdx Gdx Screen)
-           (com.badlogic.gdx.graphics.g2d TextureAtlas)))
+           (com.badlogic.gdx.graphics.g2d TextureAtlas)
+           (com.badlogic.gdx.math Circle)))
 
 ; Attach a simple map to the entity system to represent world state
 (def system
@@ -17,12 +18,12 @@
   []
   (reset! system (let [player (be/create-entity)
                        regions (sys-rendering/split-texture-pack "./assets/player/player.pack")]
-                   (println regions)
-    (-> @system
-        (be/add-entity player)
-        (be/add-component player (comps/->Player))
-        (be/add-component player (comps/->Animation regions))
-        (be/add-component player (comps/->Position 0 10))))))
+                   (-> @system
+                       (be/add-entity player)
+                       (be/add-component player (comps/->Player))
+                       (be/add-component player (comps/->AnimationMap regions))
+                       (be/add-component player (comps/->State (comps/states :walking) 0.0))
+                       (be/add-component player (comps/->Spatial (Circle. (float 100) (float 100) 18) (comps/directions :east)))))))
 
 (defn screen []
   (proxy [Screen] []

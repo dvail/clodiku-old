@@ -1,7 +1,12 @@
 (ns clodiku.components)
 
+(def states #{:walking :standing :melee :dead})
+(def directions #{:east :west :north :south})
+
 (defrecord Player [])
 
-(defrecord Position [x y])
+(defrecord Spatial [pos direction])
 
-(defrecord Animation [regions])
+(defrecord AnimationMap [regions])
+
+(defrecord State [current time])
