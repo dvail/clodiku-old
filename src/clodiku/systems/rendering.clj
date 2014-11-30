@@ -1,9 +1,8 @@
 (ns clodiku.systems.rendering
-  (:import (com.badlogic.gdx Graphics)
-           (com.badlogic.gdx.graphics.g2d TextureAtlas Animation$PlayMode TextureRegion TextureAtlas$AtlasRegion)
-           (clodiku.components Player AnimationMap Spatial State)
-           (com.badlogic.gdx.math Circle))
-  (:import (com.badlogic.gdx.graphics GL20 OrthographicCamera)
+  (:import (com.badlogic.gdx.graphics.g2d TextureAtlas Animation$PlayMode TextureRegion TextureAtlas$AtlasRegion)
+           (clodiku.components Player AnimationMap State WorldMap)
+           (com.badlogic.gdx.math Circle)
+           (com.badlogic.gdx.graphics GL20 OrthographicCamera)
            (com.badlogic.gdx Gdx)
            (com.badlogic.gdx.maps.tiled.renderers OrthogonalTiledMapRenderer)
            (com.badlogic.gdx.graphics.g2d SpriteBatch Animation)
@@ -46,21 +45,21 @@
 (defn init-resources!
   [system]
   (let [graphics Gdx/graphics
-        map-entity (first (be/get-all-entities-with-component system TiledMap))]
+        map-entity (first (be/get-all-entities-with-component system WorldMap))]
     (def camera (OrthographicCamera.
                   (.getWidth graphics)
                   (.getHeight graphics)))
     (def batch (SpriteBatch.))
     (def map-renderer
       (OrthogonalTiledMapRenderer.
-        (be/get-component system map-entity TiledMap) batch))))
+        ^TiledMap (:tilemap (be/get-component system map-entity WorldMap)) batch))))
 
 
 (defn render-entities!
   "Render the player, mobs, npcs and items"
   [batch system]
   (let [player (first (be/get-all-entities-with-component system Player))
-        pos (clodiku.maps.map-core/get-player-pos system)
+        pos (maps/get-player-pos system)
         state (be/get-component system player State)
         region-map (:regions (be/get-component system player AnimationMap))]
     (doto ^SpriteBatch batch
@@ -76,7 +75,7 @@
       (.glClear GL20/GL_COLOR_BUFFER_BIT))
     (doto camera (.update))
     (doto camera-pos
-      (.set ^Vector3 (clodiku.maps.map-core/get-map-bounds system camera)))
+      (.set ^Vector3 (maps/get-map-bounds system camera)))
     (doto map-renderer
       (.setView camera)
       (.render))

@@ -3,7 +3,7 @@
 (def states #{:walking :standing :melee :dead})
 (def directions #{:east :west :north :south})
 
-(defrecord Map [tilemap])
+(defrecord WorldMap [tilemap])
 
 (defrecord Player [])
 

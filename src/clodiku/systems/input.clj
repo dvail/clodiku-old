@@ -1,5 +1,5 @@
 (ns clodiku.systems.input
-  (:import (com.badlogic.gdx Gdx Input$Keys Input)
+  (:import (com.badlogic.gdx Gdx Input Input$Keys)
            (clodiku.components Player Spatial State)
            (com.badlogic.gdx.math Circle))
   (:require [brute.entity :as be]
@@ -22,10 +22,10 @@
         newdelta (if (= newstate (:current state)) (+ delta (:time state)) 0)
         newdirection (cond
                        (= mov-x mov-y 0) (:direction pos)
-                       (< 0 mov-y) (comps/directions :north)
-                       (> 0 mov-y) (comps/directions :south)
                        (< 0 mov-x) (comps/directions :east)
-                       (> 0 mov-x) (comps/directions :west))]
+                       (> 0 mov-x) (comps/directions :west)
+                       (< 0 mov-y) (comps/directions :north)
+                       (> 0 mov-y) (comps/directions :south))]
     ; TODO Change this to `be/update-component` -- seems like it must be more efficient
     (-> system
         (be/add-component player (comps/->Spatial (Circle.
