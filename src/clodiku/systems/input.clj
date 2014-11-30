@@ -1,9 +1,9 @@
 (ns clodiku.systems.input
   (:import (com.badlogic.gdx Gdx Input Input$Keys)
-           (clodiku.components Player Spatial State)
-           (com.badlogic.gdx.math Circle))
+           (clodiku.components Player Spatial State))
   (:require [brute.entity :as be]
-            [clodiku.components :as comps]))
+            [clodiku.components :as comps]
+            [clodiku.util.collision :as coll]))
 
 (def bound-keys {:move_south Input$Keys/S :move_north Input$Keys/W :move_west Input$Keys/A :move_east Input$Keys/D})
 
@@ -28,9 +28,8 @@
                        (> 0 mov-y) (comps/directions :south))]
     ; TODO Change this to `be/update-component` -- seems like it must be more efficient
     (-> system
-        (be/add-component player (comps/->Spatial (Circle.
-                                                    (+ (.x ^Circle (:pos pos)) mov-x)
-                                                    (+ (.y ^Circle (:pos pos)) mov-y) 18) newdirection))
+        (be/add-component player (comps/->Spatial
+                                   (coll/get-movement-circle system (:pos pos) {:x mov-x :y mov-y}) newdirection))
         (be/add-component player (comps/->State newstate newdelta)))))
 
 (defn update [system delta]

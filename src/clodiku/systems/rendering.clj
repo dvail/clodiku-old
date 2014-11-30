@@ -1,6 +1,6 @@
 (ns clodiku.systems.rendering
   (:import (com.badlogic.gdx.graphics.g2d TextureAtlas Animation$PlayMode TextureRegion TextureAtlas$AtlasRegion)
-           (clodiku.components Player AnimationMap State WorldMap)
+           (clodiku.components Player AnimationMap State WorldMap Spatial)
            (com.badlogic.gdx.math Circle)
            (com.badlogic.gdx.graphics GL20 OrthographicCamera)
            (com.badlogic.gdx Gdx)
@@ -9,7 +9,8 @@
            (com.badlogic.gdx.maps.tiled TiledMap)
            (com.badlogic.gdx.math Vector3))
   (:require [clodiku.maps.map-core :as maps]
-            [brute.entity :as be]))
+            [brute.entity :as be]
+            [clodiku.util.entities :as eu]))
 
 (declare ^OrthographicCamera camera)
 (declare ^SpriteBatch batch)
@@ -44,22 +45,21 @@
 
 (defn init-resources!
   [system]
-  (let [graphics Gdx/graphics
-        map-entity (first (be/get-all-entities-with-component system WorldMap))]
+  (let [graphics Gdx/graphics]
     (def camera (OrthographicCamera.
                   (.getWidth graphics)
                   (.getHeight graphics)))
     (def batch (SpriteBatch.))
     (def map-renderer
       (OrthogonalTiledMapRenderer.
-        ^TiledMap (:tilemap (be/get-component system map-entity WorldMap)) batch))))
+        ^TiledMap (eu/get-current-map system) batch))))
 
 
 (defn render-entities!
   "Render the player, mobs, npcs and items"
   [batch system]
   (let [player (first (be/get-all-entities-with-component system Player))
-        pos (maps/get-player-pos system)
+        pos (be/get-component system player Spatial)
         state (be/get-component system player State)
         region-map (:regions (be/get-component system player AnimationMap))]
     (doto ^SpriteBatch batch
