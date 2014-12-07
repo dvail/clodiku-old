@@ -1,13 +1,14 @@
 (ns clodiku.systems.rendering
   (:import (com.badlogic.gdx.graphics.g2d TextureAtlas Animation$PlayMode TextureRegion TextureAtlas$AtlasRegion)
-           (clodiku.components Player AnimationMap State WorldMap Spatial)
+           (clodiku.components Player Animated State WorldMap Spatial)
            (com.badlogic.gdx.math Circle)
            (com.badlogic.gdx.graphics GL20 OrthographicCamera)
            (com.badlogic.gdx Gdx)
            (com.badlogic.gdx.maps.tiled.renderers OrthogonalTiledMapRenderer)
            (com.badlogic.gdx.graphics.g2d SpriteBatch Animation)
            (com.badlogic.gdx.maps.tiled TiledMap)
-           (com.badlogic.gdx.math Vector3))
+           (com.badlogic.gdx.math Vector3)
+           (com.badlogic.gdx.graphics.glutils ShapeRenderer))
   (:require [clodiku.maps.map-core :as maps]
             [brute.entity :as be]
             [clodiku.util.entities :as eu]))
@@ -15,6 +16,7 @@
 (declare ^OrthographicCamera camera)
 (declare ^SpriteBatch batch)
 (declare ^OrthogonalTiledMapRenderer map-renderer)
+(declare ^ShapeRenderer shape-renderer)
 
 ; TODO This might need a more elegant/efficient/readable way of packing up entities...
 (defn split-texture-pack
@@ -52,7 +54,8 @@
     (def batch (SpriteBatch.))
     (def map-renderer
       (OrthogonalTiledMapRenderer.
-        ^TiledMap (eu/get-current-map system) batch))))
+        ^TiledMap (eu/get-current-map system) batch))
+    (def shape-renderer (ShapeRenderer.))))
 
 
 (defn render-entities!
@@ -61,12 +64,22 @@
   (let [player (first (be/get-all-entities-with-component system Player))
         pos (be/get-component system player Spatial)
         state (be/get-component system player State)
-        region-map (:regions (be/get-component system player AnimationMap))]
+        region-map (:regions (be/get-component system player Animated))
+        circle ^Circle (:pos pos)
+        region ^TextureRegion (.getKeyFrame ^Animation ((:direction pos) ((:current state) region-map)) (:time state))]
     (doto ^SpriteBatch batch
-      (.draw ^TextureRegion
-             (.getKeyFrame ^Animation ((:direction pos) ((:current state) region-map)) (:time state))
-             (.x ^Circle (:pos pos))
-             (.y ^Circle (:pos pos))))))
+      (.draw region
+             (- (.x circle) (/ (.getRegionWidth region) 2))
+             (- (.y circle) (.radius circle) -6)))))
+
+(defn render-entity-shapes!
+  "Render the actual spatial component of the entities"
+  [renderer system]
+  (let [player (first (be/get-all-entities-with-component system Player))
+        pos (be/get-component system player Spatial)
+        circle ^Circle (:pos pos)]
+    (doto ^ShapeRenderer renderer
+      (.circle (.x circle) (.y circle) (.radius circle)))))
 
 (defn render! [system delta]
   (let [camera-pos (.position camera)]
@@ -83,4 +96,9 @@
       (.begin)
       (.setProjectionMatrix (.combined camera))
       (render-entities! system)
+      (.end))
+    (doto shape-renderer
+      (.setAutoShapeType true)
+      (.begin)
+      (render-entity-shapes! system)
       (.end)) system))

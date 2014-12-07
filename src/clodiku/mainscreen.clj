@@ -27,14 +27,26 @@
             (-> @system
                 (be/add-entity player)
                 (be/add-component player (comps/->Player))
-                (be/add-component player (comps/->AnimationMap regions))
+                (be/add-component player (comps/->Animated regions))
                 (be/add-component player (comps/->State (comps/states :walking) 0.0))
-                (be/add-component player (comps/->Spatial (Circle. (float 100) (float 100) 18) (comps/directions :east)))))))
+                (be/add-component player (comps/->Spatial (Circle. (float 100) (float 100) 14) (comps/directions :east)))))))
+
+(defn init-mobs! []
+  (reset! system
+          (let [orc (be/create-entity)
+                regions (sys-rendering/split-texture-pack "./assets/mobs/orc/orc.pack")]
+            (-> @system
+                (be/add-entity orc)
+                (be/add-component orc (comps/->MobAI))
+                (be/add-component orc (comps/->Animated regions))
+                (be/add-component orc (comps/->State (comps/states :walking) 0.0))
+                (be/add-component orc (comps/->Spatial (Circle. (float 200) (float 200) 14) (comps/directions :west)))))))
 
 (defn screen []
   (proxy [Screen] []
     (show []
       (init-player!)
+      (init-mobs!)
       (init-map!)
       (sys-rendering/init-resources! @system))
     (render [delta]

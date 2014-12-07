@@ -8,5 +8,7 @@
 (defrecord Player [])
 
 (defrecord Spatial [pos direction])
-(defrecord AnimationMap [regions])
+(defrecord Animated [regions])
 (defrecord State [current time])
+
+(defrecord MobAI [])
