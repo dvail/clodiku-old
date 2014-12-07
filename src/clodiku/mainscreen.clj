@@ -34,7 +34,7 @@
 (defn init-mobs! []
   (reset! system
           (let [orc (be/create-entity)
-                regions (sys-rendering/split-texture-pack "./assets/mobs/orc/orc.pack")]
+                regions (sys-rendering/split-texture-pack "./assets/mob/orc/orc.pack")]
             (-> @system
                 (be/add-entity orc)
                 (be/add-component orc (comps/->MobAI))

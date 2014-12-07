@@ -1,6 +1,6 @@
 (ns clodiku.systems.rendering
   (:import (com.badlogic.gdx.graphics.g2d TextureAtlas Animation$PlayMode TextureRegion TextureAtlas$AtlasRegion)
-           (clodiku.components Player Animated State WorldMap Spatial)
+           (clodiku.components Player Animated State Spatial)
            (com.badlogic.gdx.math Circle)
            (com.badlogic.gdx.graphics GL20 OrthographicCamera)
            (com.badlogic.gdx Gdx)
@@ -11,6 +11,7 @@
            (com.badlogic.gdx.graphics.glutils ShapeRenderer))
   (:require [clodiku.maps.map-core :as maps]
             [brute.entity :as be]
+            [clojure.set :as cset]
             [clodiku.util.entities :as eu]))
 
 (declare ^OrthographicCamera camera)
@@ -45,6 +46,20 @@
                                    (doto animation
                                      (.setPlayMode Animation$PlayMode/LOOP))))) fv)))) {} raw-map)))
 
+; TODO Generalize a way to get entities sharing multiple components
+(defn get-animated-entities
+  "Get all entities with both an Animated and a Spatial component"
+  [system]
+  (let [animated (be/get-all-entities-with-component system Animated)
+        spatial (be/get-all-entities-with-component system Spatial)]
+    (cset/intersection (set animated) (set spatial))))
+
+(defn sort-entities-by-render-order
+  "Sorts a collection of entities by 'y' value, so that entities closer
+  to the bottom of the screen are drawn first"
+  [system entities]
+  (reverse (sort-by #(.y (:pos (be/get-component system % Spatial))) entities)))
+
 (defn init-resources!
   [system]
   (let [graphics Gdx/graphics]
@@ -57,14 +72,12 @@
         ^TiledMap (eu/get-current-map system) batch))
     (def shape-renderer (ShapeRenderer.))))
 
-
-(defn render-entities!
-  "Render the player, mobs, npcs and items"
-  [batch system]
-  (let [player (first (be/get-all-entities-with-component system Player))
-        pos (be/get-component system player Spatial)
-        state (be/get-component system player State)
-        region-map (:regions (be/get-component system player Animated))
+(defn dorender
+  "Renders a single entity"
+  [entity batch system]
+  (let [pos (be/get-component system entity Spatial)
+        state (be/get-component system entity State)
+        region-map (:regions (be/get-component system entity Animated))
         circle ^Circle (:pos pos)
         region ^TextureRegion (.getKeyFrame ^Animation ((:direction pos) ((:current state) region-map)) (:time state))]
     (doto ^SpriteBatch batch
@@ -72,14 +85,21 @@
              (- (.x circle) (/ (.getRegionWidth region) 2))
              (- (.y circle) (.radius circle) -6)))))
 
+(defn render-entities!
+  "Render the player, mobs, npcs and items"
+  [batch system]
+  (let [entities (sort-entities-by-render-order system (get-animated-entities system))]
+    (doseq [entity entities]
+      (dorender entity batch system))))
+
 (defn render-entity-shapes!
   "Render the actual spatial component of the entities"
   [renderer system]
-  (let [player (first (be/get-all-entities-with-component system Player))
-        pos (be/get-component system player Spatial)
-        circle ^Circle (:pos pos)]
-    (doto ^ShapeRenderer renderer
-      (.circle (.x circle) (.y circle) (.radius circle)))))
+  (let [entities (be/get-all-entities-with-component system Spatial)
+        circles (map (fn [ent] (:pos (be/get-component system ent Spatial))) entities)]
+    (doseq [circle circles]
+      (doto ^ShapeRenderer renderer
+        (.circle (.x ^Circle circle) (.y ^Circle circle) (.radius ^Circle circle))))))
 
 (defn render! [system delta]
   (let [camera-pos (.position camera)]
