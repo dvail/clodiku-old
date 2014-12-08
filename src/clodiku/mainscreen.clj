@@ -4,31 +4,51 @@
             [clodiku.systems.rendering :as sys-rendering]
             [brute.entity :as be]
             [brute.system :as bs])
-  (:import (com.badlogic.gdx Gdx Screen)
-           (com.badlogic.gdx.graphics.g2d TextureAtlas)))
+  (:import (com.badlogic.gdx Screen)
+           (com.badlogic.gdx.math Circle)))
 
 ; Attach a simple map to the entity system to represent world state
 (def system
-  (atom (assoc (-> (be/create-system)
-                   (bs/add-system-fn sys-input/update)
-                   (bs/add-system-fn sys-rendering/render!)) :world {})))
+  (atom (-> (be/create-system)
+            (bs/add-system-fn sys-input/update)
+            (bs/add-system-fn sys-rendering/render!))))
 
-(defn init-player!
-  []
-  (reset! system (let [player (be/create-entity)
-                       regions (sys-rendering/split-texture-pack "./assets/player/player.pack")]
-                   (println regions)
-    (-> @system
-        (be/add-entity player)
-        (be/add-component player (comps/->Player))
-        (be/add-component player (comps/->Animation regions))
-        (be/add-component player (comps/->Position 0 10))))))
+(defn init-map! []
+  (reset! system
+          (let [tilemap (be/create-entity)]
+            (-> @system
+                (be/add-entity tilemap)
+                (be/add-component tilemap (comps/->WorldMap (clodiku.maps.map-core/load-map)))))))
+
+(defn init-player! []
+  (reset! system
+          (let [player (be/create-entity)
+                regions (sys-rendering/split-texture-pack "./assets/player/player.pack")]
+            (-> @system
+                (be/add-entity player)
+                (be/add-component player (comps/->Player))
+                (be/add-component player (comps/->Animated regions))
+                (be/add-component player (comps/->State (comps/states :walking) 0.0))
+                (be/add-component player (comps/->Spatial (Circle. (float 100) (float 100) 14) (comps/directions :east)))))))
+
+(defn init-mobs! []
+  (reset! system
+          (let [orc (be/create-entity)
+                regions (sys-rendering/split-texture-pack "./assets/mob/orc/orc.pack")]
+            (-> @system
+                (be/add-entity orc)
+                (be/add-component orc (comps/->MobAI))
+                (be/add-component orc (comps/->Animated regions))
+                (be/add-component orc (comps/->State (comps/states :walking) 0.0))
+                (be/add-component orc (comps/->Spatial (Circle. (float 200) (float 200) 14) (comps/directions :west)))))))
 
 (defn screen []
   (proxy [Screen] []
     (show []
-      (sys-rendering/init-resources!)
-      (init-player!))
+      (init-player!)
+      (init-mobs!)
+      (init-map!)
+      (sys-rendering/init-resources! @system))
     (render [delta]
       (reset! system (bs/process-one-game-tick @system delta)))
     (dispose [])
