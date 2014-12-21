@@ -46,8 +46,14 @@
 
 (defn do-melee-input
   [system delta]
-  (println delta)
-  system)
+  (let [player (first (be/get-all-entities-with-component system Player))
+        old-state (be/get-component system player State)
+        ; TODO Abstract out the time to stay in melee state - base this on Animation time
+        new-state (if (< (:time old-state) 8/12)
+                    (comps/->State (comps/states :melee) (+ (:time old-state) delta) {})
+                    (comps/->State (comps/states :standing) 0 {}))]
+    (-> system
+        (be/add-component player new-state))))
 
 (def process-input-for-state {:walking do-free-input
                               :standing do-free-input
