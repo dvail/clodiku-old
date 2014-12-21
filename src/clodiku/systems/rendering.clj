@@ -69,7 +69,7 @@
     (def batch (SpriteBatch.))
     (def map-renderer
       (OrthogonalTiledMapRenderer.
-        ^TiledMap (eu/get-current-map system) batch))
+        ^TiledMap (eu/get-current-map @system) batch))
     (def shape-renderer (ShapeRenderer.))))
 
 (defn dorender

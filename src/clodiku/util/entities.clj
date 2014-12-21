@@ -2,6 +2,12 @@
   (:import (clodiku.components Player Spatial WorldMap))
   (:require [brute.entity :as be]))
 
+(defn get-player-component
+  "Get a named component type from the player"
+  [system comp]
+  (let [player (first (be/get-all-entities-with-component system Player))]
+    (be/get-component system player comp)))
+
 (defn get-player-pos
   "Get the Spatial component of the player character"
   [system]

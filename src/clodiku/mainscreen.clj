@@ -13,42 +13,46 @@
             (bs/add-system-fn sys-input/update)
             (bs/add-system-fn sys-rendering/render!))))
 
-(defn init-map! []
-  (reset! system
+(defn init-map [sys]
+  (reset! sys
           (let [tilemap (be/create-entity)]
-            (-> @system
+            (-> @sys
                 (be/add-entity tilemap)
                 (be/add-component tilemap (comps/->WorldMap (clodiku.maps.map-core/load-map)))))))
 
-(defn init-player! []
-  (reset! system
+(defn init-player [sys]
+  (reset! sys
           (let [player (be/create-entity)
                 regions (sys-rendering/split-texture-pack "./assets/player/player.pack")]
-            (-> @system
+            (-> @sys
                 (be/add-entity player)
                 (be/add-component player (comps/->Player))
                 (be/add-component player (comps/->Animated regions))
-                (be/add-component player (comps/->State (comps/states :walking) 0.0))
-                (be/add-component player (comps/->Spatial (Circle. (float 100) (float 100) 14) (comps/directions :east)))))))
+                (be/add-component player (comps/->State (comps/states :walking) 0.0 {}))
+                (be/add-component player (comps/->Spatial
+                                           (Circle. (float 100) (float 100) 14)
+                                           (comps/directions :east)))))))
 
-(defn init-mobs! []
-  (reset! system
+(defn init-mobs [sys]
+  (reset! sys
           (let [orc (be/create-entity)
                 regions (sys-rendering/split-texture-pack "./assets/mob/orc/orc.pack")]
-            (-> @system
+            (-> @sys
                 (be/add-entity orc)
                 (be/add-component orc (comps/->MobAI))
                 (be/add-component orc (comps/->Animated regions))
-                (be/add-component orc (comps/->State (comps/states :walking) 0.0))
-                (be/add-component orc (comps/->Spatial (Circle. (float 200) (float 200) 14) (comps/directions :west)))))))
+                (be/add-component orc (comps/->State (comps/states :walking) 0.0 {}))
+                (be/add-component orc (comps/->Spatial
+                                        (Circle. (float 200) (float 200) 14)
+                                        (comps/directions :west)))))))
 
 (defn screen []
   (proxy [Screen] []
     (show []
-      (init-player!)
-      (init-mobs!)
-      (init-map!)
-      (sys-rendering/init-resources! @system))
+      (init-player system)
+      (init-mobs system)
+      (init-map system)
+      (sys-rendering/init-resources! system))
     (render [delta]
       (reset! system (bs/process-one-game-tick @system delta)))
     (dispose [])

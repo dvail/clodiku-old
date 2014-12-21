@@ -3,12 +3,18 @@
            (clodiku.components Player Spatial State))
   (:require [brute.entity :as be]
             [clodiku.components :as comps]
-            [clodiku.util.collision :as coll]))
+            [clodiku.util.collision :as coll]
+            [clodiku.util.entities :as eu]))
 
-(def bound-keys {:move_south Input$Keys/S :move_north Input$Keys/W :move_west Input$Keys/A :move_east Input$Keys/D})
+(def bound-keys {:move_south   Input$Keys/S
+                 :move_north   Input$Keys/W
+                 :move_west    Input$Keys/A
+                 :move_east    Input$Keys/D
+                 :melee_attack Input$Keys/P})
 
 (defn is-pressed? [k]
   (-> Gdx/input (.isKeyPressed (k bound-keys))))
+
 
 (defn move-player [system delta]
   (let [player (first (be/get-all-entities-with-component system Player))
@@ -30,7 +36,25 @@
     (-> system
         (be/add-component player (comps/->Spatial
                                    (coll/get-movement-circle system (:pos pos) {:x mov-x :y mov-y}) newdirection))
-        (be/add-component player (comps/->State newstate newdelta)))))
+        (be/add-component player (comps/->State newstate newdelta {})))))
+
+(defn do-free-input [system delta]
+  (let [player (first (be/get-all-entities-with-component system Player))]
+    (if (is-pressed? :melee_attack)
+      (be/add-component system player (comps/->State (comps/states :melee) 0 {}))
+      (move-player system delta))))
+
+(defn do-melee-input
+  [system delta]
+  (println delta)
+  system)
+
+(def process-input-for-state {:walking do-free-input
+                              :standing do-free-input
+                              :melee do-melee-input})
 
 (defn update [system delta]
-  (-> system (move-player delta)))
+  (let [pstate (eu/get-player-component system State)]
+    (-> system
+        (((:current pstate) process-input-for-state) delta))))
+
