@@ -119,6 +119,7 @@
       (.end))
     (doto shape-renderer
       (.setAutoShapeType true)
+      (.setProjectionMatrix (.combined camera))
       (.begin)
       (render-entity-shapes! system)
       (.end)) system))
