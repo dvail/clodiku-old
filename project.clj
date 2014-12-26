@@ -13,7 +13,7 @@
                   "https://oss.sonatype.org/content/repositories/releases/"]]
 ;  :plugins [[cider/cider-nrepl "0.8.1"]]
   :main clodiku.core
-  :aot [clodiku.game]
+  :aot [clodiku.game clodiku.mainscreen]
   :global-vars {*warn-on-reflection* true}
   :target-path "target/%s"
   :profiles {:uberjar {:aot :all}})

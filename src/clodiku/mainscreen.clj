@@ -33,17 +33,27 @@
                                            (Circle. (float 100) (float 100) 14)
                                            (comps/directions :east)))))))
 
+; TODO Entity and asset initialization...
+
 (defn init-mobs [sys]
   (reset! sys
-          (let [orc (be/create-entity)
+          (let [orc1 (be/create-entity)
+                orc2 (be/create-entity)
                 regions (sys-rendering/split-texture-pack "./assets/mob/orc/orc.pack")]
             (-> @sys
-                (be/add-entity orc)
-                (be/add-component orc (comps/->MobAI))
-                (be/add-component orc (comps/->Animated regions))
-                (be/add-component orc (comps/->State (comps/states :walking) 0.0 {}))
-                (be/add-component orc (comps/->Spatial
+                (be/add-entity orc1)
+                (be/add-component orc1 (comps/->MobAI))
+                (be/add-component orc1 (comps/->Animated regions))
+                (be/add-component orc1 (comps/->State (comps/states :walking) 0.0 {}))
+                (be/add-component orc1 (comps/->Spatial
                                         (Circle. (float 200) (float 200) 14)
+                                        (comps/directions :west)))
+                (be/add-entity orc2)
+                (be/add-component orc2 (comps/->MobAI))
+                (be/add-component orc2 (comps/->Animated regions))
+                (be/add-component orc2 (comps/->State (comps/states :walking) 0.0 {}))
+                (be/add-component orc2 (comps/->Spatial
+                                        (Circle. (float 500) (float 500) 14)
                                         (comps/directions :west)))))))
 
 (defn screen []

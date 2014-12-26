@@ -3,7 +3,7 @@
            (clodiku.components Player Animated State Spatial)
            (com.badlogic.gdx.math Circle)
            (com.badlogic.gdx.graphics GL20 OrthographicCamera)
-           (com.badlogic.gdx Gdx)
+           (com.badlogic.gdx Gdx Graphics)
            (com.badlogic.gdx.maps.tiled.renderers OrthogonalTiledMapRenderer)
            (com.badlogic.gdx.graphics.g2d SpriteBatch Animation)
            (com.badlogic.gdx.maps.tiled TiledMap)
@@ -58,11 +58,11 @@
   "Sorts a collection of entities by 'y' value, so that entities closer
   to the bottom of the screen are drawn first"
   [system entities]
-  (reverse (sort-by #(.y (:pos (be/get-component system % Spatial))) entities)))
+  (reverse (sort-by #(.y ^Circle (:pos (be/get-component system % Spatial))) entities)))
 
 (defn init-resources!
   [system]
-  (let [graphics Gdx/graphics]
+  (let [graphics ^Graphics Gdx/graphics]
     (def camera (OrthographicCamera.
                   (.getWidth graphics)
                   (.getHeight graphics)))
