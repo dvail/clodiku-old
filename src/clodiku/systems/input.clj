@@ -1,6 +1,7 @@
 (ns clodiku.systems.input
   (:import (com.badlogic.gdx Gdx Input Input$Keys)
-           (clodiku.components Player Spatial State))
+           (clodiku.components Player Spatial State)
+           (com.badlogic.gdx.math Rectangle))
   (:require [brute.entity :as be]
             [clodiku.components :as comps]
             [clodiku.util.collision :as coll]
@@ -14,6 +15,15 @@
 
 (defn is-pressed? [k]
   (-> Gdx/input (.isKeyPressed (k bound-keys))))
+
+(defn begin-attack [system delta]
+  (let [player (first (be/get-all-entities-with-component system Player))
+        pos (:pos (be/get-component system player Spatial))]
+    (-> system
+        (be/add-component player (comps/->State (comps/states :melee) 0 {}))
+        (be/add-component player (comps/->EqWeapon
+                                   (Rectangle. (float (.x pos)) (float (.y pos)) (float 4) (float 4))
+                                   (fn []))))))
 
 (defn move-player [system delta]
   (let [player (first (be/get-all-entities-with-component system Player))
@@ -38,10 +48,9 @@
         (be/add-component player (comps/->State newstate newdelta {})))))
 
 (defn do-free-input [system delta]
-  (let [player (first (be/get-all-entities-with-component system Player))]
-    (if (is-pressed? :melee_attack)
-      (be/add-component system player (comps/->State (comps/states :melee) 0 {}))
-      (move-player system delta))))
+  (if (is-pressed? :melee_attack)
+    (begin-attack system delta)
+    (move-player system delta)))
 
 (defn do-melee-input
   [system delta]
@@ -54,9 +63,9 @@
     (-> system
         (be/add-component player new-state))))
 
-(def process-input-for-state {:walking do-free-input
+(def process-input-for-state {:walking  do-free-input
                               :standing do-free-input
-                              :melee do-melee-input})
+                              :melee    do-melee-input})
 
 (defn update [system delta]
   (let [pstate (eu/get-player-component system State)]

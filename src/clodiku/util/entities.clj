@@ -1,6 +1,15 @@
 (ns clodiku.util.entities
-  (:import (clodiku.components Player Spatial WorldMap))
-  (:require [brute.entity :as be]))
+  (:import (clodiku.components Player Spatial WorldMap State))
+  (:require [brute.entity :as be]
+            [clodiku.components :as comps]))
+
+(defn get-attackers
+  "Gets a sequence of entities who are currently attacking"
+  [system]
+  (let [entities (be/get-all-entities-with-component system State)]
+    (filter (fn [ent]
+              (= (comps/states :melee)
+                 (:current (be/get-component system ent State)))) entities)))
 
 (defn get-player-component
   "Get a named component type from the player"

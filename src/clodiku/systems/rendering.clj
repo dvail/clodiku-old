@@ -1,7 +1,7 @@
 (ns clodiku.systems.rendering
   (:import (com.badlogic.gdx.graphics.g2d TextureAtlas Animation$PlayMode TextureRegion TextureAtlas$AtlasRegion)
-           (clodiku.components Player Animated State Spatial)
-           (com.badlogic.gdx.math Circle)
+           (clodiku.components Player Animated State Spatial EqWeapon)
+           (com.badlogic.gdx.math Circle Rectangle)
            (com.badlogic.gdx.graphics GL20 OrthographicCamera)
            (com.badlogic.gdx Gdx Graphics)
            (com.badlogic.gdx.maps.tiled.renderers OrthogonalTiledMapRenderer)
@@ -9,7 +9,8 @@
            (com.badlogic.gdx.maps.tiled TiledMap)
            (com.badlogic.gdx.math Vector3)
            (com.badlogic.gdx.graphics.glutils ShapeRenderer))
-  (:require [clodiku.maps.map-core :as maps]
+  (:require [clodiku.components :as comps]
+            [clodiku.maps.map-core :as maps]
             [brute.entity :as be]
             [clojure.set :as cset]
             [clodiku.util.entities :as eu]))
@@ -101,6 +102,20 @@
       (doto ^ShapeRenderer renderer
         (.circle (.x ^Circle circle) (.y ^Circle circle) (.radius ^Circle circle))))))
 
+
+(defn render-attack-shapes!
+  "Render the collision zones for entity attacks"
+  [renderer system]
+  (let [attackers (eu/get-attackers system)
+        rectangles (map
+                     (fn [ent] (:hit-box (be/get-component system ent EqWeapon))) attackers)]
+    (doseq [rect rectangles]
+      (doto ^ShapeRenderer renderer
+        (.rect (.x ^Rectangle rect)
+               (.y ^Rectangle rect)
+               (.height ^Rectangle rect)
+               (.width ^Rectangle rect))))))
+
 (defn render! [system delta]
   (let [camera-pos (.position camera)]
     (doto (Gdx/gl)
@@ -122,4 +137,5 @@
       (.setProjectionMatrix (.combined camera))
       (.begin)
       (render-entity-shapes! system)
+      (render-attack-shapes! system)
       (.end)) system))
