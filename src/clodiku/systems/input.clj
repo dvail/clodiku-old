@@ -15,7 +15,6 @@
 (defn is-pressed? [k]
   (-> Gdx/input (.isKeyPressed (k bound-keys))))
 
-
 (defn move-player [system delta]
   (let [player (first (be/get-all-entities-with-component system Player))
         pos (be/get-component system player Spatial)
@@ -63,4 +62,3 @@
   (let [pstate (eu/get-player-component system State)]
     (-> system
         (((:current pstate) process-input-for-state) delta))))
-
