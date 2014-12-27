@@ -1,6 +1,6 @@
 (ns clodiku.systems.rendering
   (:import (com.badlogic.gdx.graphics.g2d TextureAtlas Animation$PlayMode TextureRegion TextureAtlas$AtlasRegion)
-           (clodiku.components Player Animated State Spatial EqWeapon)
+           (clodiku.components Player Animated State Spatial EqWeapon Equipable)
            (com.badlogic.gdx.math Circle Rectangle)
            (com.badlogic.gdx.graphics GL20 OrthographicCamera)
            (com.badlogic.gdx Gdx Graphics)
@@ -108,7 +108,7 @@
   [renderer system]
   (let [attackers (eu/get-attackers system)
         rectangles (map
-                     (fn [ent] (:hit-box (be/get-component system ent EqWeapon))) attackers)]
+                     (fn [ent] (:hit-box (eu/get-entity-weapon system ent))) attackers)]
     (doseq [rect rectangles]
       (doto ^ShapeRenderer renderer
         (.rect (.x ^Rectangle rect)

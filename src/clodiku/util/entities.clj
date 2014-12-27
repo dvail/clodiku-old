@@ -1,5 +1,5 @@
 (ns clodiku.util.entities
-  (:import (clodiku.components Player Spatial WorldMap State))
+  (:import (clodiku.components Player Spatial WorldMap State EqWeapon Equipable))
   (:require [brute.entity :as be]
             [clodiku.components :as comps]))
 
@@ -10,6 +10,13 @@
     (filter (fn [ent]
               (= (comps/states :melee)
                  (:current (be/get-component system ent State)))) entities)))
+
+(defn get-entity-weapon
+  "Gets the equipment piece in the given slot from the entity that owns it"
+  [system entity]
+  (be/get-component system
+                    (:held (:equipment (be/get-component system entity Equipable)))
+                    EqWeapon))
 
 (defn get-player-component
   "Get a named component type from the player"
