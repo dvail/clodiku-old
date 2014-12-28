@@ -22,19 +22,13 @@
         eq-weapon (:held (:equipment (be/get-component system player Equipable)))]
     (-> system
         (be/add-component player (comps/->State (comps/states :melee) 0 {}))
-        (be/add-component player (comps/->EqWeapon
-                                   (Rectangle. (float (.x pos)) (float (.y pos)) (float 4) (float 4))
-                                   (fn [])))
-
-        ;(be/update-component eq-weapon EqWeapon (fn [weapon]
-        ;                                       (println weapon)
-        ;                                       (assoc weapon :hit-box
-        ;                                              (Rectangle.
-        ;                                                (float (.x pos))
-        ;                                                (float (.y pos))
-        ;                                                (float (.height (:hit-box weapon)))
-        ;                                                (float (.width (:hit-box weapon)))))) eq-weapon)
-        )))
+        (be/update-component eq-weapon EqWeapon (fn [weapon]
+                                               (assoc weapon :hit-box
+                                                      (Rectangle.
+                                                        (float (.x pos))
+                                                        (float (.y pos))
+                                                        (float (.height (:hit-box weapon)))
+                                                        (float (.width (:hit-box weapon))))))))))
 
 (defn move-player [system delta]
   (let [player (first (be/get-all-entities-with-component system Player))

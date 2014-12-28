@@ -107,8 +107,7 @@
   "Render the collision zones for entity attacks"
   [renderer system]
   (let [attackers (eu/get-attackers system)
-        rectangles (map
-                     (fn [ent] (:hit-box (eu/get-entity-weapon system ent))) attackers)]
+        rectangles (map (fn [ent] (:hit-box (eu/get-entity-weapon system ent))) attackers)]
     (doseq [rect rectangles]
       (doto ^ShapeRenderer renderer
         (.rect (.x ^Rectangle rect)

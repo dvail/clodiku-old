@@ -1,7 +1,8 @@
 (ns clodiku.util.entities
   (:import (clodiku.components Player Spatial WorldMap State EqWeapon Equipable))
   (:require [brute.entity :as be]
-            [clodiku.components :as comps]))
+            [clodiku.components :as comps]
+            [clojure.set :refer [union]]))
 
 (defn get-attackers
   "Gets a sequence of entities who are currently attacking"
@@ -23,6 +24,12 @@
   [system comp]
   (let [player (first (be/get-all-entities-with-component system Player))]
     (be/get-component system player comp)))
+
+; TODO Test this - not sure if it works yet
+(defn get-entities-with-components
+  "Get entities that have each of a given component list."
+  [system & components]
+  (reduce #(union %1 (set (be/get-all-entities-with-component system %2))) #{} components))
 
 (defn get-player-pos
   "Get the Spatial component of the player character"
