@@ -1,7 +1,7 @@
 (ns clodiku.systems.input
   (:import (com.badlogic.gdx Gdx Input Input$Keys)
            (clodiku.components Player Spatial State EqWeapon Equipable)
-           (com.badlogic.gdx.math Rectangle))
+           (com.badlogic.gdx.math Rectangle Circle))
   (:require [brute.entity :as be]
             [clodiku.components :as comps]
             [clodiku.util.collision :as coll]
@@ -24,11 +24,10 @@
         (be/add-component player (comps/->State (comps/states :melee) 0 {}))
         (be/update-component eq-weapon EqWeapon (fn [weapon]
                                                (assoc weapon :hit-box
-                                                      (Rectangle.
+                                                      (Circle.
                                                         (float (.x pos))
                                                         (float (.y pos))
-                                                        (float (.height (:hit-box weapon)))
-                                                        (float (.width (:hit-box weapon))))))))))
+                                                        (float (.radius (:hit-box weapon))))))))))
 
 (defn move-player [system delta]
   (let [player (first (be/get-all-entities-with-component system Player))
@@ -46,7 +45,8 @@
                        (> 0 mov-x) (comps/directions :west)
                        (< 0 mov-y) (comps/directions :north)
                        (> 0 mov-y) (comps/directions :south))]
-    ; TODO Change this to `be/update-component` -- seems like it must be more efficient
+    ; be/add-component is more efficient here - update component is only more ideal when we need to retain old
+    ; parameter values
     (-> system
         (be/add-component player (comps/->Spatial
                                    (coll/get-movement-circle system (:pos pos) {:x mov-x :y mov-y}) newdirection))
@@ -62,7 +62,7 @@
   (let [player (first (be/get-all-entities-with-component system Player))
         old-state (be/get-component system player State)
         ; TODO Abstract out the time to stay in melee state - base this on Animation time
-        new-state (if (< (:time old-state) 8/12)
+        new-state (if (< (:time old-state) 4/12)
                     (comps/->State (comps/states :melee) (+ (:time old-state) delta) {})
                     (comps/->State (comps/states :standing) 0 {}))]
     (-> system

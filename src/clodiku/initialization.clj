@@ -21,7 +21,7 @@
                                                  :hr 1
                                                  :slot (comps/eq-slots :held)}))
         (be/add-component spear (comps/->EqWeapon
-                                  (Rectangle. (float 0) (float 0) (float 4) (float 4))
+                                  (Circle. (float 0) (float 0) (float 4))
                                   (:spear weaponry/attack-fns)))
         (be/add-entity player)
         (be/add-component player (comps/->Player))

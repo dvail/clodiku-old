@@ -41,7 +41,8 @@
                (apply merge
                       (map
                         (fn [dir-map]
-                          (let [animation (Animation. (float 1/12) (into-array (val dir-map)))]
+                          (let [anim-speed (if (= fk :melee) 1/24 1/12)
+                                animation (Animation. (float anim-speed) (into-array (val dir-map)))]
                             (assoc {}
                                    (key dir-map)
                                    (doto animation
@@ -107,13 +108,12 @@
   "Render the collision zones for entity attacks"
   [renderer system]
   (let [attackers (eu/get-attackers system)
-        rectangles (map (fn [ent] (:hit-box (eu/get-entity-weapon system ent))) attackers)]
-    (doseq [rect rectangles]
+        circles (map (fn [ent] (:hit-box (eu/get-entity-weapon system ent))) attackers)]
+    (doseq [circle circles]
       (doto ^ShapeRenderer renderer
-        (.rect (.x ^Rectangle rect)
-               (.y ^Rectangle rect)
-               (.height ^Rectangle rect)
-               (.width ^Rectangle rect))))))
+        (.circle (.x ^Circle circle)
+               (.y ^Circle circle)
+               (.radius ^Circle circle))))))
 
 (defn render! [system delta]
   (let [camera-pos (.position camera)]
