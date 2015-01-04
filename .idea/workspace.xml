@@ -37,8 +37,8 @@
       <file leaf-file-name="weaponry.clj" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/clodiku/equipment/weaponry.clj">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.20152092" vertical-offset="399" max-vertical-offset="1188">
-              <caret line="31" column="96" selection-start-line="31" selection-start-column="96" selection-end-line="31" selection-end-column="96" />
+            <state vertical-scroll-proportion="0.4068441" vertical-offset="237" max-vertical-offset="1188">
+              <caret line="31" column="72" selection-start-line="31" selection-start-column="72" selection-end-line="31" selection-end-column="72" />
               <folding />
             </state>
           </provider>
@@ -449,7 +449,7 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="5" y="25" width="1590" height="870" extended-state="1" />
+    <frame x="5" y="25" width="1590" height="870" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info id="Palette&#9;" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
@@ -869,8 +869,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/clodiku/equipment/weaponry.clj">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.20152092" vertical-offset="399" max-vertical-offset="1188">
-          <caret line="31" column="96" selection-start-line="31" selection-start-column="96" selection-end-line="31" selection-end-column="96" />
+        <state vertical-scroll-proportion="0.4068441" vertical-offset="237" max-vertical-offset="1188">
+          <caret line="31" column="72" selection-start-line="31" selection-start-column="72" selection-end-line="31" selection-end-column="72" />
           <folding />
         </state>
       </provider>
