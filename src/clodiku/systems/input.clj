@@ -1,11 +1,11 @@
 (ns clodiku.systems.input
   (:import (com.badlogic.gdx Gdx Input Input$Keys)
-           (clodiku.components Player Spatial State EqWeapon Equipable)
-           (com.badlogic.gdx.math Rectangle Circle))
+           (clodiku.components Player Spatial State EqWeapon Equipable))
   (:require [brute.entity :as be]
             [clodiku.components :as comps]
             [clodiku.util.collision :as coll]
-            [clodiku.util.entities :as eu]))
+            [clodiku.util.entities :as eu]
+            [clodiku.equipment.weaponry :as weaponry]))
 
 (def bound-keys {:move_south   Input$Keys/S
                  :move_north   Input$Keys/W
@@ -18,16 +18,13 @@
 
 (defn begin-attack [system delta]
   (let [player (first (be/get-all-entities-with-component system Player))
-        pos (:pos (be/get-component system player Spatial))
+        spatial (be/get-component system player Spatial)
         eq-weapon (:held (:equipment (be/get-component system player Equipable)))]
     (-> system
         (be/add-component player (comps/->State (comps/states :melee) 0 {}))
         (be/update-component eq-weapon EqWeapon (fn [weapon]
                                                (assoc weapon :hit-box
-                                                      (Circle.
-                                                        (float (.x pos))
-                                                        (float (.y pos))
-                                                        (float (.radius (:hit-box weapon))))))))))
+                                                      (weaponry/get-attack-start-pos (:type weapon) spatial)))))))
 
 (defn move-player [system delta]
   (let [player (first (be/get-all-entities-with-component system Player))

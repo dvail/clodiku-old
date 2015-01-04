@@ -1,17 +1,15 @@
 (ns clodiku.systems.combat
-  (:import (clodiku.components Spatial EqWeapon Equipable)
-           (com.badlogic.gdx.math Rectangle Circle))
+  (:import (clodiku.components Spatial EqWeapon Equipable))
   (:require [clodiku.util.entities :as eu]
             [brute.entity :as be]
-            [clodiku.components :as comps]))
+            [clodiku.equipment.weaponry :as weaponry]))
 
 (defn update-attack-components
   [system delta attacker]
   (let [weapon-entity (:held (:equipment (be/get-component system attacker Equipable)))
         weapon-comp (be/get-component system weapon-entity EqWeapon)
         entity-space (be/get-component system attacker Spatial)
-        entity-facing (:direction entity-space)
-        new-hit-box ((:hit-box-fn weapon-comp) (:hit-box weapon-comp) entity-facing delta)]
+        new-hit-box ((weaponry/get-attack-fn (:type weapon-comp)) (:hit-box weapon-comp) entity-space)]
     (-> system
         (be/update-component weapon-entity EqWeapon
                              (fn [weap]

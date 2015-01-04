@@ -135,6 +135,8 @@
       (.setAutoShapeType true)
       (.setProjectionMatrix (.combined camera))
       (.begin)
+      (.setColor 0.5 1 0.5 1)
       (render-entity-shapes! system)
+      (.setColor 1 0.5 0.5 1)
       (render-attack-shapes! system)
       (.end)) system))

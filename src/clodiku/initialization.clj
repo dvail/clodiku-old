@@ -13,21 +13,20 @@
 
 (defn init-player [sys]
   (let [player (be/create-entity)
-        spear (be/create-entity)
+        weap (be/create-entity)
         regions (sys-rendering/split-texture-pack "./assets/player/player.pack")]
     (-> sys
-        (be/add-entity spear)
-        (be/add-component spear (comps/->EqItem {:damage 5
+        (be/add-entity weap)
+        (be/add-component weap (comps/->EqItem {:damage 5
                                                  :hr 1
                                                  :slot (comps/eq-slots :held)}))
-        (be/add-component spear (comps/->EqWeapon
-                                  (Circle. (float 0) (float 0) (float 4))
-                                  (:spear weaponry/attack-fns)))
+        (be/add-component weap (comps/->EqWeapon
+                                  (Circle. (float 0) (float 0) (float 4)) (weaponry/weapon-types :sword)))
         (be/add-entity player)
         (be/add-component player (comps/->Player))
         (be/add-component player (comps/->Animated regions))
         (be/add-component player (comps/->State (comps/states :walking) 0.0 {}))
-        (be/add-component player (comps/->Equipable {:held spear}))
+        (be/add-component player (comps/->Equipable {:held weap}))
         (be/add-component player (comps/->Spatial
                                    (Circle. (float 100) (float 100) 14)
                                    (comps/directions :east))))))
