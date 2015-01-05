@@ -40,14 +40,14 @@
         regions (sys-rendering/split-texture-pack "./assets/mob/orc/orc.pack")]
     (-> sys
         (be/add-entity orc1)
-        (be/add-component orc1 (comps/->MobAI))
+        (be/add-component orc1 (comps/->MobAI (comps/mob-ai-states :wander) {:last-update 0}))
         (be/add-component orc1 (comps/->Animated regions))
         (be/add-component orc1 (comps/->State (comps/states :walking) 0.0 {}))
         (be/add-component orc1 (comps/->Spatial
                                  (Circle. (float 300) (float 300) 14)
                                  (comps/directions :west)))
         (be/add-entity orc2)
-        (be/add-component orc2 (comps/->MobAI))
+        (be/add-component orc2 (comps/->MobAI (comps/mob-ai-states :wander) {:last-update 0}))
         (be/add-component orc2 (comps/->Animated regions))
         (be/add-component orc2 (comps/->State (comps/states :walking) 0.0 {}))
         (be/add-component orc2 (comps/->Spatial

@@ -1,5 +1,6 @@
 (ns clodiku.mainscreen
   (:require [clodiku.systems.input :as sys-input]
+            [clodiku.systems.mob-ai :as sys-mob-ai]
             [clodiku.systems.combat :as sys-combat]
             [clodiku.systems.rendering :as sys-rendering]
             [clodiku.initialization :as init]
@@ -10,6 +11,7 @@
 (def system
   (atom (-> (be/create-system)
             (bs/add-system-fn sys-input/update)
+            (bs/add-system-fn sys-mob-ai/update)
             (bs/add-system-fn sys-combat/update)
             (bs/add-system-fn sys-rendering/render!))))
 

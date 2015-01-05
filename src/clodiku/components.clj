@@ -7,6 +7,8 @@
 (def attributes #{:hp :str :dex :vit :psy})
 (def eq-stats #{:damage :hr :dr :ms :pd :saves})
 
+(def mob-ai-states #{:wander :aggro})
+
 (defrecord WorldMap [tilemap])
 
 (defrecord Player [])
@@ -27,6 +29,6 @@
 ; an attack
 (defrecord EqWeapon [base-damage hit-box hit-list type])
 
-(defrecord MobAI [])
+(defrecord MobAI [state data])
 
 

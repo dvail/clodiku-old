@@ -8,6 +8,7 @@
         <option value="clodiku.game" />
         <option value="clodiku.mainscreen" />
         <option value="clodiku.components" />
+        <option value="clodiku.initialization" />
       </list>
     </option>
     <option name="SHOW_REFLECTION_WARNINGS" value="true" />
