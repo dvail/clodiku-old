@@ -5,7 +5,7 @@
            (com.badlogic.gdx.graphics GL20 OrthographicCamera)
            (com.badlogic.gdx Gdx Graphics)
            (com.badlogic.gdx.maps.tiled.renderers OrthogonalTiledMapRenderer)
-           (com.badlogic.gdx.graphics.g2d SpriteBatch Animation)
+           (com.badlogic.gdx.graphics.g2d SpriteBatch Animation BitmapFont)
            (com.badlogic.gdx.maps.tiled TiledMap)
            (com.badlogic.gdx.math Vector3)
            (com.badlogic.gdx.graphics.glutils ShapeRenderer))
@@ -19,6 +19,8 @@
 (declare ^SpriteBatch batch)
 (declare ^OrthogonalTiledMapRenderer map-renderer)
 (declare ^ShapeRenderer shape-renderer)
+
+(declare ^BitmapFont attack-font)
 
 ; TODO This might need a more elegant/efficient/readable way of packing up entities...
 (defn split-texture-pack
@@ -38,12 +40,12 @@
     (reduce-kv
       (fn [init fk fv]
         (assoc init fk
-               (apply merge
-                      (map
-                        (fn [dir-map]
-                          (let [anim-speed (if (= fk :melee) 1/24 1/12)
-                                animation (Animation. (float anim-speed) (into-array (val dir-map)))]
-                            (assoc {}
+                    (apply merge
+                           (map
+                             (fn [dir-map]
+                               (let [anim-speed (if (= fk :melee) 1/24 1/12)
+                                     animation (Animation. (float anim-speed) (into-array (val dir-map)))]
+                                 (assoc {}
                                    (key dir-map)
                                    (doto animation
                                      (.setPlayMode Animation$PlayMode/LOOP))))) fv)))) {} raw-map)))
@@ -69,6 +71,7 @@
                   (.getWidth graphics)
                   (.getHeight graphics)))
     (def batch (SpriteBatch.))
+    (def attack-font (BitmapFont.))
     (def map-renderer
       (OrthogonalTiledMapRenderer.
         ^TiledMap (eu/get-current-map @system) batch))
@@ -94,6 +97,17 @@
     (doseq [entity entities]
       (dorender entity batch system))))
 
+(defn render-attack-verbs
+  "Draw the KICK POW BANG verbs for attacks"
+  [batch system]
+  (let [attacks (:combat (:world_events system))]
+    (doseq [attack attacks]
+      (let [delta (:delta attack)
+            draw-x (.x (:location attack))
+            draw-y (.y (:location attack))]
+        (.setColor attack-font 0.2 0.2 1 (- 3 delta))
+        (.draw attack-font batch "poke" draw-x (+ draw-y (* 100 delta)))))))
+
 (defn render-entity-shapes!
   "Render the actual spatial component of the entities"
   [renderer system]
@@ -112,8 +126,9 @@
     (doseq [circle circles]
       (doto ^ShapeRenderer renderer
         (.circle (.x ^Circle circle)
-               (.y ^Circle circle)
-               (.radius ^Circle circle))))))
+                 (.y ^Circle circle)
+                 (.radius ^Circle circle))))))
+
 
 (defn render! [system delta]
   (let [camera-pos (.position camera)]
@@ -130,6 +145,7 @@
       (.begin)
       (.setProjectionMatrix (.combined camera))
       (render-entities! system)
+      (render-attack-verbs system)
       (.end))
     (doto shape-renderer
       (.setAutoShapeType true)

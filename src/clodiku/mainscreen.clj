@@ -17,7 +17,7 @@
   (proxy [Screen] []
     (show []
       (reset! system (init/init-main @system))
-      (reset! system (assoc @system :world_events '()))
+      (reset! system (assoc @system :world_events {:combat '()}))
       (sys-rendering/init-resources! system))
     (render [delta]
       (reset! system (bs/process-one-game-tick @system delta)))
