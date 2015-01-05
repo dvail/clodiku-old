@@ -4,10 +4,10 @@
     <option name="NS_TO_COMPILE" value="2" />
     <option name="NAMESPACES">
       <list>
-        <option value="clodiku.MyGame" />
         <option value="clodiku.core" />
         <option value="clodiku.game" />
         <option value="clodiku.mainscreen" />
+        <option value="clodiku.components" />
       </list>
     </option>
     <option name="SHOW_REFLECTION_WARNINGS" value="true" />

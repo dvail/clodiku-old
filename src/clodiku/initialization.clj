@@ -1,5 +1,5 @@
 (ns clodiku.initialization
-  (:import (com.badlogic.gdx.math Circle Rectangle))
+  (:import (com.badlogic.gdx.math Circle))
   (:require [clodiku.components :as comps]
             [brute.entity :as be]
             [clodiku.systems.rendering :as sys-rendering]
@@ -22,6 +22,7 @@
         (be/add-component weap (comps/->EqWeapon
                                  5                          ; Base damage
                                  (Circle. (float 0) (float 0) (float (:spear weaponry/weapon-sizes)))
+                                 '()                        ; List of hit entities TODO Move this someplace else?
                                  (weaponry/weapon-types :spear)))
         (be/add-entity player)
         (be/add-component player (comps/->Player))

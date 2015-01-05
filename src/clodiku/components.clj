@@ -25,7 +25,7 @@
 
 ; A weapon component has a hit box that checks for collisions, as well as a function that describes the motion of
 ; an attack
-(defrecord EqWeapon [base-damage hit-box type])
+(defrecord EqWeapon [base-damage hit-box hit-list type])
 
 (defrecord MobAI [])
 

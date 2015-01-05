@@ -23,8 +23,9 @@
     (-> system
         (be/add-component player (comps/->State (comps/states :melee) 0 {}))
         (be/update-component eq-weapon EqWeapon (fn [weapon]
-                                               (assoc weapon :hit-box
-                                                      (weaponry/get-attack-start-pos (:type weapon) spatial)))))))
+                                               (assoc weapon
+                                                 :hit-box (weaponry/get-attack-start-pos (:type weapon) spatial)
+                                                 :hit-list '()))))))
 
 (defn move-player [system delta]
   (let [player (first (be/get-all-entities-with-component system Player))
