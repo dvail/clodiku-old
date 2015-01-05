@@ -17,11 +17,12 @@
         regions (sys-rendering/split-texture-pack "./assets/player/player.pack")]
     (-> sys
         (be/add-entity weap)
-        (be/add-component weap (comps/->EqItem {:damage 5
-                                                 :hr 1
-                                                 :slot (comps/eq-slots :held)}))
+        (be/add-component weap (comps/->EqItem {:hr     1
+                                                :slot   (comps/eq-slots :held)}))
         (be/add-component weap (comps/->EqWeapon
-                                  (Circle. (float 0) (float 0) (float 4)) (weaponry/weapon-types :sword)))
+                                 5                          ; Base damage
+                                 (Circle. (float 0) (float 0) (float (:spear weaponry/weapon-sizes)))
+                                 (weaponry/weapon-types :spear)))
         (be/add-entity player)
         (be/add-component player (comps/->Player))
         (be/add-component player (comps/->Animated regions))

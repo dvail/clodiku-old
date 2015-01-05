@@ -17,6 +17,13 @@
   (reduce (fn [collision? circle]
             (or collision? (intersects? entity-space circle))) false other-spaces))
 
+; TODO Generalize this to handle all collisions?
+(defn get-entity-collisions
+  "Gets a sequence of entities that fall in the collision zone. Only cares about entities with the
+  Player or MobAI components at this point."
+  [system entity-space other-entities]
+ (filter #(intersects? entity-space (:pos (be/get-component system % Spatial))) other-entities))
+
 (defn collides-with-map?
   "Tests if the entity will collide with an impassable area of the map"
   [entity-space map-objs]
