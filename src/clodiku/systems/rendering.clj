@@ -98,15 +98,15 @@
       (dorender entity batch system))))
 
 (defn render-attack-verbs
-  "Draw the KICK POW BANG verbs for attacks"
+  "Draw the *KICK POW BANG* verbs for attacks"
   [batch system]
   (let [attacks (:combat (:world_events system))]
     (doseq [attack attacks]
       (let [delta (:delta attack)
             draw-x (.x (:location attack))
             draw-y (.y (:location attack))]
-        (.setColor attack-font 0.2 0.2 1 (- 3 delta))
-        (.draw attack-font batch "poke" draw-x (+ draw-y (* 100 delta)))))))
+        (.setColor attack-font 0.2 0.2 1 (- 1 (/ delta 2)))
+        (.draw attack-font batch "poke" draw-x (+ 25 draw-y (* 100 delta)))))))
 
 (defn render-entity-shapes!
   "Render the actual spatial component of the entities"

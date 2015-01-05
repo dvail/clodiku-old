@@ -26,7 +26,6 @@
                :delta    0}
         combat-events (:combat (:world_events system))
         new-event-list (conj combat-events event)]
-    (println new-event-list)
     (-> system
         (be/update-component weapon EqWeapon
                              (fn [weap]
@@ -61,8 +60,9 @@
   "Updates information about attacks, etc."
   [system delta]
   (let [events (:combat (:world_events system))
-        updated-events (map #(assoc % :delta (+ delta (:delta %))) events)]
-    (assoc-in system [:world_events :combat] updated-events)))
+        updated-events (map #(assoc % :delta (+ delta (:delta %))) events)
+        filtered-events (filter #(> 1 (:delta %)) updated-events)]
+    (assoc-in system [:world_events :combat] filtered-events)))
 
 (defn update
   "Apply combat events and collisions"
