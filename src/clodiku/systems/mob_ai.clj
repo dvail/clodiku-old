@@ -1,17 +1,16 @@
 (ns clodiku.systems.mob-ai
-  (:require [brute.entity :as be]
-            [clodiku.components :as comps]
-            [clodiku.util.collision :as coll]
-            [clodiku.util.entities :as eu])
-  (:import (clodiku.components MobAI)))
+  (:import (clodiku.components MobAI Spatial))
+  (:require [brute.entity :as be]))
 
 ; How often the AI "thinks" and decides to change its behavior
-(defn ai-speed 4)
+(def ai-speed 3)
+
+; The max distance along the x or y axis that a mob will wander..
+(def wander-distance 100)
 
 (defn do-wander
   "Just... wander around."
   [system delta mob]
-  (println mob)
   system)
 
 (defn do-aggro
@@ -19,10 +18,29 @@
   [system delta mob]
   system)
 
-(defn update-mob
+(defn set-path-to-location
+  "Get a path to the next target location, the path should be a vector of
+  x/y coordinates (Vector2) that the mob attempts to move to."
+  [system mob]
+  (let [current-location (:pos (be/get-component system mob Spatial))
+        new-x (+ (- (/ wander-distance 2) (rand wander-distance)) (.x current-location))
+        new-y (+ (- (/ wander-distance 2) (rand wander-distance)) (.y current-location))]
+    system))
+
+(defn update-mob-timestamp
+  "Updates the last time the mob had to make a descision"
+  [system mob new-delta]
+  (let [ai-component (be/get-component system mob MobAI)
+        new-data (assoc (:data ai-component) :last-update new-delta)]
+    (be/update-component system mob MobAI (fn [ai]
+                                            (assoc ai :data new-data)))))
+
+(defn update-mob-behavior
   "Updates the Mob's choice of behavior"
-  [system delta mob]
-  system)
+  [system mob state]
+  (if (= state :wander)
+    (set-path-to-location system mob)
+    system))
 
 ; Map Mob states to action functions
 (def state-actions {:wander do-wander
@@ -36,7 +54,10 @@
                     mob-state (:state ai-component)
                     last-update (:last-update (:data ai-component))]
                 (if (> last-update ai-speed)
-                  (-> system
-                      (update-mob delta mob)
+                  (-> sys
+                      (update-mob-timestamp mob 0)
+                      (update-mob-behavior mob mob-state)
                       ((get state-actions mob-state) delta mob))
-                  ((get state-actions mob-state) system delta mob)))) system mobs)))
+                  (-> sys
+                      (update-mob-timestamp mob (+ last-update delta))
+                      ((get state-actions mob-state) delta mob))))) system mobs)))
