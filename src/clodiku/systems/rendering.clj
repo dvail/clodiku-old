@@ -88,7 +88,7 @@
     (doto ^SpriteBatch batch
       (.draw region
              (- (.x circle) (/ (.getRegionWidth region) 2))
-             (- (.y circle) (.radius circle))))))
+             (- (.y circle) (.radius circle) -2)))))
 
 (defn render-entities!
   "Render the player, mobs, npcs and items"

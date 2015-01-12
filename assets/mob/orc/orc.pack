@@ -5,420 +5,420 @@ filter: Nearest,Nearest
 repeat: none
 melee-east-2
   rotate: false
-  xy: 1, 397
+  xy: 0, 396
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 melee-east-0
   rotate: false
-  xy: 1, 331
+  xy: 0, 330
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 walking-south-5
   rotate: false
-  xy: 67, 397
+  xy: 66, 396
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 melee-south-1
   rotate: false
-  xy: 1, 265
+  xy: 0, 264
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 melee-west-2
   rotate: false
-  xy: 67, 331
+  xy: 66, 330
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 melee-west-1
   rotate: false
-  xy: 133, 397
+  xy: 132, 396
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 melee-north-1
   rotate: false
-  xy: 1, 199
+  xy: 0, 198
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 walking-south-6
   rotate: false
-  xy: 67, 265
+  xy: 66, 264
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 melee-south-2
   rotate: false
-  xy: 133, 331
+  xy: 132, 330
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 standing-north-0
   rotate: false
-  xy: 199, 397
+  xy: 198, 396
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 standing-south-0
   rotate: false
-  xy: 1, 133
+  xy: 0, 132
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 melee-south-5
   rotate: false
-  xy: 67, 199
+  xy: 66, 198
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 walking-west-1
   rotate: false
-  xy: 133, 265
+  xy: 132, 264
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 walking-south-1
   rotate: false
-  xy: 199, 331
+  xy: 198, 330
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 walking-north-6
   rotate: false
-  xy: 265, 397
+  xy: 264, 396
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 melee-west-3
   rotate: false
-  xy: 1, 67
+  xy: 0, 66
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 walking-west-6
   rotate: false
-  xy: 67, 133
+  xy: 66, 132
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 walking-north-3
   rotate: false
-  xy: 133, 199
+  xy: 132, 198
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 walking-west-3
   rotate: false
-  xy: 199, 265
+  xy: 198, 264
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 melee-west-4
   rotate: false
-  xy: 265, 331
+  xy: 264, 330
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 melee-south-3
   rotate: false
-  xy: 331, 397
+  xy: 330, 396
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 melee-east-1
   rotate: false
-  xy: 1, 1
+  xy: 0, 0
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 walking-north-2
   rotate: false
-  xy: 67, 67
+  xy: 66, 66
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 walking-south-4
   rotate: false
-  xy: 133, 133
+  xy: 132, 132
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 melee-north-5
   rotate: false
-  xy: 199, 199
+  xy: 198, 198
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 walking-west-0
   rotate: false
-  xy: 265, 265
+  xy: 264, 264
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 walking-south-7
   rotate: false
-  xy: 331, 331
+  xy: 330, 330
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 walking-north-1
   rotate: false
-  xy: 397, 397
+  xy: 396, 396
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 walking-west-7
   rotate: false
-  xy: 67, 1
+  xy: 66, 0
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 walking-north-0
   rotate: false
-  xy: 133, 67
+  xy: 132, 66
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 walking-south-0
   rotate: false
-  xy: 199, 133
+  xy: 198, 132
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 walking-west-5
   rotate: false
-  xy: 265, 199
+  xy: 264, 198
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 walking-west-2
   rotate: false
-  xy: 331, 265
+  xy: 330, 264
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 melee-north-2
   rotate: false
-  xy: 397, 331
+  xy: 396, 330
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 walking-north-7
   rotate: false
-  xy: 463, 397
+  xy: 462, 396
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 walking-south-2
   rotate: false
-  xy: 133, 1
+  xy: 132, 0
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 melee-south-4
   rotate: false
-  xy: 199, 67
+  xy: 198, 66
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 walking-north-4
   rotate: false
-  xy: 265, 133
+  xy: 264, 132
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 melee-west-5
   rotate: false
-  xy: 331, 199
+  xy: 330, 198
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 melee-east-4
   rotate: false
-  xy: 397, 265
+  xy: 396, 264
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 melee-north-0
   rotate: false
-  xy: 463, 331
+  xy: 462, 330
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 melee-west-0
   rotate: false
-  xy: 529, 397
+  xy: 528, 396
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 melee-east-3
   rotate: false
-  xy: 199, 1
+  xy: 198, 0
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 melee-south-0
   rotate: false
-  xy: 265, 67
+  xy: 264, 66
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 melee-north-4
   rotate: false
-  xy: 331, 133
+  xy: 330, 132
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 walking-west-4
   rotate: false
-  xy: 397, 199
+  xy: 396, 198
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 standing-west-0
   rotate: false
-  xy: 463, 265
+  xy: 462, 264
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 melee-east-5
   rotate: false
-  xy: 529, 331
+  xy: 528, 330
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 melee-north-3
   rotate: false
-  xy: 595, 397
+  xy: 594, 396
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 walking-north-5
   rotate: false
-  xy: 265, 1
+  xy: 264, 0
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 walking-south-3
   rotate: false
-  xy: 331, 67
+  xy: 330, 66
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 walking-east-1
   rotate: false
-  xy: 397, 134
+  xy: 396, 133
   size: 64, 63
   orig: 64, 63
   offset: 0, 0
   index: -1
 walking-east-7
   rotate: false
-  xy: 463, 200
+  xy: 462, 199
   size: 64, 63
   orig: 64, 63
   offset: 0, 0
   index: -1
 walking-east-2
   rotate: false
-  xy: 529, 266
+  xy: 528, 265
   size: 64, 63
   orig: 64, 63
   offset: 0, 0
   index: -1
 walking-east-3
   rotate: false
-  xy: 595, 332
+  xy: 594, 331
   size: 64, 63
   orig: 64, 63
   offset: 0, 0
   index: -1
 standing-east-0
   rotate: false
-  xy: 661, 398
+  xy: 660, 397
   size: 64, 63
   orig: 64, 63
   offset: 0, 0
   index: -1
 walking-east-5
   rotate: false
-  xy: 331, 2
+  xy: 330, 1
   size: 64, 63
   orig: 64, 63
   offset: 0, 0
   index: -1
 walking-east-0
   rotate: false
-  xy: 397, 69
+  xy: 396, 68
   size: 64, 63
   orig: 64, 63
   offset: 0, 0
   index: -1
 walking-east-6
   rotate: false
-  xy: 463, 135
+  xy: 462, 134
   size: 64, 63
   orig: 64, 63
   offset: 0, 0
   index: -1
 walking-east-4
   rotate: false
-  xy: 529, 201
+  xy: 528, 200
   size: 64, 63
   orig: 64, 63
   offset: 0, 0
