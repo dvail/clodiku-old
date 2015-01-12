@@ -41,19 +41,20 @@
     (Vector3. pos-x pos-y 0)))
 
 ; TODO This is inefficient, unreadable or some mix of the two...
+;; Might be able to change this to a 2d array of 'shorts', but probably doesn't matter
 (defn load-map-grid
   "Generates a matrix representing the passable and unpassable tiles on the grid for use in pathfinding"
-  [tmxmap]
+  [^TiledMap tmxmap]
   (let [layer ^TiledMapTileLayer (.get (.getLayers tmxmap) 0)
         width (.getWidth layer)
         height (.getHeight layer)]
     (into-array
       (pmap (fn [row]
-              (boolean-array (pmap (fn [col]
+              (int-array (map (fn [col]
                                      (if (= "false" (.get (->> ^TiledMapTileLayer$Cell (.getCell layer row col)
                                                                (.getTile)
                                                                (.getProperties)) "walkable"))
-                                       false true))
+                                       9000 10))
                                    (range 0 width)))) (range 0 height)))))
 
 (defn load-map
