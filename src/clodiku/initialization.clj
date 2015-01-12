@@ -3,13 +3,16 @@
   (:require [clodiku.components :as comps]
             [brute.entity :as be]
             [clodiku.systems.rendering :as sys-rendering]
-            [clodiku.equipment.weaponry :as weaponry]))
+            [clodiku.equipment.weaponry :as weaponry]
+            [clodiku.maps.map-core :as maps]))
 
 (defn init-map [sys]
-  (let [tilemap (be/create-entity)]
+  (let [map-entity (be/create-entity)
+        tmx-map (maps/load-map)
+        map-grid (maps/load-map-grid tmx-map)]
     (-> sys
-        (be/add-entity tilemap)
-        (be/add-component tilemap (comps/->WorldMap (clodiku.maps.map-core/load-map))))))
+        (be/add-entity map-entity)
+        (be/add-component map-entity (comps/->WorldMap tmx-map map-grid)))))
 
 (defn init-player [sys]
   (let [player (be/create-entity)
@@ -17,8 +20,8 @@
         regions (sys-rendering/split-texture-pack "./assets/player/player.pack")]
     (-> sys
         (be/add-entity weap)
-        (be/add-component weap (comps/->EqItem {:hr     1
-                                                :slot   (comps/eq-slots :held)}))
+        (be/add-component weap (comps/->EqItem {:hr   1
+                                                :slot (comps/eq-slots :held)}))
         (be/add-component weap (comps/->EqWeapon
                                  5                          ; Base damage
                                  (Circle. (float 0) (float 0) (float (:spear weaponry/weapon-sizes)))

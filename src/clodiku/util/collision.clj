@@ -2,9 +2,9 @@
   (:import (com.badlogic.gdx.math Circle Intersector)
            (com.badlogic.gdx.maps.tiled TiledMap)
            (com.badlogic.gdx.maps.objects RectangleMapObject)
-           (clodiku.components Spatial Player))
+           (clodiku.components Spatial))
   (:require [brute.entity :as be]
-            [clodiku.util.entities :as eu]))
+            [clodiku.maps.map-core :as maps]))
 
 (defn intersects?
   "Tests whether or not two shapes intersect"
@@ -36,7 +36,7 @@
   [system ^Circle circle move]
   (let [entity-mov-x (Circle. (+ (.x circle) (:x move)) (.y circle) (.radius circle))
         entity-mov-y (Circle. (.x circle) (+ (.y circle) (:y move)) (.radius circle))
-        map-objects (-> ^TiledMap (eu/get-current-map system)
+        map-objects (-> ^TiledMap (maps/get-current-map system)
                         (.getLayers)
                         (.get "collision")
                         (.getObjects))

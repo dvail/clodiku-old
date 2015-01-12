@@ -37,8 +37,3 @@
   (let [player (first (be/get-all-entities-with-component system Player))]
     (:pos (be/get-component system player Spatial))))
 
-(defn get-current-map
-  "Get the reference to the TiledMap that the player is currently on"
-  [system]
-  (let [worldmap (first (be/get-all-entities-with-component system WorldMap))]
-    (:tilemap (be/get-component system worldmap WorldMap))))

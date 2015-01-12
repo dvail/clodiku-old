@@ -1,6 +1,10 @@
 (ns clodiku.systems.mob-ai
-  (:import (clodiku.components MobAI Spatial))
-  (:require [brute.entity :as be]))
+  (:import (clodiku.components MobAI Spatial)
+           (com.badlogic.gdx.math Circle))
+  (:require [brute.entity :as be]
+            [clodiku.maps.pathfinding :as pathfinding]
+            [clodiku.util.entities :as eu]
+            [clodiku.maps.map-core :as maps]))
 
 ; How often the AI "thinks" and decides to change its behavior
 (def ai-speed 3)
@@ -24,7 +28,10 @@
   [system mob]
   (let [current-location (:pos (be/get-component system mob Spatial))
         new-x (+ (- (/ wander-distance 2) (rand wander-distance)) (.x current-location))
-        new-y (+ (- (/ wander-distance 2) (rand wander-distance)) (.y current-location))]
+        new-y (+ (- (/ wander-distance 2) (rand wander-distance)) (.y current-location))
+        new-location (Circle. new-x new-y (.radius current-location))
+         path (pathfinding/find-path system current-location new-location)
+        ]
     system))
 
 (defn update-mob-timestamp

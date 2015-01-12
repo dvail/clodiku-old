@@ -74,7 +74,7 @@
     (def attack-font (BitmapFont.))
     (def map-renderer
       (OrthogonalTiledMapRenderer.
-        ^TiledMap (eu/get-current-map @system) batch))
+        ^TiledMap (maps/get-current-map @system) batch))
     (def shape-renderer (ShapeRenderer.))))
 
 (defn dorender
@@ -88,7 +88,7 @@
     (doto ^SpriteBatch batch
       (.draw region
              (- (.x circle) (/ (.getRegionWidth region) 2))
-             (- (.y circle) (.radius circle) -6)))))
+             (- (.y circle) (.radius circle))))))
 
 (defn render-entities!
   "Render the player, mobs, npcs and items"

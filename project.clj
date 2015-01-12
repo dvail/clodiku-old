@@ -8,6 +8,7 @@
                  [com.badlogicgames.gdx/gdx-backend-lwjgl "1.5.0"]
                  [com.badlogicgames.gdx/gdx-platform "1.5.0"
                   :classifier "natives-desktop"]
+                 [org.clojure/data.priority-map  "0.0.5"]
                  [brute "0.3.0" :exclusions [org.clojure/clojure]]]
   :repositories [["sonatype"
                   "https://oss.sonatype.org/content/repositories/releases/"]]

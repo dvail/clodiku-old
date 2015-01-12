@@ -9,7 +9,7 @@
 
 (def mob-ai-states #{:wander :aggro})
 
-(defrecord WorldMap [tilemap])
+(defrecord WorldMap [tilemap grid])
 
 (defrecord Player [])
 
