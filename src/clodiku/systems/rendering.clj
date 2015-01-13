@@ -1,15 +1,16 @@
 (ns clodiku.systems.rendering
   (:import (com.badlogic.gdx.graphics.g2d TextureAtlas Animation$PlayMode TextureRegion TextureAtlas$AtlasRegion)
-           (clodiku.components Player Animated State Spatial)
-           (com.badlogic.gdx.math Circle)
+           (clodiku.components Player Animated State Spatial EqWeapon Equipable)
+           (com.badlogic.gdx.math Circle Rectangle)
            (com.badlogic.gdx.graphics GL20 OrthographicCamera)
-           (com.badlogic.gdx Gdx)
+           (com.badlogic.gdx Gdx Graphics)
            (com.badlogic.gdx.maps.tiled.renderers OrthogonalTiledMapRenderer)
-           (com.badlogic.gdx.graphics.g2d SpriteBatch Animation)
+           (com.badlogic.gdx.graphics.g2d SpriteBatch Animation BitmapFont)
            (com.badlogic.gdx.maps.tiled TiledMap)
            (com.badlogic.gdx.math Vector3)
            (com.badlogic.gdx.graphics.glutils ShapeRenderer))
-  (:require [clodiku.maps.map-core :as maps]
+  (:require [clodiku.components :as comps]
+            [clodiku.maps.map-core :as maps]
             [brute.entity :as be]
             [clojure.set :as cset]
             [clodiku.util.entities :as eu]))
@@ -18,6 +19,8 @@
 (declare ^SpriteBatch batch)
 (declare ^OrthogonalTiledMapRenderer map-renderer)
 (declare ^ShapeRenderer shape-renderer)
+
+(declare ^BitmapFont attack-font)
 
 ; TODO This might need a more elegant/efficient/readable way of packing up entities...
 (defn split-texture-pack
@@ -37,11 +40,12 @@
     (reduce-kv
       (fn [init fk fv]
         (assoc init fk
-               (apply merge
-                      (map
-                        (fn [dir-map]
-                          (let [animation (Animation. (float 1/12) (into-array (val dir-map)))]
-                            (assoc {}
+                    (apply merge
+                           (map
+                             (fn [dir-map]
+                               (let [anim-speed (if (= fk :melee) 1/24 1/12)
+                                     animation (Animation. (float anim-speed) (into-array (val dir-map)))]
+                                 (assoc {}
                                    (key dir-map)
                                    (doto animation
                                      (.setPlayMode Animation$PlayMode/LOOP))))) fv)))) {} raw-map)))
@@ -58,18 +62,19 @@
   "Sorts a collection of entities by 'y' value, so that entities closer
   to the bottom of the screen are drawn first"
   [system entities]
-  (reverse (sort-by #(.y (:pos (be/get-component system % Spatial))) entities)))
+  (reverse (sort-by #(.y ^Circle (:pos (be/get-component system % Spatial))) entities)))
 
 (defn init-resources!
   [system]
-  (let [graphics Gdx/graphics]
+  (let [graphics ^Graphics Gdx/graphics]
     (def camera (OrthographicCamera.
                   (.getWidth graphics)
                   (.getHeight graphics)))
     (def batch (SpriteBatch.))
+    (def attack-font (BitmapFont.))
     (def map-renderer
       (OrthogonalTiledMapRenderer.
-        ^TiledMap (eu/get-current-map system) batch))
+        ^TiledMap (maps/get-current-map @system) batch))
     (def shape-renderer (ShapeRenderer.))))
 
 (defn dorender
@@ -83,7 +88,7 @@
     (doto ^SpriteBatch batch
       (.draw region
              (- (.x circle) (/ (.getRegionWidth region) 2))
-             (- (.y circle) (.radius circle) -6)))))
+             (- (.y circle) (.radius circle) -2)))))
 
 (defn render-entities!
   "Render the player, mobs, npcs and items"
@@ -91,6 +96,17 @@
   (let [entities (sort-entities-by-render-order system (get-animated-entities system))]
     (doseq [entity entities]
       (dorender entity batch system))))
+
+(defn render-attack-verbs
+  "Draw the *KICK POW BANG* verbs for attacks"
+  [batch system]
+  (let [attacks (:combat (:world_events system))]
+    (doseq [attack attacks]
+      (let [delta (:delta attack)
+            draw-x (.x (:location attack))
+            draw-y (.y (:location attack))]
+        (.setColor attack-font 0.2 0.2 1 (- 1 (/ delta 2)))
+        (.draw attack-font batch "poke" draw-x (+ 25 draw-y (* 100 delta)))))))
 
 (defn render-entity-shapes!
   "Render the actual spatial component of the entities"
@@ -100,6 +116,19 @@
     (doseq [circle circles]
       (doto ^ShapeRenderer renderer
         (.circle (.x ^Circle circle) (.y ^Circle circle) (.radius ^Circle circle))))))
+
+
+(defn render-attack-shapes!
+  "Render the collision zones for entity attacks"
+  [renderer system]
+  (let [attackers (eu/get-attackers system)
+        circles (map (fn [ent] (:hit-box (eu/get-entity-weapon system ent))) attackers)]
+    (doseq [circle circles]
+      (doto ^ShapeRenderer renderer
+        (.circle (.x ^Circle circle)
+                 (.y ^Circle circle)
+                 (.radius ^Circle circle))))))
+
 
 (defn render! [system delta]
   (let [camera-pos (.position camera)]
@@ -116,9 +145,14 @@
       (.begin)
       (.setProjectionMatrix (.combined camera))
       (render-entities! system)
+      (render-attack-verbs system)
       (.end))
     (doto shape-renderer
       (.setAutoShapeType true)
+      (.setProjectionMatrix (.combined camera))
       (.begin)
+      (.setColor 0.5 1 0.5 1)
       (render-entity-shapes! system)
+      (.setColor 1 0.5 0.5 1)
+      (render-attack-shapes! system)
       (.end)) system))

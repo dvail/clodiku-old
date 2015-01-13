@@ -1,9 +1,10 @@
 (ns clodiku.core
   (:gen-class)
   (:import (com.badlogic.gdx.backends.lwjgl LwjglApplication)
-           (org.lwjgl.input Keyboard)))
+           (org.lwjgl.input Keyboard)
+           (clodiku game)))
 
 (defn -main
   []
-  (LwjglApplication. (clodiku.MyGame. ) "test" 400 300)
+  (LwjglApplication. (game. ) "Clodiku" 500 400)
   (Keyboard/enableRepeatEvents true))
