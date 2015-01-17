@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" orientation="orthogonal" renderorder="right-down" width="80" height="80" tilewidth="32" tileheight="32">
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="64" height="64" tilewidth="32" tileheight="32">
  <tileset firstgid="1" name="forest_tileset_32x32" tilewidth="32" tileheight="32">
   <image source="forest_tileset_32x32.png" width="512" height="160"/>
   <tile id="68">
@@ -8,29 +8,29 @@
    </properties>
   </tile>
  </tileset>
- <layer name="base" width="80" height="80">
+ <layer name="base" width="64" height="64">
   <data encoding="base64" compression="zlib">
-   eJzt2mFOwzAMBeBOcAOYOMd+cATufyWENKSpcizHdeL3Ev94QrQbxN/SJE13O47jVgnL9zPn42+NvAO0GSktv49GPgHajBTJrlKpVHbJF0Ab0HN/Zme/e0CY/Cxtj/bp/Z9ofiMMIoxQ/ViMEPwYbRD8rDWjeCD4ofURNr9KpVL5yw5jaJQR8joFMZIR09ov04p5zczklt1+JqvdvKqP5bllt/0/j5cgu2U7tdxav+9o9jjs/Uk6H+2nuSB4nc20/tVzLtJPM83wsjpoFp73rBjPNVp+9jrLz1+nd4wrP//cwezXu471GnjdUXN2s9bgXX+w+Vjsos5Zrs3V/Cy+Urx/L7vmSLvoeqrvxXwm1v7KnFXrmvk5ruRnHZ8ja16pD/bsm0UbZtceWYe0JzvyOl6lD7buA6T7ghHjIPtcKXlpNbLWOdpPsut5zc7R+pbnHn+3aNdn9T2fX+tYdlutmfmcUJsjmOYNzWqWn8UUMdpz6tsx59kr6z5Gz/P+0X6WY2iRbKR+N9uQqe9Jx17dZvoxuKH6MUUymuX3Y0i2T69fa/6QXh9hdT6f7eH1s34f8Ypfdq2j/DTP82vKr+2njXnSzwg/dlfL9zyla7j87IZX7Wb6ZawdtTGtdU+C6Je5z6X5Rdz/jvA7vzd7v2Hkft+IcQ7Nb2Rm+mXXyuq3csovp1Zt3im/a37ZNaH7se9tIfhltxsl5Vd+5cebXosd5wiLB1pmte+q3y835odx
+   eJztmtENwyAMRNMhOkiG6P4r9aeVIoSNjTDnAz7uhzTVPdsYSPK6rut1dESk909oHzMYNaE9zuC2xoIxJh6uw70nKxvvjjkexY32Ppsb7XkH5rtQFLN0DZEXiXdEDGpMaF4P44gayKwW38r8Frad+Uf1wKxqzXs2du+6tUrfK7mtMZB+w8g+6hpb3Vt7WE0r5z4intliE+HHWy9o/oy+ZsYxE7+1v4z0nKkGrDmOiAGa/enjLsai50GWGpD2YbV9WUQfQPfqGq/mMUPOIvi1/EbWQAZpue05o7BJq+/Vcy/xS2Nor1Z5ntdqPY6p7/U+o25xM/Br7yl64sDKXouDh98ylk21PPfwl7xMuZfqwft/LDUfxc8kaZ5b+D8Gofm8/FL/a/Gx8Er8LTGyWfm1eDzzj/YazS+t+xo/e1ws32mszG+JwUx+xN5BW+f+4zP4kedkjT8q/+W96POS9l1axDzPxu/xGsmPZkXxZ9bhH3sf23khgh/NFM3PfjYewY/2ffgP/+Gfz8/Y4yw82TTL3xeYMWk9
   </data>
  </layer>
  <objectgroup color="#ff07fe" name="collision">
-  <object name="wall" x="159" y="224" width="32" height="287">
+  <object name="wall" x="159" y="-288" width="32" height="287">
    <properties>
     <property name="passable" value="false"/>
    </properties>
   </object>
-  <object x="0" y="1890" width="34" height="676"/>
-  <object x="36" y="2530" width="1180" height="34"/>
-  <object x="1282" y="2530" width="766" height="38"/>
-  <object x="418" y="2338" width="28" height="216"/>
-  <object x="384" y="2496" width="40" height="46"/>
-  <object x="420" y="2338" width="254" height="28"/>
-  <object x="448" y="2274" width="32" height="84"/>
-  <object x="642" y="2274" width="30" height="84"/>
-  <object x="674" y="2114" width="32" height="192"/>
-  <object x="194" y="1988" width="28" height="156"/>
-  <object x="2" y="1890" width="192" height="30"/>
-  <object x="158" y="1858" width="290" height="28"/>
-  <object x="256" y="1888" width="66" height="34"/>
+  <object x="0" y="1378" width="34" height="676"/>
+  <object x="36" y="2018" width="1180" height="34"/>
+  <object x="1282" y="2018" width="766" height="38"/>
+  <object x="418" y="1826" width="28" height="216"/>
+  <object x="384" y="1984" width="40" height="46"/>
+  <object x="420" y="1826" width="254" height="28"/>
+  <object x="448" y="1762" width="32" height="84"/>
+  <object x="642" y="1762" width="30" height="84"/>
+  <object x="674" y="1602" width="32" height="192"/>
+  <object x="194" y="1476" width="28" height="156"/>
+  <object x="2" y="1378" width="192" height="30"/>
+  <object x="158" y="1346" width="290" height="28"/>
+  <object x="256" y="1376" width="66" height="34"/>
  </objectgroup>
 </map>

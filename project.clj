@@ -14,6 +14,8 @@
                   "https://oss.sonatype.org/content/repositories/releases/"]]
 ;  :plugins [[cider/cider-nrepl "0.8.1"]]
   :main clodiku.core
+  :source-paths      ["src/clojure"]
+  :java-source-paths ["src/java"]
   :aot [clodiku.components clodiku.game clodiku.core ]
   :global-vars {*warn-on-reflection* true}
   :target-path "target/%s"

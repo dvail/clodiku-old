@@ -1,8 +1,7 @@
 (ns clodiku.systems.mob-ai
   (:import (clodiku.components MobAI Spatial)
-           (com.badlogic.gdx.math Circle))
+           (clodiku.pathfinding AStar AStar$Node))
   (:require [brute.entity :as be]
-            [clodiku.maps.pathfinding :as pathfinding]
             [clodiku.util.entities :as eu]
             [clodiku.maps.map-core :as maps]))
 
@@ -26,12 +25,11 @@
   "Get a path to the next target location, the path should be a vector of
   x/y coordinates (Vector2) that the mob attempts to move to."
   [system mob]
-  (let [current-location (:pos (be/get-component system mob Spatial))
-        new-x (+ (- (/ wander-distance 2) (rand wander-distance)) (.x current-location))
-        new-y (+ (- (/ wander-distance 2) (rand wander-distance)) (.y current-location))
-        new-location (Circle. new-x new-y (.radius current-location))
-         path (pathfinding/find-path system current-location new-location)
-        ]
+  (let [current-pos (:pos (be/get-component system mob Spatial))
+        new-x (int (+ (- (/ wander-distance 2) (rand wander-distance)) (.x current-pos)))
+        new-y (int (+ (- (/ wander-distance 2) (rand wander-distance)) (.y current-pos)))
+        curr-location (AStar$Node. (int (.x current-pos)) (int (.y current-pos)))
+        new-location (AStar$Node. new-x new-y)]
     system))
 
 (defn update-mob-timestamp

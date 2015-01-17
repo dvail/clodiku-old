@@ -51,11 +51,11 @@
     (into-array
       (pmap (fn [row]
               (int-array (map (fn [col]
-                                     (if (= "false" (.get (->> ^TiledMapTileLayer$Cell (.getCell layer row col)
-                                                               (.getTile)
-                                                               (.getProperties)) "walkable"))
-                                       9000 10))
-                                   (range 0 width)))) (range 0 height)))))
+                                (if (= "false" (.get (->> ^TiledMapTileLayer$Cell (.getCell layer row col)
+                                                          (.getTile)
+                                                          (.getProperties)) "walkable"))
+                                  9000 10))
+                              (range 0 width)))) (range 0 height)))))
 
 (defn load-map
   ([]
