@@ -9,7 +9,7 @@
 (def ai-speed 3)
 
 ; The max distance along the x or y axis that a mob will wander..
-(def wander-distance 100)
+(def wander-distance 400)
 
 (defn do-wander
   "Just... wander around."
@@ -26,10 +26,15 @@
   x/y coordinates (Vector2) that the mob attempts to move to."
   [system mob]
   (let [current-pos (:pos (be/get-component system mob Spatial))
+        tile-size maps/tile-size
         new-x (int (+ (- (/ wander-distance 2) (rand wander-distance)) (.x current-pos)))
         new-y (int (+ (- (/ wander-distance 2) (rand wander-distance)) (.y current-pos)))
-        curr-location (AStar$Node. (int (.x current-pos)) (int (.y current-pos)))
-        new-location (AStar$Node. new-x new-y)]
+        curr-location (AStar$Node. (int (/ (.x current-pos) tile-size)) (int (/ (.y current-pos) tile-size)))
+        new-location (AStar$Node. (int (/ new-x tile-size)) (int (/ new-y tile-size)))
+        grid (maps/get-current-map-grid system)
+        path (AStar/findPath grid curr-location new-location)]
+    (println [(.x curr-location) (.y curr-location)])
+    (println (map (fn [node] [(.x node) (.y node)]) (vec path)))
     system))
 
 (defn update-mob-timestamp
