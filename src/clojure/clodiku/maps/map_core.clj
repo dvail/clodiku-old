@@ -7,6 +7,9 @@
   (:require [brute.entity :as be]
             [clodiku.util.entities :as eu]))
 
+; TODO Pull this dynamically? Will the map tile size ever change?
+(def tile-size 32)
+
 (defn get-current-map
   "Get the reference to the TiledMap that the player is currently on"
   [system]
@@ -51,11 +54,11 @@
     (into-array
       (pmap (fn [row]
               (int-array (map (fn [col]
-                                     (if (= "false" (.get (->> ^TiledMapTileLayer$Cell (.getCell layer row col)
-                                                               (.getTile)
-                                                               (.getProperties)) "walkable"))
-                                       9000 10))
-                                   (range 0 width)))) (range 0 height)))))
+                                (if (= "false" (.get (->> ^TiledMapTileLayer$Cell (.getCell layer row col)
+                                                          (.getTile)
+                                                          (.getProperties)) "walkable"))
+                                  -1 10))
+                              (range 0 width)))) (range 0 height)))))
 
 (defn load-map
   ([]

@@ -1,7 +1,7 @@
 (ns clodiku.systems.rendering
   (:import (com.badlogic.gdx.graphics.g2d TextureAtlas Animation$PlayMode TextureRegion TextureAtlas$AtlasRegion)
-           (clodiku.components Player Animated State Spatial EqWeapon Equipable)
-           (com.badlogic.gdx.math Circle Rectangle)
+           (clodiku.components Animated State Spatial)
+           (com.badlogic.gdx.math Circle)
            (com.badlogic.gdx.graphics GL20 OrthographicCamera)
            (com.badlogic.gdx Gdx Graphics)
            (com.badlogic.gdx.maps.tiled.renderers OrthogonalTiledMapRenderer)
@@ -9,8 +9,7 @@
            (com.badlogic.gdx.maps.tiled TiledMap)
            (com.badlogic.gdx.math Vector3)
            (com.badlogic.gdx.graphics.glutils ShapeRenderer))
-  (:require [clodiku.components :as comps]
-            [clodiku.maps.map-core :as maps]
+  (:require [clodiku.maps.map-core :as maps]
             [brute.entity :as be]
             [clojure.set :as cset]
             [clodiku.util.entities :as eu]))
@@ -19,7 +18,6 @@
 (declare ^SpriteBatch batch)
 (declare ^OrthogonalTiledMapRenderer map-renderer)
 (declare ^ShapeRenderer shape-renderer)
-
 (declare ^BitmapFont attack-font)
 
 ; TODO This might need a more elegant/efficient/readable way of packing up entities...
@@ -99,6 +97,7 @@
 
 (defn render-attack-verbs
   "Draw the *KICK POW BANG* verbs for attacks"
+  ; TODO Probably will look better to do these as static images/animations rather than BitMap fonts
   [batch system]
   (let [attacks (:combat (:world_events system))]
     (doseq [attack attacks]
