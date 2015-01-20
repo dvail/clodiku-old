@@ -27,10 +27,25 @@ public class AStar {
             this.parent = parent;
         }
 
-        public boolean equals(Node other) {
-            return (this.x == other.x && this.y == other.y);
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+
+            Node node = (Node) o;
+
+            if (x != node.x) return false;
+            if (y != node.y) return false;
+
+            return true;
         }
 
+        @Override
+        public int hashCode() {
+            int result = x;
+            result = 31 * result + y;
+            return result;
+        }
     }
 
     public static List<Node> getNeighbors(int[][] grid, Node parent) {
@@ -104,7 +119,6 @@ public class AStar {
                 if (openNodes.contains(node)) {
 
                     // TODO Update cost value here for more efficient routes
-                    System.out.println(node);
 
                 } else if (!closedNodes.contains(node)) {
 
@@ -124,8 +138,6 @@ public class AStar {
 
                 return path.toArray(new Node[path.size()]); // Path is found
             }
-
-            System.out.println(openNodes.size()); // Way way too big...
 
         }
 
