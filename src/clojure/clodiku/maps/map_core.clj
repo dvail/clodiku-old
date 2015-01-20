@@ -46,7 +46,9 @@
 ; TODO This is inefficient, unreadable or some mix of the two...
 ;; Might be able to change this to a 2d array of 'shorts', but probably doesn't matter
 (defn load-map-grid
-  "Generates a matrix representing the passable and unpassable tiles on the grid for use in pathfinding"
+  "Generates a matrix representing the passable and unpassable tiles on the grid for use in pathfinding.
+  Tiles that are not walkable are represented with a -1. All other tiles have their traversal cost as some multiple
+  of one, where one is the easiest to traverse."
   [^TiledMap tmxmap]
   (let [layer ^TiledMapTileLayer (.get (.getLayers tmxmap) 0)
         width (.getWidth layer)
@@ -57,7 +59,7 @@
                                 (if (= "false" (.get (->> ^TiledMapTileLayer$Cell (.getCell layer row col)
                                                           (.getTile)
                                                           (.getProperties)) "walkable"))
-                                  -1 10))
+                                  -1 1))
                               (range 0 width)))) (range 0 height)))))
 
 (defn load-map
