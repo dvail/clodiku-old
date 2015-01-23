@@ -1,7 +1,6 @@
 (ns clodiku.systems.combat
   (:import (clodiku.components Spatial EqWeapon Equipable Player MobAI))
   (:require [clodiku.util.entities :as eu]
-            [brute.entity :as be]
             [clodiku.equipment.weaponry :as weaponry]
             [clodiku.util.collision :as coll]))
 
@@ -21,22 +20,20 @@
         event {:type     :melee_attack
                :attacker attacker
                :defender (first hit-list)
-               :location (:pos (be/get-component system (first hit-list) Spatial))
+               :location (:pos (eu/comp-data system (first hit-list) Spatial))
                :damage   damage
                :delta    0}
         combat-events (:combat (:world_events system))
         new-event-list (conj combat-events event)]
     (-> system
-        (be/update-component weapon EqWeapon
-                             (fn [weap]
-                               (assoc weap :hit-list hit-list)))
+        (eu/comp-update weapon EqWeapon {:hit-list hit-list})
         (assoc-in [:world_events :combat] new-event-list))))
 
 (defn check-attack-collisions
   "Tests is any entities are hit by a weapon. Does not allow an entity
   to hit him/herself when attacking"
   [system attacker weapon]
-  (let [weapon-comp (be/get-component system weapon EqWeapon)
+  (let [weapon-comp (eu/comp-data system weapon EqWeapon)
         defenders (get-defenders system attacker)
         old-hit-list (:hit-list weapon-comp)
         entities-hit (coll/get-entity-collisions system (:hit-box weapon-comp) defenders)
@@ -48,13 +45,11 @@
 (defn update-entity-attacks
   "Updates the positions of the all weapon hit boxes belonging to attacking entities."
   [system attacker weapon]
-  (let [weapon-comp (be/get-component system weapon EqWeapon)
-        entity-space (be/get-component system attacker Spatial)
+  (let [weapon-comp (eu/comp-data system weapon EqWeapon)
+        entity-space (eu/comp-data system attacker Spatial)
         new-hit-box ((weaponry/get-attack-fn (:type weapon-comp)) (:hit-box weapon-comp) entity-space)]
     (-> system
-        (be/update-component weapon EqWeapon
-                             (fn [weap]
-                               (assoc weap :hit-box new-hit-box))))))
+        (eu/comp-update weapon EqWeapon {:hit-box new-hit-box}))))
 
 (defn update-combat-events
   "Updates information about attacks, etc."
@@ -71,7 +66,7 @@
   (let [updated-system (update-combat-events system delta)]
     (reduce
       (fn [sys attacker]
-        (let [weapon-entity (:held (:equipment (be/get-component system attacker Equipable)))]
+        (let [weapon-entity (:held (:equipment (eu/comp-data system attacker Equipable)))]
           (-> sys
               (update-entity-attacks attacker weapon-entity)
               (check-attack-collisions attacker weapon-entity)))) updated-system (eu/get-attackers updated-system))))

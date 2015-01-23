@@ -3,8 +3,8 @@
            (com.badlogic.gdx.maps.tiled TiledMap)
            (com.badlogic.gdx.maps.objects RectangleMapObject)
            (clodiku.components Spatial))
-  (:require [brute.entity :as be]
-            [clodiku.maps.map-core :as maps]))
+  (:require [clodiku.maps.map-core :as maps]
+            [clodiku.util.entities :as eu]))
 
 (defn intersects?
   "Tests whether or not two shapes intersect"
@@ -22,7 +22,7 @@
   "Gets a sequence of entities that fall in the collision zone. Only cares about entities with the
   Player or MobAI components at this point."
   [system entity-space other-entities]
- (filter #(intersects? entity-space (:pos (be/get-component system % Spatial))) other-entities))
+ (filter #(intersects? entity-space (:pos (eu/comp-data system % Spatial))) other-entities))
 
 (defn collides-with-map?
   "Tests if the entity will collide with an impassable area of the map"
@@ -40,8 +40,8 @@
                         (.getLayers)
                         (.get "collision")
                         (.getObjects))
-        all-entity-spaces (map #(:pos (be/get-component system % Spatial))
-                               (be/get-all-entities-with-component system Spatial))
+        all-entity-spaces (map #(:pos (eu/comp-data system % Spatial))
+                               (eu/get-entities-with-components system Spatial))
         other-entity-spaces (remove #(= circle %) all-entity-spaces)
         collide-x? (or (collides-with-map? entity-mov-x map-objects) (collides-with-entities? entity-mov-x other-entity-spaces))
         collide-y? (or (collides-with-map? entity-mov-y map-objects) (collides-with-entities? entity-mov-y other-entity-spaces))

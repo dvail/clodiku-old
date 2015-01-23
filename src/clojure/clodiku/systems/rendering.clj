@@ -10,7 +10,6 @@
            (com.badlogic.gdx.math Vector3)
            (com.badlogic.gdx.graphics.glutils ShapeRenderer))
   (:require [clodiku.maps.map-core :as maps]
-            [brute.entity :as be]
             [clojure.set :as cset]
             [clodiku.util.entities :as eu]))
 
@@ -52,15 +51,15 @@
 (defn get-animated-entities
   "Get all entities with both an Animated and a Spatial component"
   [system]
-  (let [animated (be/get-all-entities-with-component system Animated)
-        spatial (be/get-all-entities-with-component system Spatial)]
+  (let [animated (eu/get-entities-with-components system Animated)
+        spatial (eu/get-entities-with-components system Spatial)]
     (cset/intersection (set animated) (set spatial))))
 
 (defn sort-entities-by-render-order
   "Sorts a collection of entities by 'y' value, so that entities closer
   to the bottom of the screen are drawn first"
   [system entities]
-  (reverse (sort-by #(.y ^Circle (:pos (be/get-component system % Spatial))) entities)))
+  (reverse (sort-by #(.y ^Circle (:pos (eu/comp-data system % Spatial))) entities)))
 
 (defn init-resources!
   [system]
@@ -78,9 +77,9 @@
 (defn dorender
   "Renders a single entity"
   [entity batch system]
-  (let [pos (be/get-component system entity Spatial)
-        state (be/get-component system entity State)
-        region-map (:regions (be/get-component system entity Animated))
+  (let [pos (eu/comp-data system entity Spatial)
+        state (eu/comp-data system entity State)
+        region-map (:regions (eu/comp-data system entity Animated))
         circle ^Circle (:pos pos)
         region ^TextureRegion (.getKeyFrame ^Animation ((:direction pos) ((:current state) region-map)) (:time state))]
     (doto ^SpriteBatch batch
@@ -110,8 +109,8 @@
 (defn render-entity-shapes!
   "Render the actual spatial component of the entities"
   [renderer system]
-  (let [entities (be/get-all-entities-with-component system Spatial)
-        circles (map (fn [ent] (:pos (be/get-component system ent Spatial))) entities)]
+  (let [entities (eu/get-entities-with-components system Spatial)
+        circles (map (fn [ent] (:pos (eu/comp-data system ent Spatial))) entities)]
     (doseq [circle circles]
       (doto ^ShapeRenderer renderer
         (.circle (.x ^Circle circle) (.y ^Circle circle) (.radius ^Circle circle))))))

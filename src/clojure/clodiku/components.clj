@@ -9,26 +9,26 @@
 
 (def mob-ai-states #{:wander :aggro})
 
-(defrecord WorldMap [tilemap grid])
+(defrecord WorldMap [data])
 
 (defrecord Player [])
 
-(defrecord Spatial [pos direction])
-(defrecord Animated [regions])
-(defrecord State [current time data])
+(defrecord Spatial [data])
+(defrecord Animated [data])
+(defrecord State [data])
 
-(defrecord Attributes [attributes])
+(defrecord Attributes [data])
 
 ;equipment is a map that maps eq slots to items
-(defrecord Equipable [equipment])
+(defrecord Equipable [data])
 
 ; EqItem is the actual component representing a piece of equipment
-(defrecord EqItem [stats])
+(defrecord EqItem [data])
 
 ; A weapon component has a hit box that checks for collisions, as well as a function that describes the motion of
 ; an attack
-(defrecord EqWeapon [base-damage hit-box hit-list type])
+(defrecord EqWeapon [data])
 
-(defrecord MobAI [state data])
+(defrecord MobAI [data])
 
 

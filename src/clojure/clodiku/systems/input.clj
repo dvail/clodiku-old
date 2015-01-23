@@ -1,8 +1,7 @@
 (ns clodiku.systems.input
   (:import (com.badlogic.gdx Gdx Input Input$Keys)
            (clodiku.components Player Spatial State EqWeapon Equipable))
-  (:require [brute.entity :as be]
-            [clodiku.components :as comps]
+  (:require [clodiku.components :as comps]
             [clodiku.util.collision :as coll]
             [clodiku.util.entities :as eu]
             [clodiku.equipment.weaponry :as weaponry]))
@@ -17,20 +16,20 @@
   (-> Gdx/input (.isKeyPressed (k bound-keys))))
 
 (defn begin-attack [system delta]
-  (let [player (first (be/get-all-entities-with-component system Player))
-        spatial (be/get-component system player Spatial)
-        eq-weapon (:held (:equipment (be/get-component system player Equipable)))]
+  (let [player (eu/first-entity-with-comp system Player)
+        spatial (eu/comp-data system player Spatial)
+        eq-weapon (:held (:equipment (eu/comp-data system player Equipable)))
+        weapon-data (eu/comp-data system eq-weapon EqWeapon)]
     (-> system
-        (be/add-component player (comps/->State (comps/states :melee) 0 {}))
-        (be/update-component eq-weapon EqWeapon (fn [weapon]
-                                               (assoc weapon
-                                                 :hit-box (weaponry/get-attack-start-pos (:type weapon) spatial)
-                                                 :hit-list '()))))))
+        (eu/comp-update player State {:current (comps/states :melee)
+                                      :time    0})
+        (eu/comp-update eq-weapon EqWeapon {:hit-box  (weaponry/get-attack-start-pos (:type weapon-data) spatial)
+                                            :hit-list '()}))))
 
 (defn move-player [system delta]
-  (let [player (first (be/get-all-entities-with-component system Player))
-        pos (be/get-component system player Spatial)
-        state (be/get-component system player State)
+  (let [player (eu/first-entity-with-comp system Player)
+        pos (eu/comp-data system player Spatial)
+        state (eu/comp-data system player State)
         mov-x (+ (if (is-pressed? :move_east) 2 0) (if (is-pressed? :move_west) -2 0))
         mov-y (+ (if (is-pressed? :move_north) 2 0) (if (is-pressed? :move_south) -2 0))
         newstate (if (= mov-x mov-y 0)
@@ -46,9 +45,10 @@
     ; be/add-component is more efficient here - update component is only more ideal when we need to retain old
     ; parameter values
     (-> system
-        (be/add-component player (comps/->Spatial
-                                   (coll/get-movement-circle system (:pos pos) {:x mov-x :y mov-y}) newdirection))
-        (be/add-component player (comps/->State newstate newdelta {})))))
+        (eu/comp-update player Spatial {:pos       (coll/get-movement-circle system (:pos pos) {:x mov-x :y mov-y})
+                                        :direction newdirection})
+        (eu/comp-update player State {:current newstate
+                                      :time    newdelta}))))
 
 (defn do-free-input [system delta]
   (if (is-pressed? :melee_attack)
@@ -57,14 +57,17 @@
 
 (defn do-melee-input
   [system delta]
-  (let [player (first (be/get-all-entities-with-component system Player))
-        old-state (be/get-component system player State)
+  (let [player (eu/first-entity-with-comp system Player)
+        old-state (eu/comp-data system player State)
         ; TODO Abstract out the time to stay in melee state - base this on Animation time
         new-state (if (< (:time old-state) 4/12)
-                    (comps/->State (comps/states :melee) (+ (:time old-state) delta) {})
-                    (comps/->State (comps/states :standing) 0 {}))]
+                    {:current (comps/states :melee)
+                     :time    (+ (:time old-state) delta)}
+                    {:current (comps/states :standing)
+                     :time    0})]
     (-> system
-        (be/add-component player new-state))))
+        (eu/comp-update player State new-state)
+        )))
 
 (def process-input-for-state {:walking  do-free-input
                               :standing do-free-input

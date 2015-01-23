@@ -1,8 +1,7 @@
 (ns clodiku.systems.mob-ai
   (:import (clodiku.components MobAI Spatial)
            (clodiku.pathfinding AStar AStar$Node))
-  (:require [brute.entity :as be]
-            [clodiku.util.entities :as eu]
+  (:require [clodiku.util.entities :as eu]
             [clodiku.maps.map-core :as maps]))
 
 ; How often the AI "thinks" and decides to change its behavior
@@ -25,7 +24,7 @@
   "Get a path to the next target location, the path should be a vector of
   x/y coordinates (Vector2) that the mob attempts to move to."
   [system mob]
-  (let [current-pos (:pos (be/get-component system mob Spatial))
+  (let [current-pos (:pos (eu/comp-data system mob Spatial))
         tile-size maps/tile-size
         new-x (int (+ (- (/ wander-distance 2) (rand wander-distance)) (.x current-pos)))
         new-y (int (+ (- (/ wander-distance 2) (rand wander-distance)) (.y current-pos)))
@@ -33,17 +32,12 @@
         new-location (AStar$Node. (int (/ new-x tile-size)) (int (/ new-y tile-size)))
         grid (maps/get-current-map-grid system)
         path (AStar/findPath grid curr-location new-location)]
-    (println [(.x curr-location) (.y curr-location)])
-    (println (map (fn [node] [(.x node) (.y node)]) (vec path)))
-    system))
+    (eu/comp-update system mob MobAI {:path path})))
 
 (defn update-mob-timestamp
   "Updates the last time the mob had to make a descision"
   [system mob new-delta]
-  (let [ai-component (be/get-component system mob MobAI)
-        new-data (assoc (:data ai-component) :last-update new-delta)]
-    (be/update-component system mob MobAI (fn [ai]
-                                            (assoc ai :data new-data)))))
+  (eu/comp-update system mob MobAI {:last-update new-delta}))
 
 (defn update-mob-behavior
   "Updates the Mob's choice of behavior"
@@ -58,11 +52,11 @@
 
 (defn update
   [system delta]
-  (let [mobs (be/get-all-entities-with-component system MobAI)]
+  (let [mobs (eu/get-entities-with-components system MobAI)]
     (reduce (fn [sys mob]
-              (let [ai-component (be/get-component sys mob MobAI)
-                    mob-state (:state ai-component)
-                    last-update (:last-update (:data ai-component))]
+              (let [ai (eu/comp-data sys mob MobAI)
+                    mob-state (:state ai)
+                    last-update (:last-update ai)]
                 (if (> last-update ai-speed)
                   (-> sys
                       (update-mob-timestamp mob 0)

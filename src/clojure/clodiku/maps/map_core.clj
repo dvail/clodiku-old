@@ -4,8 +4,7 @@
            (com.badlogic.gdx.graphics OrthographicCamera)
            (com.badlogic.gdx.maps MapProperties)
            (clodiku.components WorldMap))
-  (:require [brute.entity :as be]
-            [clodiku.util.entities :as eu]))
+  (:require [clodiku.util.entities :as eu]))
 
 ; TODO Pull this dynamically? Will the map tile size ever change?
 (def tile-size 32)
@@ -13,14 +12,14 @@
 (defn get-current-map
   "Get the reference to the TiledMap that the player is currently on"
   [system]
-  (let [worldmap (first (be/get-all-entities-with-component system WorldMap))]
-    (:tilemap (be/get-component system worldmap WorldMap))))
+  (let [worldmap (eu/first-entity-with-comp system WorldMap)]
+    (:tilemap (eu/comp-data system worldmap WorldMap))))
 
 (defn get-current-map-grid
   "Get the 2d array representing walkable tiles on the map"
   [system]
-  (let [worldmap (first (be/get-all-entities-with-component system WorldMap))]
-    (:grid (be/get-component system worldmap WorldMap))))
+  (let [worldmap (eu/first-entity-with-comp system WorldMap)]
+    (:grid (eu/comp-data system worldmap WorldMap))))
 
 (defn get-map-bounds
   "Gets the appropriate camera view of a tiled map based on the player location and map edges"
