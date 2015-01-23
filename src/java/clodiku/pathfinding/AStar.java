@@ -7,33 +7,13 @@ import java.util.*;
  */
 public class AStar {
 
-    static public class Node {
+    public static int manhattenDistance(Node a, Node b) {
 
-        public int x;
-        public int y;
-        public int cost;
-        public Node parent;
-
-        public Node (int x, int y) {
-            this.x = x;
-            this.y = y;
-            this.cost = 0;
-            this.parent = null;
-        }
-
-        public Node (int x, int y, int cost, Node parent) {
-            this(x,y);
-            this.cost = cost + parent.cost;
-            this.parent = parent;
-        }
-
-        public boolean equals(Node other) {
-            return (this.x == other.x && this.y == other.y);
-        }
+        return Math.abs(a.x - b.x) + Math.abs(a.y - b.y);
 
     }
 
-    public static List<Node> getNeighbors(int[][] grid, Node parent) {
+    public static List<Node> getNeighbors(int[][] grid, Node parent, Node goal) {
         List<Node> neighbors = new ArrayList<>(4);
 
         int xLeft = parent.x - 1, xRight = parent.x + 1;
@@ -41,19 +21,19 @@ public class AStar {
 
         // Check if each potential neighbor is within the grid bounds, and does not have a value < 0 (impassable)
         if (xLeft > -1 && grid[xLeft][parent.y] > -1) {
-            neighbors.add(new Node(xLeft, parent.y, grid[xLeft][parent.y], parent));
+            neighbors.add(new Node(xLeft, parent.y, grid[xLeft][parent.y], parent, goal));
         }
 
         if (xRight < grid.length && grid[xRight][parent.y] > -1) {
-            neighbors.add(new Node(xRight, parent.y, grid[xRight][parent.y], parent));
+            neighbors.add(new Node(xRight, parent.y, grid[xRight][parent.y], parent, goal));
         }
 
         if (yUp > -1  && grid[parent.x][yUp] > -1) {
-            neighbors.add(new Node(parent.x, yUp, grid[parent.x][yUp], parent));
+            neighbors.add(new Node(parent.x, yUp, grid[parent.x][yUp], parent, goal));
         }
 
         if (yDown < grid[0].length && grid[parent.x][yDown] > -1) {
-            neighbors.add(new Node(parent.x, yDown, grid[parent.x][yDown], parent));
+            neighbors.add(new Node(parent.x, yDown, grid[parent.x][yDown], parent, goal));
         }
 
         return neighbors;
@@ -97,14 +77,13 @@ public class AStar {
             currentNode = openNodes.poll();
             closedNodes.add(currentNode);
 
-            neighbors = getNeighbors(grid, currentNode);
+            neighbors = getNeighbors(grid, currentNode, goal);
 
             for (Node node : neighbors) {
 
                 if (openNodes.contains(node)) {
 
                     // TODO Update cost value here for more efficient routes
-                    System.out.println(node);
 
                 } else if (!closedNodes.contains(node)) {
 
@@ -125,10 +104,49 @@ public class AStar {
                 return path.toArray(new Node[path.size()]); // Path is found
             }
 
-            System.out.println(openNodes.size()); // Way way too big...
-
         }
 
         return new Node[]{start}; // No path, return the starting node
     }
+
+    static public class Node {
+
+        public int x;
+        public int y;
+        public int cost;
+        public Node parent;
+
+        public Node (int x, int y) {
+            this.x = x;
+            this.y = y;
+            this.cost = 0;
+            this.parent = null;
+        }
+
+        public Node (int x, int y, int cost, Node parent, Node goal) {
+            this(x,y);
+            this.cost = cost + parent.cost + manhattenDistance(this, goal);
+            this.parent = parent;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+
+            Node node = (Node) o;
+
+            return x == node.x && y == node.y;
+
+        }
+
+        @Override
+        public int hashCode() {
+            int result = x;
+            result = 31 * result + y;
+            return result;
+        }
+    }
+
 }
