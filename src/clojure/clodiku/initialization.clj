@@ -25,16 +25,17 @@
                                                 :slot (comps/eq-slots :held)}))
         (be/add-component weap (comps/->EqWeapon
                                  {:base-damage 5
-                                  :hit-box (Circle. (float 0) (float 0) (float (:spear weaponry/weapon-sizes)))
-                                  :hit-list '()
-                                  :type (weaponry/weapon-types :spear)}))
+                                  :hit-box     (Circle. (float 0) (float 0) (float (:spear weaponry/weapon-sizes)))
+                                  :hit-list    '()
+                                  :type        (weaponry/weapon-types :spear)}))
         (be/add-entity player)
         (be/add-component player (comps/->Player))
         (be/add-component player (comps/->Animated {:regions regions}))
         (be/add-component player (comps/->State {:current (comps/states :walking)
                                                  :time    0.0}))
         (be/add-component player (comps/->Equipable {:equipment {:held weap}}))
-        (be/add-component player (comps/->Spatial {:pos       (Circle. (float 100) (float 100) 14)
+        (be/add-component player (comps/->Spatial {:pos       {:x 100 :y 100}
+                                                   :size      14
                                                    :direction (comps/directions :east)})))))
 
 ; TODO Entity and asset initialization...
@@ -50,7 +51,8 @@
         (be/add-component orc1 (comps/->State
                                  {:current (comps/states :walking)
                                   :time    0.0}))
-        (be/add-component orc1 (comps/->Spatial {:pos       (Circle. (float 300) (float 300) 14)
+        (be/add-component orc1 (comps/->Spatial {:pos       {:x 300 :y 300}
+                                                 :size      14
                                                  :direction (comps/directions :west)}))
         (be/add-entity orc2)
         (be/add-component orc2 (comps/->MobAI {:state       (comps/mob-ai-states :wander)
@@ -58,7 +60,8 @@
         (be/add-component orc2 (comps/->Animated {:regions regions}))
         (be/add-component orc2 (comps/->State {:current (comps/states :walking)
                                                :time    0.0}))
-        (be/add-component orc2 (comps/->Spatial {:pos       (Circle. (float 400) (float 400) 14)
+        (be/add-component orc2 (comps/->Spatial {:pos       {:x 400 :y 400}
+                                                 :size      14
                                                  :direction (comps/directions :west)})))))
 
 (defn init-main

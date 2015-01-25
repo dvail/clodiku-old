@@ -19,13 +19,13 @@
   (let [spatial (eu/comp-data system entity Spatial)
         pos (:pos spatial)
         state (eu/comp-data system entity State)
-        delta-x (Math/abs (- (:x move-pos) (.x pos)))
-        delta-y (Math/abs (- (:y move-pos) (.y pos)))
+        delta-x (Math/abs (- (:x move-pos) (:x pos)))
+        delta-y (Math/abs (- (:y move-pos) (:y pos)))
         ; TODO replace magic number here with movement speed
-        mov-x (if (> (:x move-pos) (.x pos))
+        mov-x (if (> (:x move-pos) (:x pos))
                 (min delta-x 1)
                 (* -1 (min delta-x 1)))
-        mov-y (if (> (:y move-pos) (.y pos))
+        mov-y (if (> (:y move-pos) (:y pos))
                 (min delta-y 1)
                 (* -1 (min delta-y 1)))
         newstate (if (= mov-x mov-y 0)
@@ -39,7 +39,7 @@
                        (> 0 mov-y) (comps/directions :south))
         newdelta (if (= newstate (:current state)) (+ delta (:time state)) 0)]
     (-> system
-        (eu/comp-update entity Spatial {:pos       (coll/get-movement-circle system (:pos spatial) {:x mov-x :y mov-y})
+        (eu/comp-update entity Spatial {:pos       (coll/get-movement-map system spatial {:x mov-x :y mov-y})
                                         :direction newdirection})
         (eu/comp-update entity State {:current newstate
                                       :time    newdelta}))))
@@ -52,8 +52,8 @@
         move-pos (last path)]
     (if (nil? move-pos)
       system
-      (if (and (> 2 (Math/abs (- (.x current-pos) (:x move-pos))))
-               (> 2 (Math/abs (- (.y current-pos) (:y move-pos)))))
+      (if (and (> 2 (Math/abs (- (:x current-pos) (:x move-pos))))
+               (> 2 (Math/abs (- (:y current-pos) (:y move-pos)))))
         (eu/comp-update system mob MobAI {:path (drop-last path)})
         (move-to system delta mob move-pos)))))
 
@@ -68,9 +68,9 @@
   [system mob]
   (let [current-pos (:pos (eu/comp-data system mob Spatial))
         tile-size maps/tile-size
-        new-x (Math/abs (int (+ (- (/ wander-distance 2) (rand wander-distance)) (.x current-pos))))
-        new-y (Math/abs (int (+ (- (/ wander-distance 2) (rand wander-distance)) (.y current-pos))))
-        curr-location (AStar$Node. (int (/ (.x current-pos) tile-size)) (int (/ (.y current-pos) tile-size)))
+        new-x (Math/abs (int (+ (- (/ wander-distance 2) (rand wander-distance)) (:x current-pos))))
+        new-y (Math/abs (int (+ (- (/ wander-distance 2) (rand wander-distance)) (:y current-pos))))
+        curr-location (AStar$Node. (int (/ (:x current-pos) tile-size)) (int (/ (:y current-pos) tile-size)))
         new-location (AStar$Node. (int (/ new-x tile-size)) (int (/ new-y tile-size)))
         grid (maps/get-current-map-grid system)
         ; The path is a list of tile center points in :x :y form

@@ -24,9 +24,9 @@
 (defn get-map-bounds
   "Gets the appropriate camera view of a tiled map based on the player location and map edges"
   [system camera]
-  (let [player-pos ^Circle (eu/get-player-pos system)
-        player-x (.x player-pos)
-        player-y (.y player-pos)
+  (let [player-pos (eu/get-player-pos system)
+        player-x (:x player-pos)
+        player-y (:y player-pos)
         cam-width (/ (.viewportWidth ^OrthographicCamera camera) 2)
         cam-height (/ (.viewportHeight ^OrthographicCamera camera) 2)
         map-props (.getProperties ^TiledMap (get-current-map system))

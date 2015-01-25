@@ -28,7 +28,7 @@
 
 (defn move-player [system delta]
   (let [player (eu/first-entity-with-comp system Player)
-        pos (eu/comp-data system player Spatial)
+        spatial (eu/comp-data system player Spatial)
         state (eu/comp-data system player State)
         mov-x (+ (if (is-pressed? :move_east) 2 0) (if (is-pressed? :move_west) -2 0))
         mov-y (+ (if (is-pressed? :move_north) 2 0) (if (is-pressed? :move_south) -2 0))
@@ -37,7 +37,7 @@
                    (comps/states :walking))
         newdelta (if (= newstate (:current state)) (+ delta (:time state)) 0)
         newdirection (cond
-                       (= mov-x mov-y 0) (:direction pos)
+                       (= mov-x mov-y 0) (:direction spatial)
                        (< 0 mov-x) (comps/directions :east)
                        (> 0 mov-x) (comps/directions :west)
                        (< 0 mov-y) (comps/directions :north)
@@ -45,7 +45,7 @@
     ; be/add-component is more efficient here - update component is only more ideal when we need to retain old
     ; parameter values
     (-> system
-        (eu/comp-update player Spatial {:pos       (coll/get-movement-circle system (:pos pos) {:x mov-x :y mov-y})
+        (eu/comp-update player Spatial {:pos       (coll/get-movement-map system spatial {:x mov-x :y mov-y})
                                         :direction newdirection})
         (eu/comp-update player State {:current newstate
                                       :time    newdelta}))))

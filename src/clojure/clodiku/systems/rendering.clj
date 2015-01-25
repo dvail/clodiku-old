@@ -59,7 +59,7 @@
   "Sorts a collection of entities by 'y' value, so that entities closer
   to the bottom of the screen are drawn first"
   [system entities]
-  (reverse (sort-by #(.y ^Circle (:pos (eu/comp-data system % Spatial))) entities)))
+  (reverse (sort-by #(:y (:pos (eu/comp-data system % Spatial))) entities)))
 
 (defn init-resources!
   [system]
@@ -77,15 +77,16 @@
 (defn dorender
   "Renders a single entity"
   [entity batch system]
-  (let [pos (eu/comp-data system entity Spatial)
+  (let [spatial (eu/comp-data system entity Spatial)
         state (eu/comp-data system entity State)
         region-map (:regions (eu/comp-data system entity Animated))
-        circle ^Circle (:pos pos)
-        region ^TextureRegion (.getKeyFrame ^Animation ((:direction pos) ((:current state) region-map)) (:time state))]
+        pos (:pos spatial)
+        region ^TextureRegion (.getKeyFrame ^Animation ((:direction spatial) ((:current state) region-map)) (:time state))]
+
     (doto ^SpriteBatch batch
       (.draw region
-             (- (.x circle) (/ (.getRegionWidth region) 2))
-             (- (.y circle) (.radius circle) -2)))))
+             ^float (- (:x pos) (/ (.getRegionWidth region) 2))
+             ^float (- (:y pos) (:size spatial) -2)))))
 
 (defn render-entities!
   "Render the player, mobs, npcs and items"
@@ -101,8 +102,8 @@
   (let [attacks (:combat (:world_events system))]
     (doseq [attack attacks]
       (let [delta (:delta attack)
-            draw-x (.x (:location attack))
-            draw-y (.y (:location attack))]
+            draw-x (:x (:location attack))
+            draw-y (:y (:location attack))]
         (.setColor attack-font 0.2 0.2 1 (- 1 (/ delta 2)))
         (.draw attack-font batch "poke" draw-x (+ 25 draw-y (* 100 delta)))))))
 
@@ -110,10 +111,10 @@
   "Render the actual spatial component of the entities"
   [renderer system]
   (let [entities (eu/get-entities-with-components system Spatial)
-        circles (map (fn [ent] (:pos (eu/comp-data system ent Spatial))) entities)]
-    (doseq [circle circles]
+        spatials (map (fn [ent] (eu/comp-data system ent Spatial)) entities)]
+    (doseq [space spatials]
       (doto ^ShapeRenderer renderer
-        (.circle (.x ^Circle circle) (.y ^Circle circle) (.radius ^Circle circle))))))
+        (.circle (:x (:pos space)) (:y (:pos space)) (:size space))))))
 
 
 (defn render-attack-shapes!
