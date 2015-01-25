@@ -1,19 +1,62 @@
 (ns clodiku.systems.mob-ai
-  (:import (clodiku.components MobAI Spatial)
+  (:import (clodiku.components MobAI Spatial State)
            (clodiku.pathfinding AStar AStar$Node))
   (:require [clodiku.util.entities :as eu]
-            [clodiku.maps.map-core :as maps]))
+            [clodiku.maps.map-core :as maps]
+            [clodiku.components :as comps]
+            [clodiku.util.collision :as coll]
+            [brute.entity :as be]))
 
 ; How often the AI "thinks" and decides to change its behavior
 (def ai-speed 3)
 
 ; The max distance along the x or y axis that a mob will wander..
-(def wander-distance 400)
+(def wander-distance 600)
+
+; TODO Yuck, this needs to be cleaned up
+(defn move-to
+  "Move an entity towards a position"
+  [system delta entity move-pos]
+  (let [spatial (eu/comp-data system entity Spatial)
+        pos (:pos spatial)
+        state (eu/comp-data system entity State)
+        delta-x (Math/abs (- (:x move-pos) (.x pos)))
+        delta-y (Math/abs (- (:y move-pos) (.y pos)))
+        ; TODO replace magic number '2' here with movement speed
+        mov-x (if (> (:x move-pos) (.x pos))
+                (min delta-x 1)
+                (* -1 (min delta-x 1)))
+        mov-y (if (> (:y move-pos) (.y pos))
+                (min delta-y 1)
+                (* -1 (min delta-y 1)))
+        newstate (if (= mov-x mov-y 0)
+                   (comps/states :standing)
+                   (comps/states :walking))
+        newdirection (cond
+                       (= mov-x mov-y 0) (:direction spatial)
+                       (< 0 mov-x) (comps/directions :east)
+                       (> 0 mov-x) (comps/directions :west)
+                       (< 0 mov-y) (comps/directions :north)
+                       (> 0 mov-y) (comps/directions :south))
+        newdelta (if (= newstate (:current state)) (+ delta (:time state)) 0)]
+    (-> system
+        (eu/comp-update entity Spatial {:pos       (coll/get-movement-circle system (:pos spatial) {:x mov-x :y mov-y})
+                                        :direction newdirection})
+        (eu/comp-update entity State {:current newstate
+                                      :time    newdelta}))))
 
 (defn do-wander
   "Just... wander around."
   [system delta mob]
-  system)
+  (let [current-pos (:pos (eu/comp-data system mob Spatial))
+        path (:path (eu/comp-data system mob MobAI))
+        move-pos (last path)]
+    (if (nil? move-pos)
+      system
+      (if (and (> 2 (Math/abs (- (.x current-pos) (:x move-pos))))
+               (> 2 (Math/abs (- (.y current-pos) (:y move-pos)))))
+        (eu/comp-update system mob MobAI {:path (drop-last path)})
+        (move-to system delta mob move-pos)))))
 
 (defn do-aggro
   "Pursue and attack the player, if in range."
@@ -31,7 +74,11 @@
         curr-location (AStar$Node. (int (/ (.x current-pos) tile-size)) (int (/ (.y current-pos) tile-size)))
         new-location (AStar$Node. (int (/ new-x tile-size)) (int (/ new-y tile-size)))
         grid (maps/get-current-map-grid system)
-        path (AStar/findPath grid curr-location new-location)]
+        ; The path is a list of tile center points in :x :y form
+        path (map (fn [node]
+                    {:x (- (* (.x node) maps/tile-size) (/ maps/tile-size 2))
+                     :y (- (* (.y node) maps/tile-size) (/ maps/tile-size 2))})
+                  (AStar/findPath grid curr-location new-location))]
     (eu/comp-update system mob MobAI {:path path})))
 
 (defn update-mob-timestamp
