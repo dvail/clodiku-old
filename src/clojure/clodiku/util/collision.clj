@@ -1,6 +1,5 @@
 (ns clodiku.util.collision
   (:import (com.badlogic.gdx.math Circle Intersector)
-           (com.badlogic.gdx.maps.tiled TiledMap)
            (com.badlogic.gdx.maps.objects RectangleMapObject)
            (clodiku.components Spatial))
   (:require [clodiku.maps.map-core :as maps]
@@ -43,12 +42,9 @@
   (let [pos (:pos spatial)
         entity-mov-x (Circle. (+ (:x pos) (:x move)) (:y pos) (:size spatial))
         entity-mov-y (Circle. (:x pos) (+ (:y pos) (:y move)) (:size spatial))
-        map-objects (-> ^TiledMap (maps/get-current-map system)
-                        (.getLayers)
-                        (.get "collision")
-                        (.getObjects))
+        map-objects (maps/get-map-obstacles system)
         all-entity-circles (map #(spatial-as-circle (eu/comp-data system % Spatial))
-                               (eu/get-entities-with-components system Spatial))
+                                (eu/get-entities-with-components system Spatial))
         other-entity-spaces (remove #(= (spatial-as-circle spatial) %) all-entity-circles)
         collide-x? (or (collides-with-map? entity-mov-x map-objects) (collides-with-entities? entity-mov-x other-entity-spaces))
         collide-y? (or (collides-with-map? entity-mov-y map-objects) (collides-with-entities? entity-mov-y other-entity-spaces))

@@ -41,7 +41,8 @@
                            (map
                              (fn [dir-map]
                                (let [anim-speed (if (= fk :melee) 1/24 1/12)
-                                     animation (Animation. (float anim-speed) (into-array (val dir-map)))]
+                                     animation (Animation. (float anim-speed)
+                                                           #^"[Lcom.badlogic.gdx.graphics.g2d.TextureRegion;" (into-array (val dir-map)))]
                                  (assoc {}
                                    (key dir-map)
                                    (doto animation

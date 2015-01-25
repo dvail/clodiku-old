@@ -32,7 +32,7 @@
 
 ; Hit-box update functions for weapon types
 ; TODO Would be cool to memoize these, but need a way to limit the cache
-(def attack-fns {:spear (fn [hit-box entity-space]
+(def attack-fns {:spear (fn [^Circle hit-box entity-space]
                           (let [rate 2
                                 facing (:direction entity-space)
                                 new-hit-vector (cond
@@ -41,7 +41,7 @@
                                                  (= facing :east) (Vector2. (+ (.x hit-box) rate) (.y hit-box))
                                                  (= facing :west) (Vector2. (- (.x hit-box) rate) (.y hit-box)))]
                             (Circle. (.x new-hit-vector) (.y new-hit-vector) (.radius hit-box))))
-                 :sword (fn [hit-box entity-space]
+                 :sword (fn [^Circle hit-box entity-space]
                           (let [rate 8                      ; rate affects the speed of swing and the distance of arc
                                 entity-origin (:pos entity-space)
                                 angle (Math/atan2

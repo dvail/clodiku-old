@@ -21,6 +21,14 @@
   (let [worldmap (eu/first-entity-with-comp system WorldMap)]
     (:grid (eu/comp-data system worldmap WorldMap))))
 
+(defn get-map-obstacles
+  "Gets a sequence of all obstacles on the map that would stop an entity from passing"
+  [system]
+  (-> ^TiledMap (get-current-map system)
+      (.getLayers)
+      (.get "collision")
+      (.getObjects)))
+
 (defn get-map-bounds
   "Gets the appropriate camera view of a tiled map based on the player location and map edges"
   [system camera]

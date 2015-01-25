@@ -19,8 +19,8 @@
   (let [spatial (eu/comp-data system entity Spatial)
         pos (:pos spatial)
         state (eu/comp-data system entity State)
-        delta-x (Math/abs (- (:x move-pos) (:x pos)))
-        delta-y (Math/abs (- (:y move-pos) (:y pos)))
+        delta-x (Math/abs ^float (- (:x move-pos) (:x pos)))
+        delta-y (Math/abs ^float (- (:y move-pos) (:y pos)))
         ; TODO replace magic number here with movement speed
         mov-x (if (> (:x move-pos) (:x pos))
                 (min delta-x 1)
@@ -52,8 +52,8 @@
         move-pos (last path)]
     (if (nil? move-pos)
       system
-      (if (and (> 2 (Math/abs (- (:x current-pos) (:x move-pos))))
-               (> 2 (Math/abs (- (:y current-pos) (:y move-pos)))))
+      (if (and (> 2 (Math/abs ^float (- (:x current-pos) (:x move-pos))))
+               (> 2 (Math/abs ^float (- (:y current-pos) (:y move-pos)))))
         (eu/comp-update system mob MobAI {:path (drop-last path)})
         (move-to system delta mob move-pos)))))
 
@@ -74,7 +74,7 @@
         new-location (AStar$Node. (int (/ new-x tile-size)) (int (/ new-y tile-size)))
         grid (maps/get-current-map-grid system)
         ; The path is a list of tile center points in :x :y form
-        path (map (fn [node]
+        path (map (fn [^AStar$Node node]
                     {:x (+ (* (.x node) maps/tile-size) (/ maps/tile-size 2))
                      :y (+ (* (.y node) maps/tile-size) (/ maps/tile-size 2))})
                   (AStar/findPath grid curr-location new-location))]

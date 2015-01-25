@@ -42,8 +42,6 @@
                        (> 0 mov-x) (comps/directions :west)
                        (< 0 mov-y) (comps/directions :north)
                        (> 0 mov-y) (comps/directions :south))]
-    ; be/add-component is more efficient here - update component is only more ideal when we need to retain old
-    ; parameter values
     (-> system
         (eu/comp-update player Spatial {:pos       (coll/get-movement-map system spatial {:x mov-x :y mov-y})
                                         :direction newdirection})
@@ -66,8 +64,7 @@
                     {:current (comps/states :standing)
                      :time    0})]
     (-> system
-        (eu/comp-update player State new-state)
-        )))
+        (eu/comp-update player State new-state))))
 
 (def process-input-for-state {:walking  do-free-input
                               :standing do-free-input
