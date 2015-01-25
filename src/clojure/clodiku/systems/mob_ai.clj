@@ -4,11 +4,10 @@
   (:require [clodiku.util.entities :as eu]
             [clodiku.maps.map-core :as maps]
             [clodiku.components :as comps]
-            [clodiku.util.collision :as coll]
-            [brute.entity :as be]))
+            [clodiku.util.collision :as coll]))
 
 ; How often the AI "thinks" and decides to change its behavior
-(def ai-speed 3)
+(def ai-speed 4)
 
 ; The max distance along the x or y axis that a mob will wander..
 (def wander-distance 600)
@@ -22,7 +21,7 @@
         state (eu/comp-data system entity State)
         delta-x (Math/abs (- (:x move-pos) (.x pos)))
         delta-y (Math/abs (- (:y move-pos) (.y pos)))
-        ; TODO replace magic number '2' here with movement speed
+        ; TODO replace magic number here with movement speed
         mov-x (if (> (:x move-pos) (.x pos))
                 (min delta-x 1)
                 (* -1 (min delta-x 1)))
@@ -69,15 +68,15 @@
   [system mob]
   (let [current-pos (:pos (eu/comp-data system mob Spatial))
         tile-size maps/tile-size
-        new-x (int (+ (- (/ wander-distance 2) (rand wander-distance)) (.x current-pos)))
-        new-y (int (+ (- (/ wander-distance 2) (rand wander-distance)) (.y current-pos)))
+        new-x (Math/abs (int (+ (- (/ wander-distance 2) (rand wander-distance)) (.x current-pos))))
+        new-y (Math/abs (int (+ (- (/ wander-distance 2) (rand wander-distance)) (.y current-pos))))
         curr-location (AStar$Node. (int (/ (.x current-pos) tile-size)) (int (/ (.y current-pos) tile-size)))
         new-location (AStar$Node. (int (/ new-x tile-size)) (int (/ new-y tile-size)))
         grid (maps/get-current-map-grid system)
         ; The path is a list of tile center points in :x :y form
         path (map (fn [node]
-                    {:x (- (* (.x node) maps/tile-size) (/ maps/tile-size 2))
-                     :y (- (* (.y node) maps/tile-size) (/ maps/tile-size 2))})
+                    {:x (+ (* (.x node) maps/tile-size) (/ maps/tile-size 2))
+                     :y (+ (* (.y node) maps/tile-size) (/ maps/tile-size 2))})
                   (AStar/findPath grid curr-location new-location))]
     (eu/comp-update system mob MobAI {:path path})))
 
