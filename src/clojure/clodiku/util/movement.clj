@@ -16,7 +16,7 @@
   [spatial-comp]
   (Circle. (:x (:pos spatial-comp)) (:y (:pos spatial-comp)) (:size spatial-comp)))
 
-; TODO Implement this later to save on pathfinding
+; TODO Implement this later to save on pathfinding?
 (defn clear-line-of-sight?
   "Tests whether or not there is a direct path between the two points without a collision on the map."
   [system pos-a pos-b]
@@ -99,11 +99,11 @@
         delta-y (Math/abs ^float (- (:y move-pos) (:y pos)))
         ; TODO replace magic number here with movement speed
         move {:x (if (> (:x move-pos) (:x pos))
-                   (min delta-x 1)
-                   (* -1 (min delta-x 1)))
+                   (min delta-x 2)
+                   (* -1 (min delta-x 2)))
               :y (if (> (:y move-pos) (:y pos))
-                   (min delta-y 1)
-                   (* -1 (min delta-y 1)))}]
+                   (min delta-y 2)
+                   (* -1 (min delta-y 2)))}]
     (move-entity system delta entity move)))
 
 (defn navigate-path

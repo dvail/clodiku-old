@@ -15,26 +15,30 @@
   "Gets all possible entities that could be hit by an attack, excluding the
   initiator of the attack"
   [system attacker]
-  (let [defenders (eu/get-entities-with-components system Player MobAI)]
-    (clojure.set/difference (set defenders) #{attacker})))
+  (let [defenders (eu/get-entities-with-components system Player MobAI)
+        filter-type (if (eu/has-comp? system attacker Player)
+                      Player
+                      MobAI)]
+    (clojure.set/difference (set defenders) (set (eu/get-entities-with-components system filter-type)))))
 
 (defn process-attack
   "Dispatch events attack and apply damage to affected entities."
   [system attacker weapon hit-list]
   ; TODO Apply damage, etc. here
-  ; TODO Map this over all entities in hit-list
-  (let [damage 5
-        event {:type     :melee_attack
-               :attacker attacker
-               :defender (first hit-list)
-               :location (:pos (eu/comp-data system (first hit-list) Spatial))
-               :damage   damage
-               :delta    0}
-        combat-events (:combat (:world_events system))
-        new-event-list (conj combat-events event)]
-    (-> system
-        (eu/comp-update weapon EqWeapon {:hit-list hit-list})
-        (assoc-in [:world_events :combat] new-event-list))))
+  (reduce (fn [sys hit-entity]
+            (let [damage 5
+                  event {:type     :melee_attack
+                         :attacker attacker
+                         :defender hit-entity
+                         :location (:pos (eu/comp-data sys hit-entity Spatial))
+                         :damage   damage
+                         :delta    0}
+                  combat-events (:combat (:world_events sys))
+                  new-event-list (conj combat-events event)
+                  old-hit-list (:hit-list (eu/comp-data system weapon EqWeapon))]
+              (-> sys
+                  (eu/comp-update weapon EqWeapon {:hit-list (conj old-hit-list hit-entity)})
+                  (assoc-in [:world_events :combat] new-event-list)))) system hit-list))
 
 (defn check-attack-collisions
   "Tests is any entities are hit by a weapon. Does not allow an entity

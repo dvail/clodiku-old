@@ -18,6 +18,11 @@
   [system type]
   (first (be/get-all-entities-with-component system type)))
 
+(defn has-comp?
+  "Does an entity have a given component type?"
+  [system entity type]
+  (not= nil (be/get-component system entity type)))
+
 (defn comp-data
   "Get the data map of a given component."
   [system entity type]

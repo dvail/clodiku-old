@@ -42,7 +42,7 @@
   (let [player-pos (eu/get-player-pos system)
         current-pos (:pos (eu/comp-data system mob Spatial))]
     ; TODO Magic attack range
-    (if (< (move/dist-between player-pos current-pos) 40)
+    (if (< (move/dist-between player-pos current-pos) 50)
       (combat/init-attack system delta mob)
       system)))
 
