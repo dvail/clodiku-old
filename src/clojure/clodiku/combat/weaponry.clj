@@ -1,4 +1,4 @@
-(ns clodiku.equipment.weaponry
+(ns clodiku.combat.weaponry
   (:import (com.badlogic.gdx.math Circle Vector2)))
 
 (def weapon-types #{:spear :sword :club})

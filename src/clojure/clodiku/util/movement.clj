@@ -1,27 +1,32 @@
 (ns clodiku.util.movement
-  (:import (com.badlogic.gdx.math Circle Intersector)
+  (:import (com.badlogic.gdx.math Circle Intersector Vector2)
            (com.badlogic.gdx.maps.objects RectangleMapObject)
-           (clodiku.components Spatial State))
+           (clodiku.components Spatial State MobAI))
   (:require [clodiku.maps.map-core :as maps]
             [clodiku.util.entities :as eu]
             [clodiku.components :as comps]))
 
 (defn intersects?
   "Tests whether or not two shapes intersect"
-  [s1 s2]
-  (Intersector/overlaps s1 s2))
+  ([s1 s2]
+  (Intersector/overlaps s1 s2)))
 
 (defn spatial-as-circle
   "Gets a Circle object representation of an entities size and position"
   [spatial-comp]
   (Circle. (:x (:pos spatial-comp)) (:y (:pos spatial-comp)) (:size spatial-comp)))
 
+; TODO Implement this later to save on pathfinding
+(defn clear-line-of-sight?
+  "Tests whether or not there is a direct path between the two points without a collision on the map."
+  [system pos-a pos-b]
+  system)
+
 (defn collides-with-entities?
   "Checks if a given entity collides with another entity on the map"
   [entity-space other-spaces]
   (reduce (fn [collision? circle]
             (or collision? (intersects? entity-space circle))) false other-spaces))
-
 
 ; TODO Generalize this to handle all collisions?
 (defn get-entity-collisions
@@ -63,6 +68,12 @@
     (< 0 y) (comps/directions :north)
     :else (comps/directions :south)))
 
+(defn dist-between
+  "The distance between two points"
+  [pos-a pos-b]
+  (+ (Math/abs (- (:x pos-a) (:x pos-b)))
+     (Math/abs (- (:y pos-a) (:y pos-b)))))
+
 (defn move-entity
   [system delta entity {:keys [x y]}]
   (let [spatial (eu/comp-data system entity Spatial)
@@ -79,3 +90,30 @@
                                         :direction newdirection})
         (eu/comp-update entity State {:current newstate
                                       :time    newdelta}))))
+
+(defn move-mob
+  "Move an entity towards a position"
+  [system delta entity move-pos]
+  (let [pos (:pos (eu/comp-data system entity Spatial))
+        delta-x (Math/abs ^float (- (:x move-pos) (:x pos)))
+        delta-y (Math/abs ^float (- (:y move-pos) (:y pos)))
+        ; TODO replace magic number here with movement speed
+        move {:x (if (> (:x move-pos) (:x pos))
+                   (min delta-x 1)
+                   (* -1 (min delta-x 1)))
+              :y (if (> (:y move-pos) (:y pos))
+                   (min delta-y 1)
+                   (* -1 (min delta-y 1)))}]
+    (move-entity system delta entity move)))
+
+(defn navigate-path
+  "Move an entity along a prediscovered path."
+  [system delta mob]
+  (let [current-pos (:pos (eu/comp-data system mob Spatial))
+        path (:path (eu/comp-data system mob MobAI))
+        move-pos (last path)]
+    (if (and (> 2 (Math/abs ^float (- (:x current-pos) (:x move-pos))))
+             (> 2 (Math/abs ^float (- (:y current-pos) (:y move-pos)))))
+      (eu/comp-update system mob MobAI {:path (drop-last path)})
+      (move-mob system delta mob move-pos))))
+

@@ -1,10 +1,10 @@
 (ns clodiku.systems.mob-ai
-  (:import (clodiku.components MobAI Spatial State)
+  (:import (clodiku.components MobAI Spatial Player State)
            (clodiku.pathfinding AStar AStar$Node))
   (:require [clodiku.util.entities :as eu]
             [clodiku.maps.map-core :as maps]
-            [clodiku.components :as comps]
-            [clodiku.util.movement :as move]))
+            [clodiku.util.movement :as move]
+            [clodiku.combat.core :as combat]))
 
 ; How often the AI "thinks" and decides to change its behavior
 (def ai-speed 4)
@@ -12,56 +12,66 @@
 ; The max distance along the x or y axis that a mob will wander..
 (def wander-distance 600)
 
-(defn move-mob
-  "Move an entity towards a position"
-  [system delta entity move-pos]
-  (let [pos (:pos (eu/comp-data system entity Spatial))
-        delta-x (Math/abs ^float (- (:x move-pos) (:x pos)))
-        delta-y (Math/abs ^float (- (:y move-pos) (:y pos)))
-        ; TODO replace magic number here with movement speed
-        move {:x (if (> (:x move-pos) (:x pos))
-                   (min delta-x 1)
-                   (* -1 (min delta-x 1)))
-              :y (if (> (:y move-pos) (:y pos))
-                   (min delta-y 1)
-                   (* -1 (min delta-y 1)))}]
-    (move/move-entity system delta entity move)))
+; The path is a list of tile center points in :x :y form
+(defn set-path-to
+  "Sets a mob on a path to a given location."
+  [system entity goal]
+  (let [current-pos (:pos (eu/comp-data system entity Spatial))
+        tile-size maps/tile-size
+        new-location (AStar$Node. (int (/ (:x goal) tile-size)) (int (/ (:y goal) tile-size)))
+        curr-location (AStar$Node. (int (/ (:x current-pos) tile-size)) (int (/ (:y current-pos) tile-size)))
+        grid (maps/get-current-map-grid system)
+        path (map (fn [^AStar$Node node]
+                    {:x (+ (* (.x node) tile-size) (/ tile-size 2))
+                     :y (+ (* (.y node) tile-size) (/ tile-size 2))})
+                  (AStar/findPath grid curr-location new-location))]
+    (eu/comp-update system entity MobAI {:path path})))
+
+(defn pursue-player
+  "Move towards the player. Try to straight line approach, otherwise set a path to follow."
+  [system delta mob]
+  (let [player-pos (eu/get-player-pos system)
+        path (:path (eu/comp-data system mob MobAI))]
+    (if (empty? path)
+      (set-path-to system mob player-pos)
+      (move/navigate-path system delta mob))))
+
+(defn attack-player
+  "Approach and attempt to attack the player. Right now this is just dumb melee attacks."
+  [system delta mob]
+  (let [player-pos (eu/get-player-pos system)
+        current-pos (:pos (eu/comp-data system mob Spatial))]
+    ; TODO Magic attack range
+    (if (< (move/dist-between player-pos current-pos) 40)
+      (combat/init-attack system delta mob)
+      system)))
 
 (defn do-wander
   "Just... wander around."
   [system delta mob]
-  (let [current-pos (:pos (eu/comp-data system mob Spatial))
-        path (:path (eu/comp-data system mob MobAI))
-        move-pos (last path)]
-    (if (nil? move-pos)
+  (let [path (:path (eu/comp-data system mob MobAI))]
+    (if (empty? path)
       system
-      (if (and (> 2 (Math/abs ^float (- (:x current-pos) (:x move-pos))))
-               (> 2 (Math/abs ^float (- (:y current-pos) (:y move-pos)))))
-        (eu/comp-update system mob MobAI {:path (drop-last path)})
-        (move-mob system delta mob move-pos)))))
+      (move/navigate-path system delta mob))))
 
 (defn do-aggro
   "Pursue and attack the player, if in range."
   [system delta mob]
-  system)
+  (let [player-pos (:pos (eu/comp-data system (eu/first-entity-with-comp system Player) Spatial))
+        current-pos (:pos (eu/comp-data system mob Spatial))]
+    ; TODO Magic number on when to pursue player
+    (if (< (move/dist-between player-pos current-pos) 300)
+      (-> system
+          (pursue-player delta mob)
+          (attack-player delta mob))
+      (do-wander system delta mob))))
 
-(defn set-path-to-location
-  "Get a path to the next target location, the path should be a vector of
-  x/y coordinates (Vector2) that the mob attempts to move to."
+(defn random-wander-location
+  "Gets a random location for a mob to wander to."
   [system mob]
-  (let [current-pos (:pos (eu/comp-data system mob Spatial))
-        tile-size maps/tile-size
-        new-x (Math/abs (int (+ (- (/ wander-distance 2) (rand wander-distance)) (:x current-pos))))
-        new-y (Math/abs (int (+ (- (/ wander-distance 2) (rand wander-distance)) (:y current-pos))))
-        curr-location (AStar$Node. (int (/ (:x current-pos) tile-size)) (int (/ (:y current-pos) tile-size)))
-        new-location (AStar$Node. (int (/ new-x tile-size)) (int (/ new-y tile-size)))
-        grid (maps/get-current-map-grid system)
-        ; The path is a list of tile center points in :x :y form
-        path (map (fn [^AStar$Node node]
-                    {:x (+ (* (.x node) maps/tile-size) (/ maps/tile-size 2))
-                     :y (+ (* (.y node) maps/tile-size) (/ maps/tile-size 2))})
-                  (AStar/findPath grid curr-location new-location))]
-    (eu/comp-update system mob MobAI {:path path})))
+  (let [current-pos (:pos (eu/comp-data system mob Spatial))]
+    {:x (Math/abs (int (+ (- (/ wander-distance 2) (rand wander-distance)) (:x current-pos))))
+     :y (Math/abs (int (+ (- (/ wander-distance 2) (rand wander-distance)) (:y current-pos))))}))
 
 (defn update-mob-timestamp
   "Updates the last time the mob had to make a descision"
@@ -72,25 +82,34 @@
   "Updates the Mob's choice of behavior"
   [system mob state]
   (if (= state :wander)
-    (set-path-to-location system mob)
+    (set-path-to system mob (random-wander-location system mob))
     system))
 
 ; Map Mob states to action functions
-(def state-actions {:wander do-wander
-                    :aggro  do-aggro})
+(def ai-state-actions {:wander do-wander
+                       :aggro  do-aggro})
+
+(defn process-ai
+  "Process the AI actions for a mob if in a 'free' state."
+  [system delta mob]
+  (let [ai (eu/comp-data system mob MobAI)
+        mob-state (:state ai)
+        last-update (:last-update ai)]
+    (if (> last-update ai-speed)
+      (-> system
+          (update-mob-timestamp mob 0)
+          (update-mob-behavior mob mob-state)
+          ((get ai-state-actions mob-state) delta mob))
+      (-> system
+          (update-mob-timestamp mob (+ last-update delta))
+          ((get ai-state-actions mob-state) delta mob)))))
 
 (defn update
   [system delta]
   (let [mobs (eu/get-entities-with-components system MobAI)]
     (reduce (fn [sys mob]
-              (let [ai (eu/comp-data sys mob MobAI)
-                    mob-state (:state ai)
-                    last-update (:last-update ai)]
-                (if (> last-update ai-speed)
-                  (-> sys
-                      (update-mob-timestamp mob 0)
-                      (update-mob-behavior mob mob-state)
-                      ((get state-actions mob-state) delta mob))
-                  (-> sys
-                      (update-mob-timestamp mob (+ last-update delta))
-                      ((get state-actions mob-state) delta mob))))) system mobs)))
+              (let [main-state (:current (eu/comp-data sys mob State))]
+                (cond (= main-state :standing) (process-ai sys delta mob)
+                      (= main-state :walking) (process-ai sys delta mob)
+                      (= main-state :melee) (combat/advance-attack-state sys delta mob)
+                      :else sys))) system mobs)))

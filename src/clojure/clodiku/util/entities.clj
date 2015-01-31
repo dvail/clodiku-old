@@ -40,7 +40,7 @@
                  (:current (comp-data system ent State)))) entities)))
 
 (defn get-entity-weapon
-  "Gets the equipment piece in the given slot from the entity that owns it"
+  "Gets the combat piece in the given slot from the entity that owns it"
   [system entity]
   (comp-data system
              (:held (:equipment (comp-data system entity Equipable)))

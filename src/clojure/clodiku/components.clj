@@ -19,10 +19,10 @@
 
 (defrecord Attributes [data])
 
-;equipment is a map that maps eq slots to items
+;combat is a map that maps eq slots to items
 (defrecord Equipable [data])
 
-; EqItem is the actual component representing a piece of equipment
+; EqItem is the actual component representing a piece of combat
 (defrecord EqItem [data])
 
 ; A weapon component has a hit box that checks for collisions, as well as a function that describes the motion of

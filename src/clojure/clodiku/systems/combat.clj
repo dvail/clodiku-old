@@ -1,8 +1,15 @@
 (ns clodiku.systems.combat
   (:import (clodiku.components Spatial EqWeapon Equipable Player MobAI))
   (:require [clodiku.util.entities :as eu]
-            [clodiku.equipment.weaponry :as weaponry]
-            [clodiku.util.movement :as coll]))
+            [clodiku.combat.weaponry :as weaponry]
+            [clodiku.util.movement :as coll]
+            [clodiku.components :as comps]))
+
+(defn aggrivate
+  "Changes the behavior of all mobs sent as input to aggressive."
+  [system mobs]
+  (reduce (fn [sys mob]
+            (eu/comp-update sys mob MobAI {:state (comps/mob-ai-states :aggro)})) system mobs))
 
 (defn get-defenders
   "Gets all possible entities that could be hit by an attack, excluding the
@@ -37,9 +44,12 @@
         defenders (get-defenders system attacker)
         old-hit-list (:hit-list weapon-comp)
         entities-hit (coll/get-entity-collisions system (:hit-box weapon-comp) defenders)
-        new-hit-list (into '() (clojure.set/difference (set entities-hit) (set old-hit-list)))]
+        new-hit-list (into '() (clojure.set/difference (set entities-hit) (set old-hit-list)))
+        hit-mobs (filter #(not= nil (eu/comp-data system % MobAI)) new-hit-list)]
     (if (not (empty? new-hit-list))
-      (process-attack system attacker weapon new-hit-list)
+      (-> system
+          (process-attack attacker weapon new-hit-list)
+          (aggrivate hit-mobs))
       system)))
 
 (defn update-entity-attacks
