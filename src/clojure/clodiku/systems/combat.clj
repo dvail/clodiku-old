@@ -2,7 +2,7 @@
   (:import (clodiku.components Spatial EqWeapon Equipable Player MobAI))
   (:require [clodiku.util.entities :as eu]
             [clodiku.equipment.weaponry :as weaponry]
-            [clodiku.util.collision :as coll]))
+            [clodiku.util.movement :as coll]))
 
 (defn get-defenders
   "Gets all possible entities that could be hit by an attack, excluding the

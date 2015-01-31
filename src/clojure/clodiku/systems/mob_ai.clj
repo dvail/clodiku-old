@@ -4,7 +4,7 @@
   (:require [clodiku.util.entities :as eu]
             [clodiku.maps.map-core :as maps]
             [clodiku.components :as comps]
-            [clodiku.util.collision :as coll]))
+            [clodiku.util.movement :as move]))
 
 ; How often the AI "thinks" and decides to change its behavior
 (def ai-speed 4)
@@ -12,37 +12,20 @@
 ; The max distance along the x or y axis that a mob will wander..
 (def wander-distance 600)
 
-; TODO Yuck, this needs to be cleaned up
-(defn move-to
+(defn move-mob
   "Move an entity towards a position"
   [system delta entity move-pos]
-  (let [spatial (eu/comp-data system entity Spatial)
-        pos (:pos spatial)
-        state (eu/comp-data system entity State)
+  (let [pos (:pos (eu/comp-data system entity Spatial))
         delta-x (Math/abs ^float (- (:x move-pos) (:x pos)))
         delta-y (Math/abs ^float (- (:y move-pos) (:y pos)))
         ; TODO replace magic number here with movement speed
-        mov-x (if (> (:x move-pos) (:x pos))
-                (min delta-x 1)
-                (* -1 (min delta-x 1)))
-        mov-y (if (> (:y move-pos) (:y pos))
-                (min delta-y 1)
-                (* -1 (min delta-y 1)))
-        newstate (if (= mov-x mov-y 0)
-                   (comps/states :standing)
-                   (comps/states :walking))
-        newdirection (cond
-                       (= mov-x mov-y 0) (:direction spatial)
-                       (< 0 mov-x) (comps/directions :east)
-                       (> 0 mov-x) (comps/directions :west)
-                       (< 0 mov-y) (comps/directions :north)
-                       (> 0 mov-y) (comps/directions :south))
-        newdelta (if (= newstate (:current state)) (+ delta (:time state)) 0)]
-    (-> system
-        (eu/comp-update entity Spatial {:pos       (coll/get-movement-map system spatial {:x mov-x :y mov-y})
-                                        :direction newdirection})
-        (eu/comp-update entity State {:current newstate
-                                      :time    newdelta}))))
+        move {:x (if (> (:x move-pos) (:x pos))
+                   (min delta-x 1)
+                   (* -1 (min delta-x 1)))
+              :y (if (> (:y move-pos) (:y pos))
+                   (min delta-y 1)
+                   (* -1 (min delta-y 1)))}]
+    (move/move-entity system delta entity move)))
 
 (defn do-wander
   "Just... wander around."
@@ -55,7 +38,7 @@
       (if (and (> 2 (Math/abs ^float (- (:x current-pos) (:x move-pos))))
                (> 2 (Math/abs ^float (- (:y current-pos) (:y move-pos)))))
         (eu/comp-update system mob MobAI {:path (drop-last path)})
-        (move-to system delta mob move-pos)))))
+        (move-mob system delta mob move-pos)))))
 
 (defn do-aggro
   "Pursue and attack the player, if in range."

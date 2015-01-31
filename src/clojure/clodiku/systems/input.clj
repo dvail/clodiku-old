@@ -2,7 +2,7 @@
   (:import (com.badlogic.gdx Gdx Input Input$Keys)
            (clodiku.components Player Spatial State EqWeapon Equipable))
   (:require [clodiku.components :as comps]
-            [clodiku.util.collision :as coll]
+            [clodiku.util.movement :as move]
             [clodiku.util.entities :as eu]
             [clodiku.equipment.weaponry :as weaponry]))
 
@@ -28,25 +28,9 @@
 
 (defn move-player [system delta]
   (let [player (eu/first-entity-with-comp system Player)
-        spatial (eu/comp-data system player Spatial)
-        state (eu/comp-data system player State)
-        mov-x (+ (if (is-pressed? :move_east) 2 0) (if (is-pressed? :move_west) -2 0))
-        mov-y (+ (if (is-pressed? :move_north) 2 0) (if (is-pressed? :move_south) -2 0))
-        newstate (if (= mov-x mov-y 0)
-                   (comps/states :standing)
-                   (comps/states :walking))
-        newdelta (if (= newstate (:current state)) (+ delta (:time state)) 0)
-        newdirection (cond
-                       (= mov-x mov-y 0) (:direction spatial)
-                       (< 0 mov-x) (comps/directions :east)
-                       (> 0 mov-x) (comps/directions :west)
-                       (< 0 mov-y) (comps/directions :north)
-                       (> 0 mov-y) (comps/directions :south))]
-    (-> system
-        (eu/comp-update player Spatial {:pos       (coll/get-movement-map system spatial {:x mov-x :y mov-y})
-                                        :direction newdirection})
-        (eu/comp-update player State {:current newstate
-                                      :time    newdelta}))))
+        move {:x (+ (if (is-pressed? :move_east) 2 0) (if (is-pressed? :move_west) -2 0))
+              :y (+ (if (is-pressed? :move_north) 2 0) (if (is-pressed? :move_south) -2 0))}]
+    (move/move-entity system delta player move)))
 
 (defn do-free-input [system delta]
   (if (is-pressed? :melee_attack)

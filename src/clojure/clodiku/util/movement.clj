@@ -1,9 +1,10 @@
-(ns clodiku.util.collision
+(ns clodiku.util.movement
   (:import (com.badlogic.gdx.math Circle Intersector)
            (com.badlogic.gdx.maps.objects RectangleMapObject)
-           (clodiku.components Spatial))
+           (clodiku.components Spatial State))
   (:require [clodiku.maps.map-core :as maps]
-            [clodiku.util.entities :as eu]))
+            [clodiku.util.entities :as eu]
+            [clodiku.components :as comps]))
 
 (defn intersects?
   "Tests whether or not two shapes intersect"
@@ -52,3 +53,29 @@
         dy (if collide-y? 0 (:y move))]
     {:x (+ (:x pos) dx)
      :y (+ (:y pos) dy)}))
+
+(defn vector->direction
+  "Returns the compass direction based on a non-zero movement vector"
+  [x y]
+  (cond
+    (< 0 x) (comps/directions :east)
+    (> 0 x) (comps/directions :west)
+    (< 0 y) (comps/directions :north)
+    :else (comps/directions :south)))
+
+(defn move-entity
+  [system delta entity {:keys [x y]}]
+  (let [spatial (eu/comp-data system entity Spatial)
+        state (eu/comp-data system entity State)
+        newstate (if (= x y 0)
+                   (comps/states :standing)
+                   (comps/states :walking))
+        newdelta (if (= newstate (:current state)) (+ delta (:time state)) 0)
+        newdirection (if (= x y 0)
+                       (:direction spatial)
+                       (vector->direction x y))]
+    (-> system
+        (eu/comp-update entity Spatial {:pos       (get-movement-map system spatial {:x x :y y})
+                                        :direction newdirection})
+        (eu/comp-update entity State {:current newstate
+                                      :time    newdelta}))))
