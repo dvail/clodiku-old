@@ -4,7 +4,8 @@
   (:require [clodiku.util.entities :as eu]
             [clodiku.maps.map-core :as maps]
             [clodiku.util.movement :as move]
-            [clodiku.combat.core :as combat]))
+            [clodiku.combat.core :as combat]
+            [clodiku.components :as comps]))
 
 ; How often the AI "thinks" and decides to change its behavior
 (def ai-speed 4)
@@ -60,16 +61,19 @@
       (move/navigate-path system delta mob))))
 
 (defn do-aggro
-  "Pursue and attack the player, if in range."
+  "Pursue and attack the player, if in range. If the player is already dead, go back to wander mode."
   [system delta mob]
-  (let [player-pos (:pos (eu/comp-data system (eu/first-entity-with-comp system Player) Spatial))
+  (let [player (eu/first-entity-with-comp system Player)
+        player-pos (:pos (eu/comp-data system player Spatial))
+        player-state (:current (eu/comp-data system player State))
         current-pos (:pos (eu/comp-data system mob Spatial))]
-    ; TODO Magic number on when to pursue player
-    (if (< (move/dist-between player-pos current-pos) 300)
-      (-> system
-          (pursue-player delta mob)
-          (attack-player delta mob))
-      (do-wander system delta mob))))
+    (cond
+      (= player-state (comps/states :dead)) (eu/comp-update system mob MobAI {:state :wander})
+      ; TODO Magic number on when to pursue player
+      (< (move/dist-between player-pos current-pos) 300) (-> system
+                                                             (pursue-player delta mob)
+                                                             (attack-player delta mob))
+      :else (do-wander system delta mob))))
 
 (defn random-wander-location
   "Gets a random location for a mob to wander to."

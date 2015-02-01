@@ -1,8 +1,7 @@
 (ns clodiku.systems.input
   (:import (com.badlogic.gdx Gdx Input Input$Keys)
            (clodiku.components Player State))
-  (:require [clodiku.components :as comps]
-            [clodiku.util.movement :as move]
+  (:require [clodiku.util.movement :as move]
             [clodiku.util.entities :as eu]
             [clodiku.combat.core :as combat]))
 
@@ -34,11 +33,10 @@
   (->> (eu/first-entity-with-comp system Player)
        (combat/advance-attack-state system delta)))
 
-(def process-input-for-state {:walking  do-free-input
-                              :standing do-free-input
-                              :melee    do-melee-input})
-
 (defn update [system delta]
-  (let [pstate (eu/get-player-component system State)]
-    (-> system
-        (((:current pstate) process-input-for-state) delta))))
+  (let [state (:current (eu/get-player-component system State))]
+    (cond
+      (= state :walking) (do-free-input system delta)
+      (= state :standing) (do-free-input system delta)
+      (= state :melee) (do-melee-input system delta)
+      :else system)))

@@ -1,5 +1,5 @@
 (ns clodiku.systems.combat
-  (:import (clodiku.components Spatial EqWeapon Equipable Player MobAI))
+  (:import (clodiku.components Spatial EqWeapon Equipable Player MobAI Attribute State))
   (:require [clodiku.util.entities :as eu]
             [clodiku.combat.weaponry :as weaponry]
             [clodiku.util.movement :as coll]
@@ -22,6 +22,18 @@
                       MobAI)]
     (clojure.set/difference (set defenders) (set (eu/get-entities-with-components system filter-type)))))
 
+(defn damage-entity
+  "Apply damage to an entity, changing state to DEAD if hp falls below zero."
+  [system entity damage]
+  (let [old-hp (:hp (eu/comp-data system entity Attribute))
+        new-hp (max 0 (- old-hp damage))
+        state (if (<= new-hp 0)
+                (comps/states :dead)
+                (:current (eu/comp-data system entity State)))]
+    (-> system
+        (eu/comp-update entity Attribute {:hp new-hp})
+        (eu/comp-update entity State {:current state}))))
+
 (defn process-attack
   "Dispatch events attack and apply damage to affected entities."
   [system attacker weapon hit-list]
@@ -37,8 +49,8 @@
                   combat-events (:combat (:world_events sys))
                   new-event-list (conj combat-events event)
                   old-hit-list (:hit-list (eu/comp-data system weapon EqWeapon))]
-              (println damage)
               (-> sys
+                  (damage-entity hit-entity damage)
                   (eu/comp-update weapon EqWeapon {:hit-list (conj old-hit-list hit-entity)})
                   (assoc-in [:world_events :combat] new-event-list)))) system hit-list))
 
