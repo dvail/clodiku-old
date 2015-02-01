@@ -12,6 +12,11 @@
 ; The max distance along the x or y axis that a mob will wander..
 (def wander-distance 600)
 
+(defn clear-path
+  "Resets the entity's current path. Useful for clearing out 'Mob Deadlock'."
+  [system entity]
+  (eu/comp-update system entity MobAI {:path '()}))
+
 ; The path is a list of tile center points in :x :y form
 (defn set-path-to
   "Sets a mob on a path to a given location."
@@ -81,9 +86,9 @@
 (defn update-mob-behavior
   "Updates the Mob's choice of behavior"
   [system mob state]
-  (if (= state :wander)
-    (set-path-to system mob (random-wander-location system mob))
-    system))
+  (cond (= state :wander) (set-path-to system mob (random-wander-location system mob))
+        (= state :aggro) (clear-path system mob)
+        :else system))
 
 ; Map Mob states to action functions
 (def ai-state-actions {:wander do-wander

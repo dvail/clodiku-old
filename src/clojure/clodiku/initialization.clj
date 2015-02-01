@@ -29,7 +29,7 @@
                                   :hit-list    '()
                                   :type        (weaponry/weapon-types :spear)}))
         (be/add-entity player)
-        (be/add-component player (comps/->Player))
+        (be/add-component player (comps/->Player {}))
         (be/add-component player (comps/->Animated {:regions regions}))
         (be/add-component player (comps/->State {:current (comps/states :walking)
                                                  :time    0.0}))
