@@ -19,6 +19,9 @@
 (declare ^ShapeRenderer shape-renderer)
 (declare ^BitmapFont attack-font)
 
+(def map-background-layers (int-array 2 [0, 1]))
+(def map-foreground-layers (int-array 1 [3]))
+
 ; TODO This might need a more elegant/efficient/readable way of packing up entities...
 (defn split-texture-pack
   "Returns a nested map where each top level key is the entities state. These keys map to
@@ -140,7 +143,7 @@
       (.set ^Vector3 (maps/get-map-bounds system camera)))
     (doto map-renderer
       (.setView camera)
-      (.render))
+      (.render map-background-layers))
     (doto batch
       (.begin)
       (.setProjectionMatrix (.combined camera))
@@ -155,4 +158,7 @@
       (render-entity-shapes! system)
       (.setColor 1 0.5 0.5 1)
       (render-attack-shapes! system)
-      (.end)) system))
+      (.end))
+    (doto map-renderer
+      (.setView camera)
+      (.render map-foreground-layers)) system))
