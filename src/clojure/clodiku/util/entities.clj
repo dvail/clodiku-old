@@ -3,7 +3,7 @@
 ;;;; it may be more feasible to switch out in the future e.g. for performance reasons.
 
 (ns clodiku.util.entities
-  (:import (clodiku.components Player Spatial State EqWeapon Equipable))
+  (:import (clodiku.components Player Spatial State EqWeapon Equipable EqItem))
   (:require [brute.entity :as be]
             [clodiku.components :as comps]
             [clojure.set :refer [union]]))
@@ -51,13 +51,18 @@
              (:held (:equipment (comp-data system entity Equipable)))
              EqWeapon))
 
+(defn get-entity-armor
+  "Gets a list of armor eq components on an entity."
+  [system entity]
+  (map #(comp-data system % EqItem)
+       (dissoc (:equipment (comp-data system entity Equipable)) (comps/eq-slots :held))))
+
 (defn get-player-component
   "Get a named component type from the player"
   [system comp]
   (let [player (first-entity-with-comp system Player)]
     (comp-data system player comp)))
 
-; TODO Test this - not sure if it works yet
 (defn get-entities-with-components
   "Get entities that have each of a given component list."
   [system & components]

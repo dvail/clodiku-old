@@ -16,6 +16,7 @@
                      :time    0})]
     (eu/comp-update system entity State new-state)))
 
+
 (defn init-attack
   "Start the attack state for an entity"
   [system delta entity]

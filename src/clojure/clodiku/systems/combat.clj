@@ -3,7 +3,8 @@
   (:require [clodiku.util.entities :as eu]
             [clodiku.combat.weaponry :as weaponry]
             [clodiku.util.movement :as coll]
-            [clodiku.components :as comps]))
+            [clodiku.components :as comps]
+            [clodiku.combat.calulations :as ccalc]))
 
 (defn aggrivate
   "Changes the behavior of all mobs sent as input to aggressive."
@@ -26,8 +27,8 @@
   [system attacker weapon hit-list]
   ; TODO Apply damage, etc. here
   (reduce (fn [sys hit-entity]
-            (let [damage 5
-                  event {:type     :melee_attack
+            (let [damage (ccalc/attack-damage sys attacker hit-entity)
+                  event {:type     :melee
                          :attacker attacker
                          :defender hit-entity
                          :location (:pos (eu/comp-data sys hit-entity Spatial))
@@ -36,6 +37,7 @@
                   combat-events (:combat (:world_events sys))
                   new-event-list (conj combat-events event)
                   old-hit-list (:hit-list (eu/comp-data system weapon EqWeapon))]
+              (println damage)
               (-> sys
                   (eu/comp-update weapon EqWeapon {:hit-list (conj old-hit-list hit-entity)})
                   (assoc-in [:world_events :combat] new-event-list)))) system hit-list))

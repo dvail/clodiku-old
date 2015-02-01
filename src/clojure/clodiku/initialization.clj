@@ -29,6 +29,12 @@
                                   :hit-list    '()
                                   :type        (weaponry/weapon-types :spear)}))
         (be/add-entity player)
+        (be/add-component player (comps/->Attribute {:hp  50
+                                                     :mv  50
+                                                     :str 10
+                                                     :dex 10
+                                                     :vit 10
+                                                     :psy 10}))
         (be/add-component player (comps/->Player {}))
         (be/add-component player (comps/->Animated {:regions regions}))
         (be/add-component player (comps/->State {:current (comps/states :walking)
@@ -48,22 +54,26 @@
     (-> sys
         (be/add-entity weap-a)
         (be/add-component weap-a (comps/->EqItem {:hr   1
-                                                :slot (comps/eq-slots :held)}))
-        (be/add-component weap-a (comps/->EqWeapon
-                                 {:base-damage 2
-                                  :hit-box     (Circle. (float 0) (float 0) (float (:sword weaponry/weapon-sizes)))
-                                  :hit-list    '()
-                                  :type        (weaponry/weapon-types :sword)}))
+                                                  :slot (comps/eq-slots :held)}))
+        (be/add-component weap-a (comps/->EqWeapon {:base-damage 2
+                                                    :hit-box     (Circle. (float 0) (float 0) (float (:sword weaponry/weapon-sizes)))
+                                                    :hit-list    '()
+                                                    :type        (weaponry/weapon-types :sword)}))
         (be/add-entity weap-b)
         (be/add-component weap-b (comps/->EqItem {:hr   1
                                                   :slot (comps/eq-slots :held)}))
-        (be/add-component weap-b (comps/->EqWeapon
-                                   {:base-damage 2
-                                    :hit-box     (Circle. (float 0) (float 0) (float (:sword weaponry/weapon-sizes)))
-                                    :hit-list    '()
-                                    :type        (weaponry/weapon-types :sword)}))
+        (be/add-component weap-b (comps/->EqWeapon {:base-damage 2
+                                                    :hit-box     (Circle. (float 0) (float 0) (float (:sword weaponry/weapon-sizes)))
+                                                    :hit-list    '()
+                                                    :type        (weaponry/weapon-types :sword)}))
 
         (be/add-entity orc1)
+        (be/add-component orc1 (comps/->Attribute {:hp  30
+                                                   :mv  50
+                                                   :str 14
+                                                   :dex 8
+                                                   :vit 14
+                                                   :psy 3}))
         (be/add-component orc1 (comps/->MobAI {:state       (comps/mob-ai-states :wander)
                                                :last-update 0
                                                :path        '()}))
@@ -77,6 +87,12 @@
                                                  :direction (comps/directions :west)}))
 
         (be/add-entity orc2)
+        (be/add-component orc2 (comps/->Attribute {:hp  30
+                                                   :mv  50
+                                                   :str 14
+                                                   :dex 8
+                                                   :vit 14
+                                                   :psy 3}))
         (be/add-component orc2 (comps/->MobAI {:state       (comps/mob-ai-states :wander)
                                                :last-update 0
                                                :path        '()}))

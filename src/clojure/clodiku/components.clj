@@ -29,7 +29,8 @@
 (defrecord Attribute [data])
 
 ;equipable is a map that maps eq slots to items
-(def equipable-keys #{:equipment})
+;this component holds the total of all eq item stats for quick calculations
+(def equipable-keys #{:equipment :stat-total})
 (defrecord Equipable [data])
 
 ; EqItem is the actual component representing a piece of combat
