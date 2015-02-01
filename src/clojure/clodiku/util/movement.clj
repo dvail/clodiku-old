@@ -2,14 +2,14 @@
   (:import (com.badlogic.gdx.math Circle Intersector Vector2)
            (com.badlogic.gdx.maps.objects RectangleMapObject)
            (clodiku.components Spatial State MobAI))
-  (:require [clodiku.maps.map-core :as maps]
+  (:require [clodiku.world.maps :as maps]
             [clodiku.util.entities :as eu]
             [clodiku.components :as comps]))
 
 (defn intersects?
   "Tests whether or not two shapes intersect"
   ([s1 s2]
-  (Intersector/overlaps s1 s2)))
+    (Intersector/overlaps s1 s2)))
 
 (defn spatial-as-circle
   "Gets a Circle object representation of an entities size and position"
@@ -40,6 +40,21 @@
   [entity-space map-objs]
   (reduce (fn [collision? object]
             (or collision? (intersects? entity-space (.getRectangle ^RectangleMapObject object)))) false map-objs))
+
+(defn try-transport
+  "If the player hits a transport zone, begin the process to swap out world and other entities."
+  [system player move]
+  (let [spatial (eu/comp-data system player Spatial)
+        pos (:pos spatial)
+        map-transports (maps/get-map-transports system)
+        entity-mov-x (Circle. (+ (:x pos) (:x move)) (:y pos) (:size spatial))
+        entity-mov-y (Circle. (:x pos) (+ (:y pos) (:y move)) (:size spatial))
+        collide-x? (collides-with-map? entity-mov-x map-transports)
+        collide-y? (collides-with-map? entity-mov-y map-transports)]
+    (if (or collide-x? collide-y?)
+      (do (println (first map-transports))
+          system)
+      system)))
 
 (defn get-movement-map
   "Given an attempted movement, check the map and other entities for collisions and

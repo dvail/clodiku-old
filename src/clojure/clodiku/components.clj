@@ -28,7 +28,11 @@
 (def attribute-keys attributes)
 (defrecord Attribute [data])
 
-;equipable is a map that maps eq slots to items
+;A component for entities that can have stuff!
+(def inventory-keys #{:items})
+(defrecord Inventory [data])
+
+;equipable is a map that world eq slots to items
 ;this component holds the total of all eq item stats for quick calculations
 (def equipable-keys #{:equipment :stat-total})
 (defrecord Equipable [data])

@@ -4,7 +4,7 @@
             [brute.entity :as be]
             [clodiku.systems.rendering :as sys-rendering]
             [clodiku.combat.weaponry :as weaponry]
-            [clodiku.maps.map-core :as maps]))
+            [clodiku.world.maps :as maps]))
 
 (defn init-map [sys]
   (let [map-entity (be/create-entity)

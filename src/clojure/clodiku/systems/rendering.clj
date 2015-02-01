@@ -9,7 +9,7 @@
            (com.badlogic.gdx.maps.tiled TiledMap)
            (com.badlogic.gdx.math Vector3)
            (com.badlogic.gdx.graphics.glutils ShapeRenderer))
-  (:require [clodiku.maps.map-core :as maps]
+  (:require [clodiku.world.maps :as maps]
             [clojure.set :as cset]
             [clodiku.util.entities :as eu]))
 

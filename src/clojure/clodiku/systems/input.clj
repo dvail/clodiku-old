@@ -18,7 +18,9 @@
   (let [player (eu/first-entity-with-comp system Player)
         move {:x (+ (if (is-pressed? :move_east) 2 0) (if (is-pressed? :move_west) -2 0))
               :y (+ (if (is-pressed? :move_north) 2 0) (if (is-pressed? :move_south) -2 0))}]
-    (move/move-entity system delta player move)))
+    (-> system
+      (move/move-entity delta player move)
+      (move/try-transport player move))))
 
 (defn do-free-input [system delta]
   (if (is-pressed? :melee_attack)

@@ -12,7 +12,6 @@
                  [brute "0.3.0" :exclusions [org.clojure/clojure]]]
   :repositories [["sonatype"
                   "https://oss.sonatype.org/content/repositories/releases/"]]
-;  :plugins [[cider/cider-nrepl "0.8.1"]]
   :main clodiku.core
   :source-paths      ["src/clojure"]
   :java-source-paths ["src/java"]

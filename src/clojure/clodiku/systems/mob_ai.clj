@@ -2,7 +2,7 @@
   (:import (clodiku.components MobAI Spatial Player State)
            (clodiku.pathfinding AStar AStar$Node))
   (:require [clodiku.util.entities :as eu]
-            [clodiku.maps.map-core :as maps]
+            [clodiku.world.maps :as maps]
             [clodiku.util.movement :as move]
             [clodiku.combat.core :as combat]
             [clodiku.components :as comps]))

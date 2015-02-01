@@ -1,6 +1,6 @@
-(ns clodiku.maps.map-core
+(ns clodiku.world.maps
   (:import (com.badlogic.gdx.maps.tiled TmxMapLoader TiledMap TiledMapTileLayer TiledMapTileLayer$Cell)
-           (com.badlogic.gdx.math Vector3 Circle)
+           (com.badlogic.gdx.math Vector3)
            (com.badlogic.gdx.graphics OrthographicCamera)
            (com.badlogic.gdx.maps MapProperties)
            (clodiku.components WorldMap))
@@ -27,6 +27,14 @@
   (-> ^TiledMap (get-current-map system)
       (.getLayers)
       (.get "collision")
+      (.getObjects)))
+
+(defn get-map-transports
+  "Gets a sequence of all transport zones on the map."
+  [system]
+  (-> ^TiledMap (get-current-map system)
+      (.getLayers)
+      (.get "transport")
       (.getObjects)))
 
 (defn get-map-bounds

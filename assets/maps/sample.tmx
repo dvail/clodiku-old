@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" orientation="orthogonal" renderorder="right-down" width="32" height="32" tilewidth="32" tileheight="32" nextobjectid="31">
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="32" height="32" tilewidth="32" tileheight="32" nextobjectid="34">
  <tileset firstgid="1" name="forest_tileset_32x32" tilewidth="32" tileheight="32">
   <image source="forest_tileset_32x32.png" width="512" height="160"/>
   <tile id="53">
@@ -33,6 +33,11 @@
    eJztzsEJAAAIxDDn0v330i3kIIH+WwUAADn6mu8JgEALdXIAdg==
   </data>
  </layer>
+ <layer name="overlay" width="32" height="32">
+  <data encoding="base64" compression="zlib">
+   eJztzjEOgCAUBFFa0QsIXgCk9v5HY3obuh+SecnUuylJkiRp1UGZTroC9m8qVOkJ2G/U6aURsC/p74s+oG1MBogBdQ==
+  </data>
+ </layer>
  <objectgroup color="#ff07fe" name="collision">
   <object id="2" x="0" y="2" width="34" height="1020"/>
   <object id="3" x="36" y="994" width="984" height="30"/>
@@ -48,19 +53,17 @@
   <object id="14" x="256" y="352" width="66" height="34"/>
   <object id="17" x="-6" y="0" width="1028" height="30"/>
   <object id="18" x="226" y="164" width="346" height="26"/>
-  <object id="19" x="192" y="196" width="62" height="28"/>
-  <object id="20" x="544" y="198" width="144" height="24"/>
+  <object id="19" x="192" y="194" width="62" height="28"/>
+  <object id="20" x="545.333" y="196.667" width="144" height="24"/>
   <object id="22" x="864" y="-10" width="34" height="462"/>
   <object id="23" x="990" y="-14" width="32" height="240"/>
-  <object id="24" x="990" y="294" width="30" height="720"/>
+  <object id="24" x="992.667" y="288.667" width="30" height="720"/>
   <object id="25" x="224" y="484" width="158" height="24"/>
   <object id="26" x="190" y="836" width="96" height="28"/>
-  <object id="27" x="520" y="676" width="45.3333" height="21.3333"/>
+  <object id="27" x="520" y="669" width="46.6667" height="22.6667"/>
   <object id="28" x="676" y="876" width="24" height="20"/>
  </objectgroup>
- <layer name="overlay" width="32" height="32">
-  <data encoding="base64" compression="zlib">
-   eJztzjEOgCAUBFFa0QsIXgCk9v5HY3obuh+SecnUuylJkiRp1UGZTroC9m8qVOkJ2G/U6aURsC/p74s+oG1MBogBdQ==
-  </data>
- </layer>
+ <objectgroup color="#08ebb2" name="transport">
+  <object id="32" x="1038.33" y="224.667" width="6.66667" height="68"/>
+ </objectgroup>
 </map>
