@@ -11,7 +11,7 @@
            (com.badlogic.gdx.graphics.glutils ShapeRenderer))
   (:require [clodiku.world.maps :as maps]
             [clojure.set :as cset]
-            [clodiku.util.entities :as eu]))
+            [clodiku.entities.util :as eu]))
 
 (declare ^OrthographicCamera camera)
 (declare ^SpriteBatch batch)

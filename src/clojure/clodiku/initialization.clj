@@ -2,13 +2,16 @@
   (:import (com.badlogic.gdx.math Circle))
   (:require [clodiku.components :as comps]
             [brute.entity :as be]
+            [clodiku.entities.mobs :as em]
+            [clodiku.entities.weapons :as ew]
             [clodiku.systems.rendering :as sys-rendering]
             [clodiku.combat.weaponry :as weaponry]
-            [clodiku.world.maps :as maps]))
+            [clodiku.world.maps :as maps]
+            [clojure.tools.reader.edn :as edn]))
 
-(defn init-map [sys]
+(defn init-map [sys map-name]
   (let [map-entity (be/create-entity)
-        tmx-map (maps/load-map)
+        tmx-map (maps/load-map map-name)
         map-grid (maps/load-map-grid tmx-map)]
     (-> sys
         (be/add-entity map-entity)
@@ -45,69 +48,16 @@
                                                    :direction (comps/directions :east)})))))
 
 ; TODO Entity and asset initialization...
-(defn init-mobs [sys]
-  (let [orc1 (be/create-entity)
-        orc2 (be/create-entity)
-        weap-a (be/create-entity)
-        weap-b (be/create-entity)
-        regions (sys-rendering/split-texture-pack "./assets/mob/orc/orc.pack")]
-    (-> sys
-        (be/add-entity weap-a)
-        (be/add-component weap-a (comps/->EqItem {:hr   1
-                                                  :slot (comps/eq-slots :held)}))
-        (be/add-component weap-a (comps/->EqWeapon {:base-damage 2
-                                                    :hit-box     (Circle. (float 0) (float 0) (float (:sword weaponry/weapon-sizes)))
-                                                    :hit-list    '()
-                                                    :type        (weaponry/weapon-types :sword)}))
-        (be/add-entity weap-b)
-        (be/add-component weap-b (comps/->EqItem {:hr   1
-                                                  :slot (comps/eq-slots :held)}))
-        (be/add-component weap-b (comps/->EqWeapon {:base-damage 2
-                                                    :hit-box     (Circle. (float 0) (float 0) (float (:sword weaponry/weapon-sizes)))
-                                                    :hit-list    '()
-                                                    :type        (weaponry/weapon-types :sword)}))
-
-        (be/add-entity orc1)
-        (be/add-component orc1 (comps/->Attribute {:hp  30
-                                                   :mv  50
-                                                   :str 14
-                                                   :dex 8
-                                                   :vit 14
-                                                   :psy 3}))
-        (be/add-component orc1 (comps/->MobAI {:state       (comps/mob-ai-states :wander)
-                                               :last-update 0
-                                               :path        '()}))
-        (be/add-component orc1 (comps/->Animated {:regions regions}))
-        (be/add-component orc1 (comps/->Equipable {:equipment {:held weap-a}}))
-
-        (be/add-component orc1 (comps/->State {:current (comps/states :walking)
-                                               :time    0.0}))
-        (be/add-component orc1 (comps/->Spatial {:pos       {:x 300 :y 300}
-                                                 :size      14
-                                                 :direction (comps/directions :west)}))
-
-        (be/add-entity orc2)
-        (be/add-component orc2 (comps/->Attribute {:hp  30
-                                                   :mv  50
-                                                   :str 14
-                                                   :dex 8
-                                                   :vit 14
-                                                   :psy 3}))
-        (be/add-component orc2 (comps/->MobAI {:state       (comps/mob-ai-states :wander)
-                                               :last-update 0
-                                               :path        '()}))
-        (be/add-component orc2 (comps/->Animated {:regions regions}))
-        (be/add-component orc2 (comps/->Equipable {:equipment {:held weap-b}}))
-        (be/add-component orc2 (comps/->State {:current (comps/states :walking)
-                                               :time    0.0}))
-        (be/add-component orc2 (comps/->Spatial {:pos       {:x 400 :y 400}
-                                                 :size      14
-                                                 :direction (comps/directions :west)})))))
+(defn init-entities [system area-name]
+  (let [area-data (edn/read-string (slurp (str "assets/maps/" area-name "/data.edn")))
+        items (:items area-data)
+        mobs (:mobs area-data)]
+    (reduce #(em/init-mob %1 %2) system mobs)))
 
 (defn init-main
   [system]
   (-> system
       (init-player)
-      (init-mobs)
-      (init-map)))
+      (init-map "sample")
+      (init-entities "sample")))
 

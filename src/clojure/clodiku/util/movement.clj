@@ -1,9 +1,10 @@
 (ns clodiku.util.movement
-  (:import (com.badlogic.gdx.math Circle Intersector Vector2)
+  (:import (com.badlogic.gdx.math Circle Intersector)
            (com.badlogic.gdx.maps.objects RectangleMapObject)
            (clodiku.components Spatial State MobAI))
   (:require [clodiku.world.maps :as maps]
-            [clodiku.util.entities :as eu]
+            [clodiku.world.transporter :as transport]
+            [clodiku.entities.util :as eu]
             [clodiku.components :as comps]))
 
 (defn intersects?
@@ -52,8 +53,7 @@
         collide-x? (collides-with-map? entity-mov-x map-transports)
         collide-y? (collides-with-map? entity-mov-y map-transports)]
     (if (or collide-x? collide-y?)
-      (do (println (first map-transports))
-          system)
+      (transport/swap-areas system (first map-transports))
       system)))
 
 (defn get-movement-map

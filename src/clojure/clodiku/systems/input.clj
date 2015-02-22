@@ -2,7 +2,7 @@
   (:import (com.badlogic.gdx Gdx Input Input$Keys)
            (clodiku.components Player State))
   (:require [clodiku.util.movement :as move]
-            [clodiku.util.entities :as eu]
+            [clodiku.entities.util :as eu]
             [clodiku.combat.core :as combat]))
 
 (def bound-keys {:move_south   Input$Keys/S

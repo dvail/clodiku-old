@@ -2,7 +2,7 @@
 ;;;; ECS data store. Ideally this will be a wrapper over whatever Entity System used so that
 ;;;; it may be more feasible to switch out in the future e.g. for performance reasons.
 
-(ns clodiku.util.entities
+(ns clodiku.entities.util
   (:import (clodiku.components Player Spatial State EqWeapon Equipable EqItem))
   (:require [brute.entity :as be]
             [clodiku.components :as comps]
@@ -28,6 +28,7 @@
   [system entity type]
   (:data (be/get-component system entity type)))
 
+;; TODO This is inefficient. Using a defrecord to store a map is the worst of both worlds for performance
 (defn comp-update
   "Update the value of a component"
   [system entity type data-map]

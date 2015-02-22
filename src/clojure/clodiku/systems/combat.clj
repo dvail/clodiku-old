@@ -1,6 +1,6 @@
 (ns clodiku.systems.combat
   (:import (clodiku.components Spatial EqWeapon Equipable Player MobAI Attribute State))
-  (:require [clodiku.util.entities :as eu]
+  (:require [clodiku.entities.util :as eu]
             [clodiku.combat.weaponry :as weaponry]
             [clodiku.util.movement :as coll]
             [clodiku.components :as comps]

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.0" orientation="orthogonal" renderorder="right-down" width="32" height="32" tilewidth="32" tileheight="32" nextobjectid="34">
  <tileset firstgid="1" name="forest_tileset_32x32" tilewidth="32" tileheight="32">
-  <image source="forest_tileset_32x32.png" width="512" height="160"/>
+     <image source="../../tilesets/forest_tileset_32x32.png" width="512" height="160"/>
   <tile id="53">
    <properties>
     <property name="walkable" value="false"/>

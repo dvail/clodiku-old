@@ -1,5 +1,5 @@
 (ns clodiku.combat.calulations
-  (:require [clodiku.util.entities :as eu])
+  (:require [clodiku.entities.util :as eu])
   (:import (clodiku.components Attribute)))
 
 (defn- attr-bonus

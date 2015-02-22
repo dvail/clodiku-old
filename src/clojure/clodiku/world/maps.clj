@@ -4,7 +4,7 @@
            (com.badlogic.gdx.graphics OrthographicCamera)
            (com.badlogic.gdx.maps MapProperties)
            (clodiku.components WorldMap))
-  (:require [clodiku.util.entities :as eu]))
+  (:require [clodiku.entities.util :as eu]))
 
 ; TODO Pull this dynamically? Will the map tile size ever change?
 (def tile-size 32)
@@ -80,7 +80,7 @@
 (defn load-map
   ([]
     (-> (TmxMapLoader.)
-        (.load "./assets/maps/sample.tmx")))
+        (.load "./assets/maps/sample/map.tmx")))
   ([map-name]
     (-> (TmxMapLoader.)
-        (.load (str "./assets/maps/" map-name ".tmx")))))
+        (.load (str "./assets/maps/" map-name "/map.tmx")))))

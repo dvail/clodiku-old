@@ -1,6 +1,6 @@
 (ns clodiku.combat.core
   (:require [clodiku.combat.weaponry :as weaponry]
-            [clodiku.util.entities :as eu]
+            [clodiku.entities.util :as eu]
             [clodiku.components :as comps])
   (:import (clodiku.components EqWeapon State Equipable Spatial)))
 
