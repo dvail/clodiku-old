@@ -50,9 +50,10 @@
 ; TODO Entity and asset initialization...
 (defn init-entities [system area-name]
   (let [area-data (edn/read-string (slurp (str "assets/maps/" area-name "/data.edn")))
-        items (:items area-data)
+        items (:free-items area-data)
         mobs (:mobs area-data)]
-    (reduce #(em/init-mob %1 %2) system mobs)))
+    (reduce (fn [sys mob]
+              (em/init-mob sys (:template mob))) system mobs)))
 
 (defn init-main
   [system]

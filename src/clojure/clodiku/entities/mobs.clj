@@ -3,7 +3,8 @@
 (ns clodiku.entities.mobs
   (:require [clodiku.components :as comps]
             [clodiku.systems.rendering :as sys-rendering]
-            [brute.entity :as be]))
+            [brute.entity :as be])
+  (:import (clodiku.components State)))
 
 
 ;; TODO Reuse animation regions when possible
@@ -16,23 +17,41 @@
     (-> system
         (be/add-entity mob)
         (be/add-component mob (comps/->Attribute {:hp  30
-                            :mv  50
-                            :str 14
-                            :dex 8
-                            :vit 14
-                            :psy 3}))
+                                                  :mv  50
+                                                  :str 14
+                                                  :dex 8
+                                                  :vit 14
+                                                  :psy 3}))
         (be/add-component mob (comps/->MobAI {:state       (comps/mob-ai-states :wander)
-                        :last-update 0
-                        :path        '()}))
+                                              :last-update 0
+                                              :path        '()}))
         (be/add-component mob (comps/->Animated {:regions anim-regions}))
         (be/add-component mob (comps/->Equipable {:equipment {}}))
         (be/add-component mob (comps/->State {:current (comps/states :walking)
-                        :time    0.0}))
+                                              :time    0.0}))
         (be/add-component mob (comps/->Spatial {:pos       {:x 300 :y 300}
-                          :size      14
-                          :direction (comps/directions :west)})))))
+                                                :size      14
+                                                :direction (comps/directions :west)})))))
 
 (def mob-factory-map {:orc make-orc})
+
+;; TODO Move templates into an edn lookup file? Sqlite database?
+(def templates {:orc {:components '({State     {:current (comps/states :walking)
+                                                :time    0}
+                                     Attribute {:hp  30
+                                                :mv  50
+                                                :str 14
+                                                :dex 8
+                                                :vit 14
+                                                :psy 3}
+                                     Spatial   {:pos {:x 100 :y 100}
+                                                :size 14
+                                                :direction (comps/directions :west)}
+                                     Equipable {:equipment {}}
+                                     Animated  {:regions (sys-rendering/split-texture-pack "./assets/mob/orc/orc.pack")}
+                                     MobAI     {:state (comps/mob-ai-states :wander)}})
+                      :inventory  '()
+                      :equipment  {:held :sword}}})
 
 
 ; TODO This might be a good place for a macro??
