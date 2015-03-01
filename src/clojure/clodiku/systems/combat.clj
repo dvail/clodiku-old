@@ -94,7 +94,9 @@
   (let [updated-system (update-combat-events system delta)]
     (reduce
       (fn [sys attacker]
-        (let [weapon-entity (:held (:equipment (eu/comp-data system attacker Equipable)))]
+        (let [weapon-entity (-> (eu/comp-data system attacker Equipable)
+                                :equipment
+                                :held)]
           (-> sys
               (update-entity-attacks attacker weapon-entity)
               (check-attack-collisions attacker weapon-entity)))) updated-system (eu/get-attackers updated-system))))

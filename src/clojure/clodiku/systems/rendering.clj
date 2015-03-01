@@ -1,5 +1,5 @@
 (ns clodiku.systems.rendering
-  (:import (com.badlogic.gdx.graphics.g2d TextureAtlas Animation$PlayMode TextureRegion TextureAtlas$AtlasRegion)
+  (:import (com.badlogic.gdx.graphics.g2d TextureRegion)
            (clodiku.components Animated State Spatial)
            (com.badlogic.gdx.math Circle)
            (com.badlogic.gdx.graphics GL20 OrthographicCamera)
@@ -21,35 +21,6 @@
 
 (def map-background-layers (int-array 2 [0, 1]))
 (def map-foreground-layers (int-array 1 [3]))
-
-; TODO This might need a more elegant/efficient/readable way of packing up entities...
-(defn split-texture-pack
-  "Returns a nested map where each top level key is the entities state. These keys map to
-  a second level map with the keys representing a cardinal direction and the values are a looping
-  animation of that state/direction combination."
-  [atlas-location]
-  (let [atlas (TextureAtlas. ^String atlas-location)
-        regions (sort #(compare (.name ^TextureAtlas$AtlasRegion %1) (.name ^TextureAtlas$AtlasRegion %2)) (seq (.getRegions atlas)))
-        action-map (map (fn [reg]
-                          (let [splits (clojure.string/split (.name ^TextureAtlas$AtlasRegion reg) #"-")
-                                action (keyword (first splits))
-                                direction (keyword (second splits))]
-                            {action {direction [reg]}})) regions)
-        raw-map (apply merge-with (fn [first-val sec-val]
-                                    (merge-with #(conj %1 (first %2)) first-val sec-val)) action-map)]
-    (reduce-kv
-      (fn [init fk fv]
-        (assoc init fk
-                    (apply merge
-                           (map
-                             (fn [dir-map]
-                               (let [anim-speed (if (= fk :melee) 1/24 1/12)
-                                     animation (Animation. (float anim-speed)
-                                                           #^"[Lcom.badlogic.gdx.graphics.g2d.TextureRegion;" (into-array (val dir-map)))]
-                                 (assoc {}
-                                   (key dir-map)
-                                   (doto animation
-                                     (.setPlayMode Animation$PlayMode/LOOP))))) fv)))) {} raw-map)))
 
 ; TODO Generalize a way to get entities sharing multiple components
 (defn get-animated-entities
@@ -86,7 +57,6 @@
         region-map (:regions (eu/comp-data system entity Animated))
         pos (:pos spatial)
         region ^TextureRegion (.getKeyFrame ^Animation ((:direction spatial) ((:current state) region-map)) (:time state))]
-
     (doto ^SpriteBatch batch
       (.draw region
              ^float (- (:x pos) (/ (.getRegionWidth region) 2))

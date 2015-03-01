@@ -14,39 +14,30 @@
 (defrecord WorldMap [data])
 
 ; Nothing is stored in Player data at this point
-(defrecord Player [data])
+(defrecord Player [])
 
-(def spatial-keys #{:pos :size})
-(defrecord Spatial [data])
+(defrecord Spatial [pos size])
 
-(def animated-keys #{:regions})
-(defrecord Animated [data])
+(defrecord Animated [regions])
 
-(def state-keys #{:current :time})
-(defrecord State [data])
+(defrecord State [current time])
 
-(def attribute-keys attributes)
-(defrecord Attribute [data])
+(defrecord Attribute [attributes])
 
 ;A component for entities that can have stuff!
-(def inventory-keys #{:items})
-(defrecord Inventory [data])
+(defrecord Inventory [items])
 
 ;equipable is a map that world eq slots to items
 ;this component holds the total of all eq item stats for quick calculations
-(def equipable-keys #{:equipment :stat-total})
-(defrecord Equipable [data])
+(defrecord Equipable [equipment stat-total])
 
 ; EqItem is the actual component representing a piece of combat
-(def eqitem-keys (union eq-stats #{:slot}))
-(defrecord EqItem [data])
+(defrecord EqItem [slot damage hr dr ms pd saves])
 
 ; A weapon component has a hit box that checks for collisions, as well as a function that describes the motion of
 ; an attack
-(def eqweapon-keys #{:base-damage :hit-box :hit-list :type})
-(defrecord EqWeapon [data])
+(defrecord EqWeapon [base-damage hit-box hit-list type])
 
-(def mobai-keys #{:state :last-update :path})
-(defrecord MobAI [data])
+(defrecord MobAI [state last-update path])
 
 

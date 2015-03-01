@@ -26,16 +26,13 @@
 (defn comp-data
   "Get the data map of a given component."
   [system entity type]
-  (:data (be/get-component system entity type)))
+  (be/get-component system entity type))
 
-;; TODO This is inefficient. Using a defrecord to store a map is the worst of both worlds for performance
 (defn comp-update
   "Update the value of a component"
   [system entity type data-map]
-  (let [component (be/get-component system entity type)
-        new-data (merge (:data component) data-map)]
-    (be/update-component system entity type (fn [comp-data]
-                                              (assoc comp-data :data new-data)))))
+  (let [component (be/get-component system entity type)]
+    (be/update-component system entity type (fn [_] (merge component data-map)))))
 
 (defn get-attackers
   "Gets a sequence of entities who are currently attacking"
