@@ -34,6 +34,10 @@
   (let [component (be/get-component system entity type)]
     (be/update-component system entity type (fn [_] (merge component data-map)))))
 
+(defn destroy-entities-with-component
+  [system comp-type]
+  (reduce #(be/kill-entity %1 %2) system (be/get-all-entities-with-component system comp-type)))
+
 (defn get-attackers
   "Gets a sequence of entities who are currently attacking"
   [system]
