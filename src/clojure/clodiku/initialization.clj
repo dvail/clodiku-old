@@ -6,8 +6,7 @@
             [clodiku.entities.weapons :as ew]
             [clodiku.util.rendering :as rendering]
             [clodiku.combat.weaponry :as weaponry]
-            [clodiku.world.maps :as maps]
-            [clojure.tools.reader.edn :as edn]))
+            [clodiku.world.maps :as maps]))
 
 (defn init-map [sys map-name]
   (let [map-entity (be/create-entity)
@@ -49,13 +48,14 @@
 
 ; TODO Entity and asset initialization...
 (defn init-entities [system area-name]
-  (let [area-data (->> (str "assets/maps/" area-name "/data.edn")
-                       (slurp)
-                       (edn/read-string))
-        items (:free-items area-data)
-        mobs (:mobs area-data)]
-    (reduce (fn [sys mob]
-              (em/init-mob sys mob)) system mobs)))
+  (binding [*read-eval* true]
+    (let [area-data (->> (str "assets/maps/" area-name "/data.clj")
+                         (slurp)
+                         (read-string))
+          items (:free-items area-data)
+          mobs (:mobs area-data)]
+      (reduce (fn [sys mob]
+                (em/init-mob sys mob)) system mobs))))
 
 (defn init-main
   [system]

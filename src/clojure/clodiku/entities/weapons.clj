@@ -15,6 +15,6 @@
   "Get a sequence of components based on a weapon keyword"
   [weapon]
   (if (keyword? weapon)
-    ((eval (weapon weapon-templates)))
-    ((eval weapon))))
+    ((weapon weapon-templates))
+    ((weapon))))
 

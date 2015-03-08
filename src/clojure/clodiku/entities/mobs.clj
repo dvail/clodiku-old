@@ -28,11 +28,11 @@
                       :equipment  {:held :sword}}})
 
 ; TODO This might be a good place for a macro??
-; TODO Yuck!
 (defn merge-default-components
   "Evaluates the default template components and overridden components and merges them into a component set."
   [mob]
-  (merge ((eval (:components ((:template mob) templates)))) ((eval (:components mob)))))
+  (let [mob-type (:template mob)]
+    (merge ((->> templates mob-type :components)) (:components mob))))
 
 (defn make-mob
   [mob]
