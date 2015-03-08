@@ -8,12 +8,29 @@
 
 ; TODO Pull this dynamically? Will the map tile size ever change?
 (def tile-size 32)
+(def half-tile-size (/ tile-size 2))
 
 (defn get-current-map
   "Get the reference to the TiledMap that the player is currently on"
   [system]
   (let [worldmap (eu/first-entity-with-comp system WorldMap)]
     (:tilemap (eu/comp-data system worldmap WorldMap))))
+
+(defn map-height-in-tiles
+  [system]
+  (let [map-props (.getProperties ^TiledMap (get-current-map system))]
+    (.get ^MapProperties map-props "height" Integer)))
+
+(defn map-width-in-tiles
+  [system]
+  (let [map-props (.getProperties ^TiledMap (get-current-map system))]
+    (.get ^MapProperties map-props "width" Integer)))
+
+(defn tile-to-pixel
+  [system tile-x tile-y]
+  {:x (+ (* tile-x tile-size) half-tile-size)
+   :y (+ (* (- (map-height-in-tiles system) tile-y) tile-size) half-tile-size)})
+
 
 (defn get-current-map-grid
   "Get the 2d array representing walkable tiles on the map"
@@ -79,8 +96,8 @@
 
 (defn load-map
   ([]
-    (-> (TmxMapLoader.)
-        (.load "./assets/maps/sample/map.tmx")))
+   (-> (TmxMapLoader.)
+       (.load "./assets/maps/sample/map.tmx")))
   ([map-name]
-    (-> (TmxMapLoader.)
-        (.load (str "./assets/maps/" map-name "/map.tmx")))))
+   (-> (TmxMapLoader.)
+       (.load (str "./assets/maps/" map-name "/map.tmx")))))

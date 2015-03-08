@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" orientation="orthogonal" renderorder="right-down" width="32" height="32" tilewidth="32" tileheight="32" nextobjectid="34">
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="32" height="32" tilewidth="32" tileheight="32" nextobjectid="38">
  <tileset firstgid="1" name="forest_tileset_32x32" tilewidth="32" tileheight="32">
-     <image source="../../tilesets/forest_tileset_32x32.png" width="512" height="160"/>
+  <image source="../../tilesets/forest_tileset_32x32.png" width="512" height="160"/>
   <tile id="53">
    <properties>
     <property name="walkable" value="false"/>
@@ -30,12 +30,12 @@
  </layer>
  <layer name="base2" width="32" height="32">
   <data encoding="base64" compression="zlib">
-   eJztzsEJAAAIxDDn0v330i3kIIH+WwUAADn6mu8JgEALdXIAdg==
+   eJzt0MEJACAMBMHUpf33lfysQE1gBu5/bAQAAJ2t2v59opGXPaa2n/r7Bi3gSNDKAko=
   </data>
  </layer>
  <layer name="overlay" width="32" height="32">
   <data encoding="base64" compression="zlib">
-   eJztzjEOgCAUBFFa0QsIXgCk9v5HY3obuh+SecnUuylJkiRp1UGZTroC9m8qVOkJ2G/U6aURsC/p74s+oG1MBogBdQ==
+   eJzt0kkKgDAQRNFsHS7gcAGHtfc/mrXU0AEV00b4D/7GTUuREAAAANIqVatGtdF3D53q1aBGp5tHk5rVotZw3iM3a3vPPaxb8R6W1Ju568otS2lv5o0tniptC+Sxff0D+I0dgFYGYQ==
   </data>
  </layer>
  <objectgroup color="#ff07fe" name="collision">
@@ -62,8 +62,18 @@
   <object id="26" x="190" y="836" width="96" height="28"/>
   <object id="27" x="520" y="669" width="46.6667" height="22.6667"/>
   <object id="28" x="676" y="876" width="24" height="20"/>
+  <object id="34" x="396" y="609.333" width="41.3333" height="22.6667"/>
+  <object id="35" x="361.333" y="702.667" width="44" height="24"/>
+  <object id="36" x="809.333" y="733.333" width="45.3333" height="26.6667"/>
+  <object id="37" x="902.667" y="794.667" width="49.3333" height="32"/>
  </objectgroup>
  <objectgroup color="#08ebb2" name="transport">
-  <object id="32" x="1038.33" y="224.667" width="6.66667" height="68"/>
+  <object id="32" x="1038.33" y="224.667" width="6.66667" height="68">
+   <properties>
+    <property name="area-name" value="sample2"/>
+    <property name="tile-x" value="0"/>
+    <property name="tile-y" value="6"/>
+   </properties>
+  </object>
  </objectgroup>
 </map>

@@ -42,7 +42,7 @@
         (be/add-component player (comps/map->State {:current (comps/states :walking)
                                                  :time    0.0}))
         (be/add-component player (comps/map->Equipable {:equipment {:held weap}}))
-        (be/add-component player (comps/map->Spatial {:pos       {:x 100 :y 100}
+        (be/add-component player (comps/map->Spatial {:pos       {:x 800 :y 800}
                                                    :size      14
                                                    :direction (comps/directions :east)})))))
 

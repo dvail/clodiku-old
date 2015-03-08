@@ -20,7 +20,7 @@
 (declare ^BitmapFont attack-font)
 
 (def map-background-layers (int-array 2 [0, 1]))
-(def map-foreground-layers (int-array 1 [3]))
+(def map-foreground-layers (int-array 1 [2]))
 
 ; TODO Generalize a way to get entities sharing multiple components
 (defn get-animated-entities
@@ -48,6 +48,12 @@
       (OrthogonalTiledMapRenderer.
         ^TiledMap (maps/get-current-map @system) batch))
     (def shape-renderer (ShapeRenderer.))))
+
+(defn update-map
+  "Swap the map to be rendered"
+  [system map-name]
+  (.setMap map-renderer (maps/get-current-map system))
+  system)
 
 (defn dorender
   "Renders a single entity"
@@ -89,7 +95,6 @@
     (doseq [space spatials]
       (doto ^ShapeRenderer renderer
         (.circle (:x (:pos space)) (:y (:pos space)) (:size space))))))
-
 
 (defn render-attack-shapes!
   "Render the collision zones for entity attacks"

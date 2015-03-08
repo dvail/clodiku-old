@@ -1,5 +1,20 @@
-(ns clodiku.world.transporter)
+(ns clodiku.world.transporter
+  (:require [clodiku.initialization :as init]
+            [clodiku.systems.rendering :as sys-rendering]
+            [clodiku.entities.util :as eu]
+            [clodiku.world.maps :as maps])
+  (:import (com.badlogic.gdx.maps.objects RectangleMapObject)
+           (clodiku.components Player Spatial)))
 
 (defn swap-areas
-  [system transport-object]
-  system)
+  [system ^RectangleMapObject transport-object]
+  (let [transport-props (.getProperties transport-object)
+        new-area (.get transport-props "area-name")
+        tile-x (Integer/parseInt (.get transport-props "tile-x"))
+        tile-y (Integer/parseInt (.get transport-props "tile-y"))
+        player (eu/first-entity-with-comp system Player)]
+    (-> system
+        (init/init-map new-area)
+        (sys-rendering/update-map new-area)
+        (eu/comp-update player Spatial {:pos (maps/tile-to-pixel system tile-x tile-y)})
+        (init/init-entities new-area))))
