@@ -49,11 +49,11 @@
         (be/add-component player (comps/map->State {:current (comps/states :walking)
                                                     :time    0.0}))
         (be/add-component player (comps/map->Equipable {:equipment {:held weap}}))
+        (be/add-component player (comps/map->Inventory {:items '()}))
         (be/add-component player (comps/map->Spatial {:pos       {:x 800 :y 800}
                                                       :size      14
                                                       :direction (comps/directions :east)})))))
 
-; TODO Entity and asset initialization...
 (defn init-entities [system area-name]
   (binding [*read-eval* true]
     (let [area-data (->> (str "assets/maps/" area-name "/data.clj")
@@ -61,8 +61,7 @@
                          (read-string))
           items (:free-items area-data)
           mobs (:mobs area-data)]
-      (reduce (fn [sys mob]
-                (em/init-mob sys mob)) system mobs))))
+      (reduce #(em/init-mob %1 %2) system mobs))))
 
 (defn init-main
   [system]

@@ -3,7 +3,7 @@
 ;;;; it may be more feasible to switch out in the future e.g. for performance reasons.
 
 (ns clodiku.entities.util
-  (:import (clodiku.components Player Spatial State EqWeapon Equipable EqItem))
+  (:import (clodiku.components Player Spatial State EqWeapon Equipable EqItem Inventory Animated))
   (:require [brute.entity :as be]
             [clodiku.components :as comps]
             [clojure.set :refer [union]]))
@@ -34,7 +34,23 @@
   (let [component (be/get-component system entity type)]
     (be/update-component system entity type (fn [_] (merge component data-map)))))
 
+(defn destroy-non-player-entities
+  "Clear all entities that are not the player entity, or in the possession of the
+  player entitiy."
+  [system]
+  ; TODO Properly dispose of resources (e.g. Textures)
+  (let [player (first-entity-with-comp system Player)
+        safe-entities (into #{} (conj (vals (:equipment (comp-data system player Equipable)))
+                                      (:items (comp-data system player Inventory))
+                                      player))]
+    (reduce #(be/kill-entity %1 %2)
+            system
+            (remove safe-entities (be/get-all-entities system)))))
+
 (defn destroy-entities-with-component
+  "Removes all entities with the given component from the system"
+  ; TODO Recursively remove nested entities here
+  ; TODO Properly dispose of resources (e.g. Textures)
   [system comp-type]
   (reduce #(be/kill-entity %1 %2) system (be/get-all-entities-with-component system comp-type)))
 
