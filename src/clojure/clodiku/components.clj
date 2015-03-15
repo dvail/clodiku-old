@@ -22,7 +22,7 @@
 
 (defrecord State [current time])
 
-(defrecord Attribute [attributes])
+(defrecord Attribute [hp mp str dex vit psy])
 
 ;A component for entities that can have stuff!
 (defrecord Inventory [items])

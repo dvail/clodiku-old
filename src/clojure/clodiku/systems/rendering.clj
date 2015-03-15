@@ -1,6 +1,6 @@
 (ns clodiku.systems.rendering
   (:import (com.badlogic.gdx.graphics.g2d TextureRegion)
-           (clodiku.components Animated State Spatial)
+           (clodiku.components Animated State Spatial Attribute)
            (com.badlogic.gdx.math Circle)
            (com.badlogic.gdx.graphics GL20 OrthographicCamera)
            (com.badlogic.gdx Gdx Graphics)
@@ -75,6 +75,25 @@
     (doseq [entity entities]
       (dorender entity batch system))))
 
+(defn render-ui
+  "Renders some simple UI elements"
+  ; TODO replace this with real scene2d UI
+  ; TODO Cache camera size somewhere...
+  [batch system camera]
+  (let [player-attributes (eu/get-player-component system Attribute)
+        corner-x (- (.x (.position camera)) (/ (.viewportWidth ^OrthographicCamera camera) 2))
+        corner-y (- (.y (.position camera)) (/ (.viewportHeight ^OrthographicCamera camera) 2))]
+    (.setColor attack-font 0 0.8 0 1)
+    (.draw attack-font batch
+           (str (:hp player-attributes))
+           (+ corner-x 20)
+           (+ corner-y 20))
+    (.setColor attack-font 0 0 0.8 1)
+    (.draw attack-font batch
+           (str (:mp player-attributes))
+           (+ corner-x 70)
+           (+ corner-y 20))))
+
 (defn render-attack-verbs
   "Draw the *KICK POW BANG* verbs for attacks"
   ; TODO Probably will look better to do these as static images/animations rather than BitMap fonts
@@ -124,6 +143,7 @@
       (.setProjectionMatrix (.combined camera))
       (render-entities! system)
       (render-attack-verbs system)
+      (render-ui system camera)
       (.end))
     (doto shape-renderer
       (.setAutoShapeType true)

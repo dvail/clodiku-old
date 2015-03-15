@@ -12,6 +12,7 @@
                                     {:state     (clodiku.components/map->State {:current (clodiku.components/states :walking)
                                                                                 :time    0})
                                      :attribute (clodiku.components/map->Attribute {:hp  30
+                                                                                    :mp  5
                                                                                     :mv  50
                                                                                     :str 14
                                                                                     :dex 8

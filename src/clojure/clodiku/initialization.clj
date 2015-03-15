@@ -39,6 +39,7 @@
                                   :type        (weaponry/weapon-types :spear)}))
         (be/add-entity player)
         (be/add-component player (comps/map->Attribute {:hp  50
+                                                        :mp  20
                                                         :mv  50
                                                         :str 10
                                                         :dex 10
