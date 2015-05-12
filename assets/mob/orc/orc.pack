@@ -3,422 +3,450 @@ orc.png
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
+dead-west-0
+  rotate: false
+  xy: 1, 397
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+dead-north-0
+  rotate: false
+  xy: 1, 397
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+dead-east-0
+  rotate: false
+  xy: 1, 397
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+dead-south-0
+  rotate: false
+  xy: 1, 397
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
 melee-east-2
   rotate: false
-  xy: 0, 396
+  xy: 1, 331
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 melee-east-0
   rotate: false
-  xy: 0, 330
+  xy: 67, 397
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 walking-south-5
   rotate: false
-  xy: 66, 396
+  xy: 1, 265
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 melee-south-1
   rotate: false
-  xy: 0, 264
+  xy: 67, 331
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 melee-west-2
   rotate: false
-  xy: 66, 330
+  xy: 133, 397
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 melee-west-1
   rotate: false
-  xy: 132, 396
+  xy: 1, 199
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 melee-north-1
   rotate: false
-  xy: 0, 198
+  xy: 67, 265
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 walking-south-6
   rotate: false
-  xy: 66, 264
+  xy: 133, 331
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 melee-south-2
   rotate: false
-  xy: 132, 330
+  xy: 199, 397
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 standing-north-0
   rotate: false
-  xy: 198, 396
+  xy: 1, 133
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 standing-south-0
   rotate: false
-  xy: 0, 132
+  xy: 67, 199
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 melee-south-5
   rotate: false
-  xy: 66, 198
+  xy: 133, 265
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 walking-west-1
   rotate: false
-  xy: 132, 264
+  xy: 199, 331
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 walking-south-1
   rotate: false
-  xy: 198, 330
+  xy: 265, 397
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 walking-north-6
   rotate: false
-  xy: 264, 396
+  xy: 1, 67
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 melee-west-3
   rotate: false
-  xy: 0, 66
+  xy: 67, 133
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 walking-west-6
   rotate: false
-  xy: 66, 132
+  xy: 133, 199
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 walking-north-3
   rotate: false
-  xy: 132, 198
+  xy: 199, 265
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 walking-west-3
   rotate: false
-  xy: 198, 264
+  xy: 265, 331
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 melee-west-4
   rotate: false
-  xy: 264, 330
+  xy: 331, 397
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 melee-south-3
   rotate: false
-  xy: 330, 396
+  xy: 1, 1
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 melee-east-1
   rotate: false
-  xy: 0, 0
+  xy: 67, 67
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 walking-north-2
   rotate: false
-  xy: 66, 66
+  xy: 133, 133
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 walking-south-4
   rotate: false
-  xy: 132, 132
+  xy: 199, 199
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 melee-north-5
   rotate: false
-  xy: 198, 198
+  xy: 265, 265
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 walking-west-0
   rotate: false
-  xy: 264, 264
+  xy: 331, 331
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 walking-south-7
   rotate: false
-  xy: 330, 330
+  xy: 397, 397
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 walking-north-1
   rotate: false
-  xy: 396, 396
+  xy: 67, 1
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 walking-west-7
   rotate: false
-  xy: 66, 0
+  xy: 133, 67
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 walking-north-0
   rotate: false
-  xy: 132, 66
+  xy: 199, 133
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 walking-south-0
   rotate: false
-  xy: 198, 132
+  xy: 265, 199
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 walking-west-5
   rotate: false
-  xy: 264, 198
+  xy: 331, 265
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 walking-west-2
   rotate: false
-  xy: 330, 264
+  xy: 397, 331
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 melee-north-2
   rotate: false
-  xy: 396, 330
+  xy: 463, 397
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 walking-north-7
   rotate: false
-  xy: 462, 396
+  xy: 133, 1
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 walking-south-2
   rotate: false
-  xy: 132, 0
+  xy: 199, 67
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 melee-south-4
   rotate: false
-  xy: 198, 66
+  xy: 265, 133
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 walking-north-4
   rotate: false
-  xy: 264, 132
+  xy: 331, 199
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 melee-west-5
   rotate: false
-  xy: 330, 198
+  xy: 397, 265
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 melee-east-4
   rotate: false
-  xy: 396, 264
+  xy: 463, 331
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 melee-north-0
   rotate: false
-  xy: 462, 330
+  xy: 529, 397
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 melee-west-0
   rotate: false
-  xy: 528, 396
+  xy: 199, 1
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 melee-east-3
   rotate: false
-  xy: 198, 0
+  xy: 265, 67
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 melee-south-0
   rotate: false
-  xy: 264, 66
+  xy: 331, 133
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 melee-north-4
   rotate: false
-  xy: 330, 132
+  xy: 397, 199
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 walking-west-4
   rotate: false
-  xy: 396, 198
+  xy: 463, 265
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 standing-west-0
   rotate: false
-  xy: 462, 264
+  xy: 529, 331
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 melee-east-5
   rotate: false
-  xy: 528, 330
+  xy: 595, 397
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 melee-north-3
   rotate: false
-  xy: 594, 396
+  xy: 265, 1
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 walking-north-5
   rotate: false
-  xy: 264, 0
+  xy: 331, 67
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 walking-south-3
   rotate: false
-  xy: 330, 66
+  xy: 397, 133
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 walking-east-1
   rotate: false
-  xy: 396, 133
+  xy: 463, 200
   size: 64, 63
   orig: 64, 63
   offset: 0, 0
   index: -1
 walking-east-7
   rotate: false
-  xy: 462, 199
+  xy: 529, 266
   size: 64, 63
   orig: 64, 63
   offset: 0, 0
   index: -1
 walking-east-2
   rotate: false
-  xy: 528, 265
+  xy: 595, 332
   size: 64, 63
   orig: 64, 63
   offset: 0, 0
   index: -1
 walking-east-3
   rotate: false
-  xy: 594, 331
+  xy: 661, 398
   size: 64, 63
   orig: 64, 63
   offset: 0, 0
   index: -1
 standing-east-0
   rotate: false
-  xy: 660, 397
+  xy: 331, 2
   size: 64, 63
   orig: 64, 63
   offset: 0, 0
   index: -1
 walking-east-5
   rotate: false
-  xy: 330, 1
+  xy: 397, 68
   size: 64, 63
   orig: 64, 63
   offset: 0, 0
   index: -1
 walking-east-0
   rotate: false
-  xy: 396, 68
+  xy: 463, 135
   size: 64, 63
   orig: 64, 63
   offset: 0, 0
   index: -1
 walking-east-6
   rotate: false
-  xy: 462, 134
+  xy: 529, 201
   size: 64, 63
   orig: 64, 63
   offset: 0, 0
   index: -1
 walking-east-4
   rotate: false
-  xy: 528, 200
+  xy: 595, 267
   size: 64, 63
   orig: 64, 63
   offset: 0, 0

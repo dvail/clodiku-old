@@ -1,6 +1,6 @@
 (ns clodiku.systems.rendering
-  (:import (com.badlogic.gdx.graphics.g2d TextureAtlas Animation$PlayMode TextureRegion TextureAtlas$AtlasRegion)
-           (clodiku.components Animated State Spatial)
+  (:import (com.badlogic.gdx.graphics.g2d TextureRegion)
+           (clodiku.components Animated State Spatial Attribute)
            (com.badlogic.gdx.math Circle)
            (com.badlogic.gdx.graphics GL20 OrthographicCamera)
            (com.badlogic.gdx Gdx Graphics)
@@ -9,10 +9,9 @@
            (com.badlogic.gdx.maps.tiled TiledMap)
            (com.badlogic.gdx.math Vector3)
            (com.badlogic.gdx.graphics.glutils ShapeRenderer))
-  (:require [clodiku.maps.map-core :as maps]
-            [brute.entity :as be]
+  (:require [clodiku.world.maps :as maps]
             [clojure.set :as cset]
-            [clodiku.util.entities :as eu]))
+            [clodiku.entities.util :as eu]))
 
 (declare ^OrthographicCamera camera)
 (declare ^SpriteBatch batch)
@@ -20,47 +19,22 @@
 (declare ^ShapeRenderer shape-renderer)
 (declare ^BitmapFont attack-font)
 
-; TODO This might need a more elegant/efficient/readable way of packing up entities...
-(defn split-texture-pack
-  "Returns a nested map where each top level key is the entities state. These keys map to
-  a second level map with the keys representing a cardinal direction and the values are a looping
-  animation of that state/direction combination."
-  [atlas-location]
-  (let [atlas (TextureAtlas. ^String atlas-location)
-        regions (sort #(compare (.name ^TextureAtlas$AtlasRegion %1) (.name ^TextureAtlas$AtlasRegion %2)) (seq (.getRegions atlas)))
-        action-map (map (fn [reg]
-                          (let [splits (clojure.string/split (.name ^TextureAtlas$AtlasRegion reg) #"-")
-                                action (keyword (first splits))
-                                direction (keyword (second splits))]
-                            {action {direction [reg]}})) regions)
-        raw-map (apply merge-with (fn [first-val sec-val]
-                                    (merge-with #(conj %1 (first %2)) first-val sec-val)) action-map)]
-    (reduce-kv
-      (fn [init fk fv]
-        (assoc init fk
-                    (apply merge
-                           (map
-                             (fn [dir-map]
-                               (let [anim-speed (if (= fk :melee) 1/24 1/12)
-                                     animation (Animation. (float anim-speed) (into-array (val dir-map)))]
-                                 (assoc {}
-                                   (key dir-map)
-                                   (doto animation
-                                     (.setPlayMode Animation$PlayMode/LOOP))))) fv)))) {} raw-map)))
+(def map-background-layers (int-array 2 [0, 1]))
+(def map-foreground-layers (int-array 1 [2]))
 
 ; TODO Generalize a way to get entities sharing multiple components
 (defn get-animated-entities
   "Get all entities with both an Animated and a Spatial component"
   [system]
-  (let [animated (be/get-all-entities-with-component system Animated)
-        spatial (be/get-all-entities-with-component system Spatial)]
+  (let [animated (eu/get-entities-with-components system Animated)
+        spatial (eu/get-entities-with-components system Spatial)]
     (cset/intersection (set animated) (set spatial))))
 
 (defn sort-entities-by-render-order
   "Sorts a collection of entities by 'y' value, so that entities closer
   to the bottom of the screen are drawn first"
   [system entities]
-  (reverse (sort-by #(.y ^Circle (:pos (be/get-component system % Spatial))) entities)))
+  (reverse (sort-by #(:y (:pos (eu/comp-data system % Spatial))) entities)))
 
 (defn init-resources!
   [system]
@@ -75,18 +49,24 @@
         ^TiledMap (maps/get-current-map @system) batch))
     (def shape-renderer (ShapeRenderer.))))
 
+(defn update-map
+  "Swap the map to be rendered"
+  [system map-name]
+  (.setMap map-renderer (maps/get-current-map system))
+  system)
+
 (defn dorender
   "Renders a single entity"
   [entity batch system]
-  (let [pos (be/get-component system entity Spatial)
-        state (be/get-component system entity State)
-        region-map (:regions (be/get-component system entity Animated))
-        circle ^Circle (:pos pos)
-        region ^TextureRegion (.getKeyFrame ^Animation ((:direction pos) ((:current state) region-map)) (:time state))]
+  (let [spatial (eu/comp-data system entity Spatial)
+        state (eu/comp-data system entity State)
+        region-map (:regions (eu/comp-data system entity Animated))
+        pos (:pos spatial)
+        region ^TextureRegion (.getKeyFrame ^Animation ((:direction spatial) ((:current state) region-map)) (:time state))]
     (doto ^SpriteBatch batch
       (.draw region
-             (- (.x circle) (/ (.getRegionWidth region) 2))
-             (- (.y circle) (.radius circle) -2)))))
+             ^float (- (:x pos) (/ (.getRegionWidth region) 2))
+             ^float (- (:y pos) (:size spatial) -2)))))
 
 (defn render-entities!
   "Render the player, mobs, npcs and items"
@@ -95,6 +75,25 @@
     (doseq [entity entities]
       (dorender entity batch system))))
 
+(defn render-ui
+  "Renders some simple UI elements"
+  ; TODO replace this with real scene2d UI
+  ; TODO Cache camera size somewhere...
+  [batch system camera]
+  (let [player-attributes (eu/get-player-component system Attribute)
+        corner-x (- (.x (.position camera)) (/ (.viewportWidth ^OrthographicCamera camera) 2))
+        corner-y (- (.y (.position camera)) (/ (.viewportHeight ^OrthographicCamera camera) 2))]
+    (.setColor attack-font 0 0.8 0 1)
+    (.draw attack-font batch
+           (str (:hp player-attributes))
+           (+ corner-x 20)
+           (+ corner-y 20))
+    (.setColor attack-font 0 0 0.8 1)
+    (.draw attack-font batch
+           (str (:mp player-attributes))
+           (+ corner-x 70)
+           (+ corner-y 20))))
+
 (defn render-attack-verbs
   "Draw the *KICK POW BANG* verbs for attacks"
   ; TODO Probably will look better to do these as static images/animations rather than BitMap fonts
@@ -102,20 +101,19 @@
   (let [attacks (:combat (:world_events system))]
     (doseq [attack attacks]
       (let [delta (:delta attack)
-            draw-x (.x (:location attack))
-            draw-y (.y (:location attack))]
+            draw-x (:x (:location attack))
+            draw-y (:y (:location attack))]
         (.setColor attack-font 0.2 0.2 1 (- 1 (/ delta 2)))
         (.draw attack-font batch "poke" draw-x (+ 25 draw-y (* 100 delta)))))))
 
 (defn render-entity-shapes!
   "Render the actual spatial component of the entities"
   [renderer system]
-  (let [entities (be/get-all-entities-with-component system Spatial)
-        circles (map (fn [ent] (:pos (be/get-component system ent Spatial))) entities)]
-    (doseq [circle circles]
+  (let [entities (eu/get-entities-with-components system Spatial)
+        spatials (map (fn [ent] (eu/comp-data system ent Spatial)) entities)]
+    (doseq [space spatials]
       (doto ^ShapeRenderer renderer
-        (.circle (.x ^Circle circle) (.y ^Circle circle) (.radius ^Circle circle))))))
-
+        (.circle (:x (:pos space)) (:y (:pos space)) (:size space))))))
 
 (defn render-attack-shapes!
   "Render the collision zones for entity attacks"
@@ -139,12 +137,13 @@
       (.set ^Vector3 (maps/get-map-bounds system camera)))
     (doto map-renderer
       (.setView camera)
-      (.render))
+      (.render map-background-layers))
     (doto batch
       (.begin)
       (.setProjectionMatrix (.combined camera))
       (render-entities! system)
       (render-attack-verbs system)
+      (render-ui system camera)
       (.end))
     (doto shape-renderer
       (.setAutoShapeType true)
@@ -154,4 +153,7 @@
       (render-entity-shapes! system)
       (.setColor 1 0.5 0.5 1)
       (render-attack-shapes! system)
-      (.end)) system))
+      (.end))
+    (doto map-renderer
+      (.setView camera)
+      (.render map-foreground-layers)) system))

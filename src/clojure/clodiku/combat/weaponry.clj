@@ -1,4 +1,4 @@
-(ns clodiku.equipment.weaponry
+(ns clodiku.combat.weaponry
   (:import (com.badlogic.gdx.math Circle Vector2)))
 
 (def weapon-types #{:spear :sword :club})
@@ -11,26 +11,28 @@
                     :sword 28
                     :club  25})
 
-(def attack-start-pos {:spear (fn [pos facing]
-                                (let [start-range (/ (.radius pos) 2)
+(def attack-start-pos {:spear (fn [spatial facing]
+                                (let [start-range (/ (:size spatial) 2)
+                                      entity-pos (:pos spatial)
                                       radius (:spear weapon-sizes)]
                                   (cond
-                                    (= facing :north) (Circle. (.x pos) (+ (.y pos) start-range radius) radius)
-                                    (= facing :south) (Circle. (.x pos) (- (.y pos) start-range radius) radius)
-                                    (= facing :east) (Circle. (+ (.x pos) start-range radius) (.y pos) radius)
-                                    (= facing :west) (Circle. (- (.x pos) start-range radius) (.y pos) radius))))
-                       :sword (fn [pos facing]
-                                (let [start-range (+ (:sword weapon-ranges) (/ (.radius pos) 2))
+                                    (= facing :north) (Circle. (:x entity-pos) (+ (:y entity-pos) start-range radius) radius)
+                                    (= facing :south) (Circle. (:x entity-pos) (- (:y entity-pos) start-range radius) radius)
+                                    (= facing :east) (Circle. (+ (:x entity-pos) start-range radius) (:y entity-pos) radius)
+                                    (= facing :west) (Circle. (- (:x entity-pos) start-range radius) (:y entity-pos) radius))))
+                       :sword (fn [spatial facing]
+                                (let [start-range (+ (:sword weapon-ranges) (/ (:size spatial) 2))
+                                      entity-pos (:pos spatial)
                                       radius (:sword weapon-sizes)]
                                   (cond
-                                    (= facing :north) (Circle. (+ (.x pos) start-range radius) (.y pos) radius)
-                                    (= facing :south) (Circle. (- (.x pos) start-range radius) (.y pos) radius)
-                                    (= facing :east) (Circle. (.x pos) (- (.y pos) start-range radius) radius)
-                                    (= facing :west) (Circle. (.x pos) (+ (.y pos) start-range radius) radius))))})
+                                    (= facing :north) (Circle. (+ (:x entity-pos) start-range radius) (:y entity-pos) radius)
+                                    (= facing :south) (Circle. (- (:x entity-pos) start-range radius) (:y entity-pos) radius)
+                                    (= facing :east) (Circle. (:x entity-pos) (- (:y entity-pos) start-range radius) radius)
+                                    (= facing :west) (Circle. (:x entity-pos) (+ (:y entity-pos) start-range radius) radius))))})
 
 ; Hit-box update functions for weapon types
 ; TODO Would be cool to memoize these, but need a way to limit the cache
-(def attack-fns {:spear (fn [hit-box entity-space]
+(def attack-fns {:spear (fn [^Circle hit-box entity-space]
                           (let [rate 2
                                 facing (:direction entity-space)
                                 new-hit-vector (cond
@@ -39,12 +41,12 @@
                                                  (= facing :east) (Vector2. (+ (.x hit-box) rate) (.y hit-box))
                                                  (= facing :west) (Vector2. (- (.x hit-box) rate) (.y hit-box)))]
                             (Circle. (.x new-hit-vector) (.y new-hit-vector) (.radius hit-box))))
-                 :sword (fn [hit-box entity-space]
+                 :sword (fn [^Circle hit-box entity-space]
                           (let [rate 8                      ; rate affects the speed of swing and the distance of arc
                                 entity-origin (:pos entity-space)
                                 angle (Math/atan2
-                                        (- (.x entity-origin) (.x hit-box))
-                                        (- (.y entity-origin) (.y hit-box)))
+                                        (- (:x entity-origin) (.x hit-box))
+                                        (- (:y entity-origin) (.y hit-box)))
                                 new-x (* rate (Math/cos angle))
                                 new-y (* rate (Math/sin angle))
                                 new-hit-vector (Vector2. new-x new-y)]
@@ -58,4 +60,4 @@
 (defn get-attack-start-pos
   "Gets the starting attack position for a given weapon type."
   [weapon-type entity-space]
-  ((weapon-type attack-start-pos) (:pos entity-space) (:direction entity-space)))
+  ((weapon-type attack-start-pos) entity-space (:direction entity-space)))
