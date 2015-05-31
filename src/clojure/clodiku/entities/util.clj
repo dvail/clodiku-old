@@ -57,10 +57,9 @@
 (defn get-attackers
   "Gets a sequence of entities who are currently attacking"
   [system]
-  (let [entities (be/get-all-entities-with-component system State)]
-    (filter (fn [ent]
-              (= (comps/states :melee)
-                 (:current (comp-data system ent State)))) entities)))
+  (filter (fn [ent]
+            (= (comps/states :melee) (:current (comp-data system ent State))))
+          (be/get-all-entities-with-component system State)))
 
 (defn get-entity-weapon
   "Gets the combat piece in the given slot from the entity that owns it"

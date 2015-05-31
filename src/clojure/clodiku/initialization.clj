@@ -51,7 +51,7 @@
                                                     :time    0.0}))
         (be/add-component player (comps/map->Equipable {:equipment {:held weap}}))
         (be/add-component player (comps/map->Inventory {:items '()}))
-        (be/add-component player (comps/map->Spatial {:pos       {:x 800 :y 800}
+        (be/add-component player (comps/map->Spatial {:pos       {:x 60 :y 60}
                                                       :size      14
                                                       :direction (comps/directions :east)})))))
 
