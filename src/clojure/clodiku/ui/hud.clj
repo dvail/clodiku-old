@@ -27,5 +27,5 @@
 (defn update!
   [scene system delta]
   (let [player-attr (eu/get-player-component system Attribute)]
-    (.setText (:hp-value scene) (str (:hp player-attr)))
-    (.setText (:mp-value scene) (str (:mp player-attr)))))
+    (.setText ^Label (:hp-value scene) (str (:hp player-attr)))
+    (.setText ^Label (:mp-value scene) (str (:mp player-attr)))))

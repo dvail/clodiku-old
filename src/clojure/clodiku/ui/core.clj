@@ -1,7 +1,7 @@
 (ns clodiku.ui.core
   (:require [clodiku.ui.hud :as hud]
             [clodiku.ui.menu :as menu])
-  (:import (com.badlogic.gdx Gdx)
+  (:import (com.badlogic.gdx Gdx Input Files)
            (com.badlogic.gdx.scenes.scene2d.ui Skin Table Label)
            (com.badlogic.gdx.scenes.scene2d Stage)
            (com.badlogic.gdx.graphics Color)))
@@ -12,18 +12,21 @@
 
 (declare scene)
 
+(defn stage
+  "Creates a scene2d stage. Override all input processor methods in here."
+  []
+  (proxy [Stage] []))
+
 (defn init-ui!
   "Setup the user interface components"
   []
-  (let [skin (Skin. (.internal Gdx/files ui-json))]
+  (let [skin (Skin. (.internal ^Files Gdx/files ui-json))]
     (def scene {:overlay  (Table.)
                 :menus    (Table.)
                 :hp-value (Label. "0" skin font-name (Color. 0.0 1.0 0.0 1.0))
                 :mp-value (Label. "0" skin font-name (Color. 0.0 0.0 1.0 1.0))
-                :stage    (proxy [Stage] []
-                            (keyDown [keycode]
-                              (menu/process-keypress keycode)))})
-    (.setInputProcessor Gdx/input (:stage scene))
+                :stage    (stage)})
+    (.setInputProcessor ^Input Gdx/input (:stage scene))
     (hud/setup! scene skin)
     (menu/setup! scene skin)))
 
