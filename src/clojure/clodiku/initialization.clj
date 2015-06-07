@@ -4,11 +4,15 @@
   (:require [clodiku.components :as comps]
             [brute.entity :as be]
             [clodiku.entities.mobs :as em]
-            [clodiku.entities.weapons :as ew]
             [clodiku.util.rendering :as rendering]
             [clodiku.combat.weaponry :as weaponry]
             [clodiku.world.maps :as maps]
             [clodiku.entities.util :as eu]))
+
+
+(def ^:const map-asset-dir "./assets/maps/")
+(def ^:const map-data-file "/data.clj")
+(def ^:const player-atlas "./assets/player/player.pack")
 
 (defn init-map [sys map-name]
   (let [tmx-map (maps/load-map map-name)
@@ -27,7 +31,7 @@
 (defn init-player [sys]
   (let [player (be/create-entity)
         weap (be/create-entity)
-        regions (rendering/split-texture-pack "./assets/player/player.pack")]
+        regions (rendering/split-texture-pack player-atlas)]
     (-> sys
         (be/add-entity weap)
         (be/add-component weap (comps/map->EqItem {:hr   1
@@ -57,7 +61,7 @@
 
 (defn init-entities [system area-name]
   (binding [*read-eval* true]
-    (let [area-data (->> (str "assets/maps/" area-name "/data.clj")
+    (let [area-data (->> (str map-asset-dir area-name map-data-file)
                          (slurp)
                          (read-string))
           items (:free-items area-data)
