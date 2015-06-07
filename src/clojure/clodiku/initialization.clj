@@ -31,6 +31,7 @@
 (defn init-player [sys]
   (let [player (be/create-entity)
         weap (be/create-entity)
+        armor (be/create-entity)
         regions (rendering/split-texture-pack player-atlas)]
     (-> sys
         (be/add-entity weap)
@@ -41,6 +42,10 @@
                                   :hit-box     (Circle. (float 0) (float 0) (float (:spear weaponry/weapon-sizes)))
                                   :hit-list    '()
                                   :type        (weaponry/weapon-types :spear)}))
+        (be/add-entity armor)
+        (be/add-component armor (comps/map->EqItem {:ed   3
+                                                    :slot (comps/eq-slots :body)}))
+        (be/add-component armor (comps/map->EqArmor {:bulk 2}))
         (be/add-entity player)
         (be/add-component player (comps/map->Attribute {:hp  50
                                                         :mp  20
@@ -50,11 +55,11 @@
                                                         :vit 10
                                                         :psy 10}))
         (be/add-component player (comps/map->Player {}))
-        (be/add-component player (comps/map->Animated {:regions regions}))
+        (be/add-component player (comps/map->AnimatedRenderable {:regions regions}))
         (be/add-component player (comps/map->State {:current (comps/states :walking)
                                                     :time    0.0}))
         (be/add-component player (comps/map->Equipable {:equipment {:held weap}}))
-        (be/add-component player (comps/map->Inventory {:items '()}))
+        (be/add-component player (comps/map->Inventory {:items '(armor)}))
         (be/add-component player (comps/map->Spatial {:pos       {:x 60 :y 60}
                                                       :size      14
                                                       :direction (comps/directions :east)})))))

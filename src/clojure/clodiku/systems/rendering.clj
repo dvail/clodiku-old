@@ -1,6 +1,6 @@
 (ns clodiku.systems.rendering
   (:import (com.badlogic.gdx.graphics.g2d TextureRegion)
-           (clodiku.components Animated State Spatial Attribute)
+           (clodiku.components AnimatedRenderable State Spatial Attribute)
            (com.badlogic.gdx.math Circle)
            (com.badlogic.gdx.graphics GL20 OrthographicCamera)
            (com.badlogic.gdx Gdx Graphics)
@@ -26,7 +26,7 @@
 (defn get-animated-entities
   "Get all entities with both an Animated and a Spatial component"
   [system]
-  (let [animated (eu/get-entities-with-components system Animated)
+  (let [animated (eu/get-entities-with-components system AnimatedRenderable)
         spatial (eu/get-entities-with-components system Spatial)]
     (cset/intersection (set animated) (set spatial))))
 
@@ -60,7 +60,7 @@
   [entity batch system]
   (let [spatial (eu/comp-data system entity Spatial)
         state (eu/comp-data system entity State)
-        region-map (:regions (eu/comp-data system entity Animated))
+        region-map (:regions (eu/comp-data system entity AnimatedRenderable))
         pos (:pos spatial)
         region ^TextureRegion (.getKeyFrame ^Animation ((:direction spatial) ((:current state) region-map)) (:time state))]
     (doto ^SpriteBatch batch

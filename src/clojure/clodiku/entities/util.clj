@@ -3,7 +3,7 @@
 ;;;; it may be more feasible to switch out in the future e.g. for performance reasons.
 
 (ns clodiku.entities.util
-  (:import (clodiku.components Player Spatial State EqWeapon Equipable EqItem Inventory Animated))
+  (:import (clodiku.components Player Spatial State EqWeapon Equipable EqItem Inventory AnimatedRenderable))
   (:require [brute.entity :as be]
             [clodiku.components :as comps]
             [clojure.set :refer [union]]))
