@@ -1,6 +1,6 @@
 (ns clodiku.systems.rendering
   (:import (com.badlogic.gdx.graphics.g2d TextureRegion)
-           (clodiku.components Animated State Spatial Attribute)
+           (clodiku.components AnimatedRenderable State Spatial Attribute)
            (com.badlogic.gdx.math Circle)
            (com.badlogic.gdx.graphics GL20 OrthographicCamera)
            (com.badlogic.gdx Gdx Graphics)
@@ -26,7 +26,7 @@
 (defn get-animated-entities
   "Get all entities with both an Animated and a Spatial component"
   [system]
-  (let [animated (eu/get-entities-with-components system Animated)
+  (let [animated (eu/get-entities-with-components system AnimatedRenderable)
         spatial (eu/get-entities-with-components system Spatial)]
     (cset/intersection (set animated) (set spatial))))
 
@@ -60,7 +60,7 @@
   [entity batch system]
   (let [spatial (eu/comp-data system entity Spatial)
         state (eu/comp-data system entity State)
-        region-map (:regions (eu/comp-data system entity Animated))
+        region-map (:regions (eu/comp-data system entity AnimatedRenderable))
         pos (:pos spatial)
         region ^TextureRegion (.getKeyFrame ^Animation ((:direction spatial) ((:current state) region-map)) (:time state))]
     (doto ^SpriteBatch batch
@@ -74,25 +74,6 @@
   (let [entities (sort-entities-by-render-order system (get-animated-entities system))]
     (doseq [entity entities]
       (dorender entity batch system))))
-
-(defn render-ui
-  "Renders some simple UI elements"
-  ; TODO replace this with real scene2d UI
-  ; TODO Cache camera size somewhere...
-  [batch system camera]
-  (let [player-attributes (eu/get-player-component system Attribute)
-        corner-x (- (.x (.position camera)) (/ (.viewportWidth ^OrthographicCamera camera) 2))
-        corner-y (- (.y (.position camera)) (/ (.viewportHeight ^OrthographicCamera camera) 2))]
-    (.setColor attack-font 0 0.8 0 1)
-    (.draw attack-font batch
-           (str (:hp player-attributes))
-           (+ corner-x 20)
-           (+ corner-y 20))
-    (.setColor attack-font 0 0 0.8 1)
-    (.draw attack-font batch
-           (str (:mp player-attributes))
-           (+ corner-x 70)
-           (+ corner-y 20))))
 
 (defn render-attack-verbs
   "Draw the *KICK POW BANG* verbs for attacks"
@@ -143,7 +124,6 @@
       (.setProjectionMatrix (.combined camera))
       (render-entities! system)
       (render-attack-verbs system)
-      (render-ui system camera)
       (.end))
     (doto shape-renderer
       (.setAutoShapeType true)

@@ -7,7 +7,7 @@ import java.util.*;
  */
 public class AStar {
 
-    public static int manhattenDistance(Node a, Node b) {
+    public static int manhattanDistance(Node a, Node b) {
 
         return Math.abs(a.x - b.x) + Math.abs(a.y - b.y);
 
@@ -125,7 +125,7 @@ public class AStar {
 
         public Node (int x, int y, int cost, Node parent, Node goal) {
             this(x,y);
-            this.cost = cost + parent.cost + manhattenDistance(this, goal);
+            this.cost = cost + parent.cost + manhattanDistance(this, goal);
             this.parent = parent;
         }
 

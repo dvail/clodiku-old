@@ -22,7 +22,7 @@
                                                                                   :size      14
                                                                                   :direction (clodiku.components/directions :west)})
                                      :equipable (clodiku.components/map->Equipable {:equipment {}})
-                                     :animated  (clodiku.components/map->Animated {:regions (clodiku.util.rendering/split-texture-pack "./assets/mob/orc/orc.pack")})
+                                     :animated  (clodiku.components/map->AnimatedRenderable {:regions (clodiku.util.rendering/split-texture-pack "./assets/mob/orc/orc.pack")})
                                      :mobai     (clodiku.components/map->MobAI {:last-update 0
                                                                                 :state       (clodiku.components/mob-ai-states :wander)})})
                       :inventory  '()

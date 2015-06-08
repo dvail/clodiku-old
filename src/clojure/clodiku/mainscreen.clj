@@ -3,6 +3,7 @@
             [clodiku.systems.mob-ai :as sys-mob-ai]
             [clodiku.systems.combat :as sys-combat]
             [clodiku.systems.rendering :as sys-rendering]
+            [clodiku.ui.core :as ui]
             [clodiku.initialization :as init]
             [brute.entity :as be]
             [brute.system :as bs])
@@ -12,18 +13,21 @@
   (atom (-> (be/create-system)
             (bs/add-system-fn sys-input/update)
             (bs/add-system-fn sys-mob-ai/update)
-            (bs/add-system-fn sys-combat/update)
-            (bs/add-system-fn sys-rendering/render!))))
+            (bs/add-system-fn sys-combat/update))))
 
 (defn screen []
   (proxy [Screen] []
     (show []
       (reset! system (init/init-main @system))
       (reset! system (assoc @system :world_events {:combat '()}))
-      (sys-rendering/init-resources! system))
+      (sys-rendering/init-resources! system)
+      (ui/init-ui!))
     (render [delta]
-      (reset! system (bs/process-one-game-tick @system delta)))
-    (dispose [])
+      (reset! system (bs/process-one-game-tick @system delta))
+      (sys-rendering/render! @system delta)
+      (ui/update-ui! @system delta))
+    (dispose []
+      (ui/dispose!))
     (hide [])
     (pause [])
     (resize [w h])

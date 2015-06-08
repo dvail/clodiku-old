@@ -87,6 +87,12 @@
         filtered-events (filter #(> 1 (:delta %)) updated-events)]
     (assoc-in system [:world_events :combat] filtered-events)))
 
+(defn apply-regen
+  ; TODO Implement
+  "Applies interval based regneration of hp, mp, etc. to entities"
+  [system]
+  system)
+
 (defn update
   "Apply combat events and collisions"
   [system delta]
@@ -98,5 +104,6 @@
                                 :equipment
                                 :held)]
           (-> sys
+              (apply-regen)
               (update-entity-attacks attacker weapon-entity)
               (check-attack-collisions attacker weapon-entity)))) updated-system (eu/get-attackers updated-system))))

@@ -18,4 +18,5 @@
   :aot [clodiku.components clodiku.game clodiku.core ]
   :global-vars {*warn-on-reflection* true}
   :target-path "target/%s"
-  :profiles {:uberjar {:aot :all}})
+ ; :profiles {:uberjar {:aot :all}}
+  )

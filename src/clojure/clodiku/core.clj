@@ -6,5 +6,5 @@
 
 (defn -main
   []
-  (LwjglApplication. (game. ) "Clodiku" 500 400)
+  (LwjglApplication. (game.) "Clodiku" 500 400)
   (Keyboard/enableRepeatEvents true))

@@ -18,7 +18,7 @@
 
 (defrecord Spatial [pos size])
 
-(defrecord Animated [regions])
+(defrecord AnimatedRenderable [regions])
 
 (defrecord State [current time])
 
@@ -31,12 +31,15 @@
 ;this component holds the total of all eq item stats for quick calculations
 (defrecord Equipable [equipment stat-total])
 
-; EqItem is the actual component representing a piece of combat
+; EqItem is the actual component representing a combat item
 (defrecord EqItem [slot damage hr dr ms pd saves])
 
 ; A weapon component has a hit box that checks for collisions, as well as a function that describes the motion of
 ; an attack
 (defrecord EqWeapon [base-damage hit-box hit-list type])
+
+; TODO Need to better define properties of armor, and all eq for that matter
+(defrecord EqArmor [bulk])
 
 (defrecord MobAI [state last-update path])
 

@@ -4,11 +4,15 @@
   (:require [clodiku.components :as comps]
             [brute.entity :as be]
             [clodiku.entities.mobs :as em]
-            [clodiku.entities.weapons :as ew]
             [clodiku.util.rendering :as rendering]
             [clodiku.combat.weaponry :as weaponry]
             [clodiku.world.maps :as maps]
             [clodiku.entities.util :as eu]))
+
+
+(def ^:const map-asset-dir "./assets/maps/")
+(def ^:const map-data-file "/data.clj")
+(def ^:const player-atlas "./assets/player/player.pack")
 
 (defn init-map [sys map-name]
   (let [tmx-map (maps/load-map map-name)
@@ -27,7 +31,8 @@
 (defn init-player [sys]
   (let [player (be/create-entity)
         weap (be/create-entity)
-        regions (rendering/split-texture-pack "./assets/player/player.pack")]
+        armor (be/create-entity)
+        regions (rendering/split-texture-pack player-atlas)]
     (-> sys
         (be/add-entity weap)
         (be/add-component weap (comps/map->EqItem {:hr   1
@@ -37,6 +42,10 @@
                                   :hit-box     (Circle. (float 0) (float 0) (float (:spear weaponry/weapon-sizes)))
                                   :hit-list    '()
                                   :type        (weaponry/weapon-types :spear)}))
+        (be/add-entity armor)
+        (be/add-component armor (comps/map->EqItem {:ed   3
+                                                    :slot (comps/eq-slots :body)}))
+        (be/add-component armor (comps/map->EqArmor {:bulk 2}))
         (be/add-entity player)
         (be/add-component player (comps/map->Attribute {:hp  50
                                                         :mp  20
@@ -46,18 +55,18 @@
                                                         :vit 10
                                                         :psy 10}))
         (be/add-component player (comps/map->Player {}))
-        (be/add-component player (comps/map->Animated {:regions regions}))
+        (be/add-component player (comps/map->AnimatedRenderable {:regions regions}))
         (be/add-component player (comps/map->State {:current (comps/states :walking)
                                                     :time    0.0}))
         (be/add-component player (comps/map->Equipable {:equipment {:held weap}}))
-        (be/add-component player (comps/map->Inventory {:items '()}))
-        (be/add-component player (comps/map->Spatial {:pos       {:x 800 :y 800}
+        (be/add-component player (comps/map->Inventory {:items '(armor)}))
+        (be/add-component player (comps/map->Spatial {:pos       {:x 60 :y 60}
                                                       :size      14
                                                       :direction (comps/directions :east)})))))
 
 (defn init-entities [system area-name]
   (binding [*read-eval* true]
-    (let [area-data (->> (str "assets/maps/" area-name "/data.clj")
+    (let [area-data (->> (str map-asset-dir area-name map-data-file)
                          (slurp)
                          (read-string))
           items (:free-items area-data)
