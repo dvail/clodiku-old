@@ -19,26 +19,26 @@
         move {:x (+ (if (is-pressed? :move_east) 2 0) (if (is-pressed? :move_west) -2 0))
               :y (+ (if (is-pressed? :move_north) 2 0) (if (is-pressed? :move_south) -2 0))}]
     (-> system
-      (move/move-entity delta player move)
-      (move/try-transport player move))))
+        (move/move-entity delta player move)
+        (move/try-transport player move))))
 
-(defn do-free-input [system delta]
+(defn do-free-input
+  [system delta]
   (if (is-pressed? :melee_attack)
     (->> (eu/first-entity-with-comp system Player)
          (combat/init-attack system delta))
     (move-player system delta)))
 
-; TODO Ideally this is where extra mid-attack skills could happen
-(defn do-melee-input
-  "Process input while in mid-attack."
-  [system delta]
+(defmulti update-player (fn [system & _] (:current (eu/get-player-component system State))))
+
+(defmethod update-player :walking [system delta] (do-free-input system delta))
+
+(defmethod update-player :standing [system delta] (do-free-input system delta))
+
+(defmethod update-player :melee [system delta]
   (->> (eu/first-entity-with-comp system Player)
        (combat/advance-attack-state system delta)))
 
-(defn update [system delta]
-  (let [state (:current (eu/get-player-component system State))]
-    (cond
-      (= state :walking) (do-free-input system delta)
-      (= state :standing) (do-free-input system delta)
-      (= state :melee) (do-melee-input system delta)
-      :else system)))
+(defmethod update-player :default [system _] system)
+
+(defn update [system delta] (update-player system delta))
