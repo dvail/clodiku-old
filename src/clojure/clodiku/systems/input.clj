@@ -29,11 +29,12 @@
          (combat/init-attack system delta))
     (move-player system delta)))
 
-(defmulti update-player (fn [system & _] (:current (eu/get-player-component system State))))
+(defmulti update-player (fn [system & _]  (:current (eu/get-player-component system State))))
 
 (defmethod update-player :walking [system delta] (do-free-input system delta))
 
-(defmethod update-player :standing [system delta] (do-free-input system delta))
+(defmethod update-player :standing [system delta]
+  (do-free-input system delta))
 
 (defmethod update-player :melee [system delta]
   (->> (eu/first-entity-with-comp system Player)
@@ -41,4 +42,6 @@
 
 (defmethod update-player :default [system _] system)
 
-(defn update [system delta] (update-player system delta))
+(defn update [system delta]
+  (update-player system delta))
+

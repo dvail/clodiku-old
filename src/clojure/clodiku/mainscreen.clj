@@ -23,9 +23,10 @@
       (sys-rendering/init-resources! system)
       (ui/init-ui!))
     (render [delta]
-      (reset! system (bs/process-one-game-tick @system delta))
-      (sys-rendering/render! @system delta)
-      (ui/update-ui! @system delta))
+      (let [simulation (future (bs/process-one-game-tick @system delta))]
+        (sys-rendering/render! @system delta)
+        (ui/update-ui! @system delta)
+        (reset! system @simulation)))
     (dispose []
       (ui/dispose!))
     (hide [])
