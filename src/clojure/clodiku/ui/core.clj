@@ -7,8 +7,8 @@
            (com.badlogic.gdx.graphics Color)))
 
 
-(def ^:const ui-json "assets/ui/uiskin.json")
-(def ^:const font-name "default-font")
+(def ^:const ^String ui-json "assets/ui/uiskin.json")
+(def ^:const ^String font-name "default-font")
 
 (declare scene)
 

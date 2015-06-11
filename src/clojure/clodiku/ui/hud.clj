@@ -1,15 +1,15 @@
 (ns clodiku.ui.hud
   (:require [clodiku.entities.util :as eu])
-  (:import (com.badlogic.gdx.scenes.scene2d.ui Value$Fixed Label Table)
+  (:import (com.badlogic.gdx.scenes.scene2d.ui Value$Fixed Label Table Skin)
            (clodiku.components Attribute)))
 
 (defn setup!
   "initializes the HUD overlay on the screen"
-  [scene skin]
+  [scene ^Skin skin]
   (let [attributes (Table.)]
-    (.pad (.add attributes (:hp-value scene)) (Value$Fixed. 5.0))
+    (.pad (.add attributes ^Label (:hp-value scene)) (Value$Fixed. 5.0))
     (.pad (.add attributes (Label. "HP" skin)) (Value$Fixed. 5.0))
-    (.pad (.add attributes (:mp-value scene)) (Value$Fixed. 5.0))
+    (.pad (.add attributes ^Label (:mp-value scene)) (Value$Fixed. 5.0))
     (.pad (.add attributes (Label. "MP" skin)) (Value$Fixed. 5.0))
     (doto attributes
       (.left)

@@ -31,5 +31,5 @@
       (ui/dispose!))
     (hide [])
     (pause [])
-    (resize [w h])
+    (resize [_ _])
     (resume [])))

@@ -9,8 +9,7 @@
 (defn aggrivate
   "Changes the behavior of all mobs sent as input to aggressive."
   [system mobs]
-  (reduce (fn [sys mob]
-            (eu/comp-update sys mob MobAI {:state (comps/mob-ai-states :aggro)})) system mobs))
+  (reduce (fn [sys mob] (eu/comp-update sys mob MobAI {:state (comps/mob-ai-states :aggro)})) system mobs))
 
 (defn get-defenders
   "Gets all possible entities that could be hit by an attack, excluding the

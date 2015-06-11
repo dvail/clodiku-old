@@ -1,6 +1,6 @@
 (ns clodiku.ui.menu
   (:require [clodiku.entities.util :as eu])
-  (:import (com.badlogic.gdx.scenes.scene2d.ui SplitPane VerticalGroup Label Container)
+  (:import (com.badlogic.gdx.scenes.scene2d.ui SplitPane VerticalGroup Label Container Skin)
            (com.badlogic.gdx.scenes.scene2d Touchable)
            (com.badlogic.gdx.scenes.scene2d.utils ClickListener)))
 
@@ -15,10 +15,10 @@
 
 (defn menu-button
   "Creates a menu button that listens for events to be passed to the UI"
-  [name skin]
+  [^String name ^Skin skin]
   (doto (Label. name skin)
     (.setTouchable Touchable/enabled)
-    (.addListener (proxy [ClickListener] [] (clicked [_ _ _] (open-submenu (keyword name)))))))
+    (.addListener (proxy [ClickListener] [] (clicked [& _] (open-submenu (keyword name)))))))
 
 (defn- populate-menu
   "Sets up the main menu options"
@@ -31,7 +31,7 @@
   [scene skin]
   (let [main-menu (VerticalGroup.)
         detail-menu (Container.)
-        container (SplitPane. main-menu detail-menu false skin)]
+        container (SplitPane. main-menu detail-menu false ^Skin skin)]
     (populate-menu main-menu skin)
     (doto (:menus scene)
       (.setDebug true)
