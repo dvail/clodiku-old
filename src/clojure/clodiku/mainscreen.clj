@@ -21,7 +21,7 @@
       (reset! system (init/init-main @system))
       (reset! system (assoc @system :world_events {:combat '()}))
       (sys-rendering/init-resources! system)
-      (ui/init-ui!))
+      (ui/init-ui! system))
     (render [delta]
       (let [simulation (future (bs/process-one-game-tick @system delta))]
         (sys-rendering/render! @system delta)

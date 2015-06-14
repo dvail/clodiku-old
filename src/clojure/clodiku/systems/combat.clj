@@ -4,7 +4,7 @@
             [clodiku.combat.weaponry :as weaponry]
             [clodiku.util.movement :as coll]
             [clodiku.components :as comps]
-            [clodiku.combat.calulations :as ccalc]))
+            [clodiku.combat.calculations :as ccalc]))
 
 (defn aggrivate
   "Changes the behavior of all mobs sent as input to aggressive."

@@ -1,4 +1,4 @@
-(ns clodiku.combat.calulations
+(ns clodiku.combat.calculations
   (:require [clodiku.entities.util :as eu])
   (:import (clodiku.components Attribute)))
 

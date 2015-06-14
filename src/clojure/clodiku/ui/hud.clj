@@ -5,7 +5,7 @@
 
 (defn setup!
   "initializes the HUD overlay on the screen"
-  [scene ^Skin skin]
+  [system scene ^Skin skin]
   (let [attributes (Table.)]
     (.pad (.add attributes ^Label (:hp-value scene)) (Value$Fixed. 5.0))
     (.pad (.add attributes (Label. "HP" skin)) (Value$Fixed. 5.0))
