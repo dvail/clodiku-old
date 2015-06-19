@@ -58,7 +58,7 @@
         (be/add-component player (comps/map->AnimatedRenderable {:regions regions}))
         (be/add-component player (comps/map->State {:current (comps/states :walking)
                                                     :time    0.0}))
-        (be/add-component player (comps/map->Equipable {:equipment {:held weap}}))
+        (be/add-component player (comps/map->Equipment {:items {:held weap}}))
         (be/add-component player (comps/map->Inventory {:items '(armor)}))
         (be/add-component player (comps/map->Spatial {:pos       {:x 60 :y 60}
                                                       :size      14

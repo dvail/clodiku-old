@@ -1,5 +1,5 @@
 (ns clodiku.systems.combat
-  (:import (clodiku.components Spatial EqWeapon Equipable Player MobAI Attribute State))
+  (:import (clodiku.components Spatial EqWeapon Equipment Player MobAI Attribute State))
   (:require [clodiku.entities.util :as eu]
             [clodiku.combat.weaponry :as weaponry]
             [clodiku.util.movement :as coll]
@@ -99,8 +99,8 @@
   (let [updated-system (update-combat-events system delta)]
     (reduce
       (fn [sys attacker]
-        (let [weapon-entity (-> (eu/comp-data system attacker Equipable)
-                                :equipment
+        (let [weapon-entity (-> (eu/comp-data system attacker Equipment)
+                                :items
                                 :held)]
           (-> sys
               (apply-regen)

@@ -2,7 +2,7 @@
   (:require [clodiku.combat.weaponry :as weaponry]
             [clodiku.entities.util :as eu]
             [clodiku.components :as comps])
-  (:import (clodiku.components EqWeapon State Equipable Spatial)))
+  (:import (clodiku.components EqWeapon State Equipment Spatial)))
 
 (defn advance-attack-state
   "Updates an entity's attack state - so that it can be animated, end, etc."
@@ -21,7 +21,7 @@
   "Start the attack state for an entity"
   [system delta entity]
   (let [spatial (eu/comp-data system entity Spatial)
-        eq-weapon (:held (:equipment (eu/comp-data system entity Equipable)))
+        eq-weapon (:held (:items (eu/comp-data system entity Equipment)))
         weapon-data (eu/comp-data system eq-weapon EqWeapon)]
     (-> system
         (eu/comp-update entity State {:current (comps/states :melee)

@@ -6,7 +6,7 @@
             [brute.entity :as be]
             [clodiku.entities.util :as eu]
             [clodiku.entities.weapons :as ew])
-  (:import (clodiku.components Equipable)))
+  (:import (clodiku.components Equipment)))
 
 (def templates {:orc {:components (fn template-components []
                                     {:state     (clodiku.components/map->State {:current (clodiku.components/states :walking)
@@ -21,7 +21,7 @@
                                      :spatial   (clodiku.components/map->Spatial {:pos       {:x 400 :y 400}
                                                                                   :size      14
                                                                                   :direction (clodiku.components/directions :west)})
-                                     :equipable (clodiku.components/map->Equipable {:equipment {}})
+                                     :equipable (clodiku.components/map->Equipment {:items {}})
                                      :animated  (clodiku.components/map->AnimatedRenderable {:regions (clodiku.util.rendering/split-texture-pack "./assets/mob/orc/orc.pack")})
                                      :mobai     (clodiku.components/map->MobAI {:last-update 0
                                                                                 :state       (clodiku.components/mob-ai-states :wander)})})
@@ -70,8 +70,8 @@
         sys (be/add-entity (:system sys-map) entity)]
     (eu/comp-update (reduce #(be/add-component %1 entity %2) sys (vals mob-comps))
                     entity
-                    Equipable
-                    {:equipment (:eq sys-map)})))
+                    Equipment
+                    {:items (:eq sys-map)})))
 
 (defn bind-to-system
   [system eq-comps mob-comps]

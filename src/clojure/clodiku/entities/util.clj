@@ -3,7 +3,7 @@
 ;;;; it may be more feasible to switch out in the future e.g. for performance reasons.
 
 (ns clodiku.entities.util
-  (:import (clodiku.components Player Spatial State EqWeapon Equipable EqItem Inventory AnimatedRenderable))
+  (:import (clodiku.components Player Spatial State EqWeapon Equipment EqItem Inventory AnimatedRenderable))
   (:require [brute.entity :as be]
             [clodiku.components :as comps]
             [clojure.set :refer [union]]))
@@ -40,7 +40,7 @@
   [system]
   ; TODO Properly dispose of resources (e.g. Textures)
   (let [player (first-entity-with-comp system Player)
-        safe-entities (into #{} (conj (vals (:equipment (comp-data system player Equipable)))
+        safe-entities (into #{} (conj (vals (:items (comp-data system player Equipment)))
                                       (:items (comp-data system player Inventory))
                                       player))]
     (reduce #(be/kill-entity %1 %2)
@@ -65,14 +65,14 @@
   "Gets the combat piece in the given slot from the entity that owns it"
   [system entity]
   (comp-data system
-             (:held (:equipment (comp-data system entity Equipable)))
+             (:held (:items (comp-data system entity Equipment)))
              EqWeapon))
 
 (defn get-entity-armor
   "Gets a list of armor eq components on an entity."
   [system entity]
   (map #(comp-data system % EqItem)
-       (dissoc (:equipment (comp-data system entity Equipable)) (comps/eq-slots :held))))
+       (dissoc (:items (comp-data system entity Equipment)) (comps/eq-slots :held))))
 
 (defn get-player-component
   "Get a named component type from the player"

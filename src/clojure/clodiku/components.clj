@@ -24,12 +24,16 @@
 
 (defrecord Attribute [hp mp str dex vit psy])
 
+;equipable is a map that world eq slots to items
+;this component holds the total of all eq item stats for quick calculations
+(defrecord Equipment [items stat-total])
+
 ;A component for entities that can have stuff!
 (defrecord Inventory [items])
 
-;equipable is a map that world eq slots to items
-;this component holds the total of all eq item stats for quick calculations
-(defrecord Equipable [equipment stat-total])
+;A component for all basic item types
+(defrecord Item [name description])
+
 
 ; EqItem is the actual component representing a combat item
 (defrecord EqItem [slot damage hr dr ms pd saves])

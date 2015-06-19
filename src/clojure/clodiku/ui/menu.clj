@@ -4,7 +4,7 @@
   (:import (com.badlogic.gdx.scenes.scene2d.ui SplitPane VerticalGroup Label Container Skin Value$Fixed Table)
            (com.badlogic.gdx.scenes.scene2d Touchable)
            (com.badlogic.gdx.scenes.scene2d.utils ClickListener)
-           (clodiku.components Player Equipable)))
+           (clodiku.components Player Equipment)))
 
 (declare overlay)
 
@@ -15,7 +15,7 @@
 (defmethod populate-sub-menu :equipment
   [system scene name]
   (let [player (eu/first-entity-with-comp system Player)
-        eq (:equipment (eu/comp-data system player Equipable))]
+        eq (:items (eu/comp-data system player Equipment))]
     (doseq [slot (keys eq)]
       (println slot))))
 
