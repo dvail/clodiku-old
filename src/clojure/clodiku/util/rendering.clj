@@ -1,7 +1,9 @@
 (ns clodiku.util.rendering
-  (:import (com.badlogic.gdx.graphics.g2d Animation$PlayMode Animation TextureAtlas$AtlasRegion TextureAtlas)))
+  (:import (com.badlogic.gdx.graphics.g2d Animation$PlayMode Animation TextureAtlas$AtlasRegion TextureAtlas)
+           (com.badlogic.gdx.graphics Texture)
+           (com.badlogic.gdx Gdx Files)))
 
-; TODO This might need a more elegant/efficient/readable way of packing up entities...
+; TODO This might need a more elegant/efficient/readable way of packing up entity animations
 (defn split-texture-pack
   "Returns a nested map where each top level key is the entities state. These keys map to
   a second level map with the keys representing a cardinal direction and the values are a looping
@@ -29,3 +31,7 @@
                                    (key dir-map)
                                    (doto animation
                                      (.setPlayMode Animation$PlayMode/LOOP))))) fv)))) {} raw-map)))
+
+(defn make-texture
+  [image-location]
+  (Texture. (.internal ^Files Gdx/files image-location)))

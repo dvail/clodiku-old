@@ -32,8 +32,7 @@
 (defrecord Inventory [items])
 
 ;A component for all basic item types
-(defrecord Item [name description])
-
+(defrecord Item [name description image])
 
 ; EqItem is the actual component representing a combat item
 (defrecord EqItem [slot damage hr dr ms pd saves])

@@ -35,6 +35,9 @@
         regions (rendering/split-texture-pack player-atlas)]
     (-> sys
         (be/add-entity weap)
+        (be/add-component weap (comps/map->Item {:name        "An emerald spear"
+                                                 :description "This spear doesn't look very sharp"
+                                                 :image (rendering/make-texture "./assets/items/emerald-spear.png")}))
         (be/add-component weap (comps/map->EqItem {:hr   1
                                                    :slot (comps/eq-slots :held)}))
         (be/add-component weap (comps/map->EqWeapon
@@ -43,6 +46,9 @@
                                   :hit-list    '()
                                   :type        (weaponry/weapon-types :spear)}))
         (be/add-entity armor)
+        (be/add-component armor (comps/map->Item {:name        "Silver armor"
+                                                  :description "This armor is made of silver"
+                                                  :image (rendering/make-texture "./assets/items/silver-scale-mail.png")}))
         (be/add-component armor (comps/map->EqItem {:ed   3
                                                     :slot (comps/eq-slots :body)}))
         (be/add-component armor (comps/map->EqArmor {:bulk 2}))
@@ -59,7 +65,7 @@
         (be/add-component player (comps/map->State {:current (comps/states :walking)
                                                     :time    0.0}))
         (be/add-component player (comps/map->Equipment {:items {:held weap}}))
-        (be/add-component player (comps/map->Inventory {:items '(armor)}))
+        (be/add-component player (comps/map->Inventory {:items (list armor)}))
         (be/add-component player (comps/map->Spatial {:pos       {:x 60 :y 60}
                                                       :size      14
                                                       :direction (comps/directions :east)})))))
