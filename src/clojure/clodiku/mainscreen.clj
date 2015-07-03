@@ -15,18 +15,20 @@
             (bs/add-system-fn sys-mob-ai/update)
             (bs/add-system-fn sys-combat/update))))
 
+(def events (atom {:ui-events '()
+                   :world-events {:combat '()}}))
+
 (defn screen []
   (proxy [Screen] []
     (show []
       (reset! system (init/init-main @system))
-      (reset! system (assoc @system :world_events {:combat '()}))
       (sys-rendering/init-resources! system)
-      (ui/init-ui! system))
+      (ui/init-ui! system events))
     (render [delta]
-      (let [simulation (future (bs/process-one-game-tick @system delta))]
-        (sys-rendering/render! @system delta)
-        (ui/update-ui! @system delta)
-        (reset! system @simulation)))
+        (reset! system (reduce (fn [sys sys-fn] (sys-fn sys delta events))
+                               @system (:system-fns @system)))
+        (sys-rendering/render! @system delta events)
+        (ui/update-ui! @system delta))
     (dispose []
       (ui/dispose!))
     (hide [])

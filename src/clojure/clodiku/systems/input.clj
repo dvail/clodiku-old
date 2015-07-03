@@ -42,6 +42,6 @@
 
 (defmethod update-player :default [system _] system)
 
-(defn update [system delta]
+(defn update [system delta events]
   (update-player system delta))
 

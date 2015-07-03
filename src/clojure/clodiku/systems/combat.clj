@@ -35,8 +35,9 @@
 
 (defn process-attack
   "Dispatch events attack and apply damage to affected entities."
-  [system attacker weapon hit-list]
+  [system events attacker weapon hit-list]
   ; TODO Apply damage, etc. here
+  ; TODO separate the event handling part out of here if possible
   (reduce (fn [sys hit-entity]
             (let [damage (ccalc/attack-damage sys attacker hit-entity)
                   event {:type     :melee
@@ -45,18 +46,18 @@
                          :location (:pos (eu/comp-data sys hit-entity Spatial))
                          :damage   damage
                          :delta    0}
-                  combat-events (:combat (:world_events sys))
+                  combat-events (:combat (:world-events @events))
                   new-event-list (conj combat-events event)
                   old-hit-list (:hit-list (eu/comp-data system weapon EqWeapon))]
+              (swap! events #(assoc-in %1 [:world-events :combat] %2) new-event-list)
               (-> sys
                   (damage-entity hit-entity damage)
-                  (eu/comp-update weapon EqWeapon {:hit-list (conj old-hit-list hit-entity)})
-                  (assoc-in [:world_events :combat] new-event-list)))) system hit-list))
+                  (eu/comp-update weapon EqWeapon {:hit-list (conj old-hit-list hit-entity)})))) system hit-list))
 
 (defn check-attack-collisions
   "Tests is any entities are hit by a weapon. Does not allow an entity
   to hit him/herself when attacking"
-  [system attacker weapon]
+  [system events attacker weapon]
   (let [weapon-comp (eu/comp-data system weapon EqWeapon)
         defenders (get-defenders system attacker)
         old-hit-list (:hit-list weapon-comp)
@@ -65,7 +66,7 @@
         hit-mobs (filter #(not= nil (eu/comp-data system % MobAI)) new-hit-list)]
     (if (not (empty? new-hit-list))
       (-> system
-          (process-attack attacker weapon new-hit-list)
+          (process-attack events attacker weapon new-hit-list)
           (aggrivate hit-mobs))
       system)))
 
@@ -80,11 +81,11 @@
 
 (defn update-combat-events
   "Updates information about attacks, etc."
-  [system delta]
-  (let [events (:combat (:world_events system))
-        updated-events (map #(assoc % :delta (+ delta (:delta %))) events)
+  [delta events]
+  (let [evts (:combat (:world-events @events))
+        updated-events (map #(assoc % :delta (+ delta (:delta %))) evts)
         filtered-events (filter #(> 1 (:delta %)) updated-events)]
-    (assoc-in system [:world_events :combat] filtered-events)))
+    (swap! events #(assoc-in %1 [:world-events :combat] %2) filtered-events)))
 
 (defn apply-regen
   ; TODO Implement
@@ -94,15 +95,16 @@
 
 (defn update
   "Apply combat events and collisions"
-  [system delta]
+  [system delta events]
   ; TODO This doesn't feel right
-  (let [updated-system (update-combat-events system delta)]
-    (reduce
-      (fn [sys attacker]
-        (let [weapon-entity (-> (eu/comp-data system attacker Equipment)
-                                :items
-                                :held)]
-          (-> sys
-              (apply-regen)
-              (update-entity-attacks attacker weapon-entity)
-              (check-attack-collisions attacker weapon-entity)))) updated-system (eu/get-attackers updated-system))))
+  ; TODO Pull the swap! from the below method out to here?
+  (update-combat-events delta events)
+  (reduce
+    (fn [sys attacker]
+      (let [weapon-entity (-> (eu/comp-data system attacker Equipment)
+                              :items
+                              :held)]
+        (-> sys
+            (apply-regen)
+            (update-entity-attacks attacker weapon-entity)
+            (check-attack-collisions events attacker weapon-entity)))) system (eu/get-attackers system)))

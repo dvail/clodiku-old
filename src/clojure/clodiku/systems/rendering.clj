@@ -78,8 +78,8 @@
 (defn render-attack-verbs
   "Draw the *KICK POW BANG* verbs for attacks"
   ; TODO Probably will look better to do these as static images/animations rather than BitMap fonts
-  [batch system]
-  (let [attacks (:combat (:world_events system))]
+  [batch _ events]
+  (let [attacks (:combat (:world-events @events))]
     (doseq [attack attacks]
       (let [delta (:delta attack)
             draw-x (:x (:location attack))
@@ -108,7 +108,7 @@
                  (.radius ^Circle circle))))))
 
 
-(defn render! [system delta]
+(defn render! [system delta events]
   (let [camera-pos (.position camera)]
     (doto (Gdx/gl)
       (.glClearColor 0 0 0.2 0.3)
@@ -123,7 +123,7 @@
       (.begin)
       (.setProjectionMatrix (.combined camera))
       (render-entities! system)
-      (render-attack-verbs system)
+      (render-attack-verbs system events)
       (.end))
     (doto shape-renderer
       (.setAutoShapeType true)

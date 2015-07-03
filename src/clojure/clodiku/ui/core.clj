@@ -12,26 +12,26 @@
 
 (def ^:const ^String ui-json "assets/ui/uiskin.json")
 (def ^:const ^String font-name "default-font")
+(def ^:const sub-menus ["Equipment" "Inventory" "Skills" "Stats"])
 
+(declare ^Skin skin)
 (declare scene)
+(declare overlay)
 
 (defn stage
   "Creates a scene2d stage. Override all input processor methods in here."
   []
   (proxy [Stage] []))
 
-;
-; Menu UI system functions
-;
-(declare overlay)
-
-(def ^:const sub-menus ["Equipment" "Inventory" "Skills" "Stats"])
+;;;
+;;; Menu UI system functions.
+;;;
 
 (defmulti populate-sub-menu "A grouping of methods to pupulate the second level game menu"
-          (fn [_ _ _ name] name))
+          (fn [_ events name] name))
 
 (defmethod populate-sub-menu :equipment
-  [system scene ^Skin skin _]
+  [system events _]
   (let [player (eu/first-entity-with-comp system Player)
         eq (:items (eu/comp-data system player Equipment))
         container (:sub-menu-container scene)
@@ -44,7 +44,7 @@
       (.add eq-table (Image. ^Texture (:image (eu/comp-data system (slot eq) Item)))))))
 
 (defmethod populate-sub-menu :inventory
-  [system scene ^Skin skin _]
+  [system events _]
   (let [player (eu/first-entity-with-comp system Player)
         items (:items (eu/comp-data system player Inventory))
         container (:sub-menu-container scene)
@@ -59,41 +59,40 @@
         (.add item-table item-img)
         (.setTouchable item-text Touchable/enabled)
         (.addListener item-text (proxy [ClickListener] []
-                                  (clicked [& _] (uutil/add-event system {:type :equip-item
-                                                                                    :item item}))))))))
+                                  (clicked [& _] (uutil/add-event events {:type :equip-item
+                                                                          :item item}))))))))
 
-(defmethod populate-sub-menu :default [_ _ _ name] (println (str "Uh oh - this isn't a real menu item: " name)))
+(defmethod populate-sub-menu :default [_ _ name] (println (str "Uh oh - this isn't a real menu item: " name)))
 
 (defn- open-submenu
   "Clears the existing menu pane and replaces with the pane referenced by the given name"
-  [system scene skin name]
+  [system events name]
   (let [container (:sub-menu-container scene)]
     (doto container
       (.clear)
       (.setActor (name (:sub-menus scene))))
-    (populate-sub-menu @system scene skin name)))
+    (populate-sub-menu @system events name)))
 
 (defn- menu-button
   "Creates a menu button that listens for events to be passed to the UI"
-  [system scene ^String name ^Skin skin]
+  [system events ^String name]
   (doto (Label. name skin)
     (.setTouchable Touchable/enabled)
     (.addListener (proxy [ClickListener] []
-                    (clicked [& _] (open-submenu system scene skin
-                                                 (keyword (s/lower-case name))))))))
+                    (clicked [& _] (open-submenu system events (keyword (s/lower-case name))))))))
 
 (defn- populate-menu
   "Sets up the main menu options"
-  [system scene menu skin]
+  [system events menu]
   (doseq [name sub-menus]
-    (.addActor menu (menu-button system scene name skin))))
+    (.addActor menu (menu-button system events name))))
 
-(defn setup-menus!
+(defn init-menus!
   "Setup the user interface components"
-  [system scene skin]
+  [system events]
   (let [main-menu ^VerticalGroup (:main-menu scene)
         container ^Container (:sub-menu-container scene)]
-    (populate-menu system scene main-menu skin)
+    (populate-menu system events main-menu)
     (.pad main-menu 10.0)
     (doto ^Table (:menus scene)
       (.setDebug true)
@@ -107,15 +106,15 @@
 
 (defn update-menus!
   "Updates the user interface based on the state of the game entities"
-  [scene system delta])
+  [system delta])
 
-;
-; HUD UI functions
-;
+;;;
+;;; HUD UI functions.
+;;;
 
 (defn init-hud!
   "Initializes the always on HUD"
-  [system scene ^Skin skin]
+  [system events]
   (let [attributes (Table.)]
     (.pad (.add attributes ^Label (:hp-value scene)) (Value$Fixed. 5.0))
     (.pad (.add attributes (Label. "HP" skin)) (Value$Fixed. 5.0))
@@ -135,41 +134,41 @@
   (.addActor (:stage scene) (:overlay scene)))
 
 (defn update-hud!
-  [scene system delta]
+  [system delta]
   (let [player-attr (eu/get-player-component system Attribute)]
     (.setText ^Label (:hp-value scene) (str (:hp player-attr)))
     (.setText ^Label (:mp-value scene) (str (:mp player-attr)))))
 
-;
-; Core UI functions
-;
+;;;
+;;; Core UI functions.
+;;;
 
 (defn init-ui!
   "Setup the user interface components"
-  [system]
-  (let [skin (Skin. (.internal ^Files Gdx/files ui-json))]
-    (def scene {:overlay            (Table.)
-                :menus              (Table.)
-                :main-menu          (VerticalGroup.)
-                :sub-menu-container (Container.)
-                :sub-menus          {:equipment (Table.)
-                                     :inventory (Table.)
-                                     :skills    (VerticalGroup.)
-                                     :stats     (VerticalGroup.)}
-                :hp-value           (Label. "0" skin font-name (Color. 0.0 1.0 0.0 1.0))
-                :mp-value           (Label. "0" skin font-name (Color. 0.0 0.0 1.0 1.0))
-                :stage              (stage)})
-    (.setInputProcessor ^Input Gdx/input (:stage scene))
-    (init-hud! system scene skin)
-    (setup-menus! system scene skin)))
+  [system events]
+  (def skin ^Skin (Skin. (.internal ^Files Gdx/files ui-json)))
+  (def scene {:overlay            (Table.)
+              :menus              (Table.)
+              :main-menu          (VerticalGroup.)
+              :sub-menu-container (Container.)
+              :sub-menus          {:equipment (Table.)
+                                   :inventory (Table.)
+                                   :skills    (VerticalGroup.)
+                                   :stats     (VerticalGroup.)}
+              :hp-value           (Label. "0" skin font-name (Color. 0.0 1.0 0.0 1.0))
+              :mp-value           (Label. "0" skin font-name (Color. 0.0 0.0 1.0 1.0))
+              :stage              (stage)})
+  (.setInputProcessor ^Input Gdx/input (:stage scene))
+  (init-hud! system events)
+  (init-menus! system events))
 
 (defn dispose! [] (.dispose (:stage scene)))
 
 (defn update-ui!
   "Updates the user interface based on the state of the game entities"
   [system delta]
-  (update-hud! scene system delta)
-  (update-menus! scene system delta)
+  (update-hud! system delta)
+  (update-menus! system delta)
   (doto (:stage scene)
     (.act delta)
     (.draw)))

@@ -2,5 +2,7 @@
 
 (defn add-event
   "Adds a UI event to the system"
-  [system event]
-  (println event))
+  [events event]
+  (swap! events (fn [evts evt]
+                  (let [ui-evts (:ui-events evts)]
+                    (assoc evts :ui-events (conj ui-evts evt)))) event))
