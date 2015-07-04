@@ -1,13 +1,13 @@
 (ns clodiku.initialization
   (:import (com.badlogic.gdx.math Circle)
-           (clodiku.components WorldMap))
-  (:require [clodiku.components :as comps]
-            [brute.entity :as be]
+           (clodiku.entities.components WorldMap))
+  (:require [brute.entity :as be]
             [clodiku.entities.mobs :as em]
             [clodiku.util.rendering :as rendering]
             [clodiku.combat.weaponry :as weaponry]
             [clodiku.world.maps :as maps]
-            [clodiku.entities.util :as eu]))
+            [clodiku.entities.util :as eu]
+            [clodiku.entities.components :as comps]))
 
 
 (def ^:const map-asset-dir "./assets/maps/")

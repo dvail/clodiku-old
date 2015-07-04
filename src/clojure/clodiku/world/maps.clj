@@ -3,7 +3,7 @@
            (com.badlogic.gdx.math Vector3)
            (com.badlogic.gdx.graphics OrthographicCamera)
            (com.badlogic.gdx.maps MapProperties)
-           (clodiku.components WorldMap))
+           (clodiku.entities.components WorldMap))
   (:require [clodiku.entities.util :as eu]))
 
 ; TODO Pull this dynamically? Will the map tile size ever change?

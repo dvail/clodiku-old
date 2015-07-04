@@ -1,30 +1,30 @@
 ;;; This is a collection of functions that define mobs available in the game
 ;;; Each function should return a seqence of data components to be attached to an entity
 (ns clodiku.entities.mobs
-  (:require [clodiku.components]
+  (:require [clodiku.entities.components :as comps]
             [clodiku.util.rendering]
             [brute.entity :as be]
             [clodiku.entities.util :as eu]
             [clodiku.entities.weapons :as ew])
-  (:import (clodiku.components Equipment)))
+  (:import (clodiku.entities.components Equipment)))
 
 (def templates {:orc {:components (fn template-components []
-                                    {:state     (clodiku.components/map->State {:current (clodiku.components/states :walking)
+                                    {:state     (comps/map->State {:current (comps/states :walking)
                                                                                 :time    0})
-                                     :attribute (clodiku.components/map->Attribute {:hp  30
+                                     :attribute (comps/map->Attribute {:hp  30
                                                                                     :mp  5
                                                                                     :mv  50
                                                                                     :str 14
                                                                                     :dex 8
                                                                                     :vit 14
                                                                                     :psy 3})
-                                     :spatial   (clodiku.components/map->Spatial {:pos       {:x 400 :y 400}
+                                     :spatial   (comps/map->Spatial {:pos       {:x 400 :y 400}
                                                                                   :size      14
-                                                                                  :direction (clodiku.components/directions :west)})
-                                     :equipable (clodiku.components/map->Equipment {:items {}})
-                                     :animated  (clodiku.components/map->AnimatedRenderable {:regions (clodiku.util.rendering/split-texture-pack "./assets/mob/orc/orc.pack")})
-                                     :mobai     (clodiku.components/map->MobAI {:last-update 0
-                                                                                :state       (clodiku.components/mob-ai-states :wander)})})
+                                                                                  :direction (comps/directions :west)})
+                                     :equipable (comps/map->Equipment {:items {}})
+                                     :animated  (comps/map->AnimatedRenderable {:regions (clodiku.util.rendering/split-texture-pack "./assets/mob/orc/orc.pack")})
+                                     :mobai     (comps/map->MobAI {:last-update 0
+                                                                                :state       (comps/mob-ai-states :wander)})})
                       :inventory  '()
                       :equipment  {:held :sword}}})
 

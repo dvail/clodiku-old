@@ -1,6 +1,6 @@
 (ns clodiku.entities.weapons
   (:require [clodiku.combat.weaponry :as weaponry]
-            [clodiku.components :as comps]
+            [clodiku.entities.components :as comps]
             [clodiku.util.rendering :as rendering])
   (:import (com.badlogic.gdx.math Circle)))
 

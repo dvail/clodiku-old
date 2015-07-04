@@ -1,4 +1,4 @@
-(ns clodiku.components
+(ns clodiku.entities.components
   (:require [clojure.set :refer [union]]))
 
 (def states #{:walking :standing :melee :casting :stunned :dead})

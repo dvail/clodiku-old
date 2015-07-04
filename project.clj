@@ -15,7 +15,7 @@
   :main clodiku.core
   :source-paths      ["src/clojure"]
   :java-source-paths ["src/java"]
-  :aot [clodiku.components clodiku.game clodiku.core ]
+  :aot [clodiku.entities.components clodiku.game clodiku.core ]
   :global-vars {*warn-on-reflection* true}
   :target-path "target/%s"
  ; :profiles {:uberjar {:aot :all}}

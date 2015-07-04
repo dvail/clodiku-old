@@ -1,11 +1,11 @@
 (ns clodiku.systems.mob-ai
-  (:import (clodiku.components MobAI Spatial Player State)
+  (:import (clodiku.entities.components MobAI Spatial Player State)
            (clodiku.pathfinding AStar AStar$Node))
   (:require [clodiku.entities.util :as eu]
             [clodiku.world.maps :as maps]
             [clodiku.util.movement :as move]
             [clodiku.combat.core :as combat]
-            [clodiku.components :as comps]))
+            [clodiku.entities.components :as comps]))
 
 ; How often the AI "thinks" and decides to change its behavior
 (def ai-speed 4)

@@ -7,7 +7,7 @@
            (com.badlogic.gdx.scenes.scene2d.ui Skin Table Label VerticalGroup Container Value$Fixed Image Value Cell)
            (com.badlogic.gdx.scenes.scene2d Stage Touchable)
            (com.badlogic.gdx.graphics Color Texture)
-           (clodiku.components Attribute Item Inventory Player Equipment)
+           (clodiku.entities.components Attribute Item Inventory Player Equipment)
            (com.badlogic.gdx.scenes.scene2d.utils ClickListener)))
 
 
@@ -35,7 +35,7 @@
   [system events name entity])
 
 (defmethod populate-action-menu :inventory
-  [system events name entity]
+  [_ events _ entity]
   (let [action-table (:sub-menu-actions scene)
         equip-text (Label. "Equip" ^Skin skin)
         drop-text (Label. "Drop" ^Skin skin)]
@@ -147,9 +147,9 @@
   [system events]
   (let [attributes (Table.)]
     (.pad (.add attributes ^Label (:hp-value scene)) (Value$Fixed. 5.0))
-    (.pad (.add attributes (Label. "HP" skin)) (Value$Fixed. 5.0))
+    (.pad (.add attributes (Label. "HP" ^Skin skin)) (Value$Fixed. 5.0))
     (.pad (.add attributes ^Label (:mp-value scene)) (Value$Fixed. 5.0))
-    (.pad (.add attributes (Label. "MP" skin)) (Value$Fixed. 5.0))
+    (.pad (.add attributes (Label. "MP" ^Skin skin)) (Value$Fixed. 5.0))
     (doto attributes
       (.left)
       (.bottom)
@@ -206,7 +206,7 @@
   [system delta events]
   (update-hud! system delta)
   (update-menus! system delta)
-  (when (input/just-pressed? :toggle-menus) (do (println events) (toggle-menus)))
+  (when (input/just-pressed? :toggle-menus) (toggle-menus))
   (doto (:stage scene)
     (.act delta)
     (.draw)))

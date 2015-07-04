@@ -1,6 +1,6 @@
 (ns clodiku.systems.rendering
   (:import (com.badlogic.gdx.graphics.g2d TextureRegion)
-           (clodiku.components AnimatedRenderable State Spatial Attribute)
+           (clodiku.entities.components AnimatedRenderable State Spatial Attribute)
            (com.badlogic.gdx.math Circle)
            (com.badlogic.gdx.graphics GL20 OrthographicCamera)
            (com.badlogic.gdx Gdx Graphics)

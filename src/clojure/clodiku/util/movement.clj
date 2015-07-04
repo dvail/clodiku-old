@@ -1,11 +1,11 @@
 (ns clodiku.util.movement
   (:import (com.badlogic.gdx.math Circle Intersector)
            (com.badlogic.gdx.maps.objects RectangleMapObject)
-           (clodiku.components Spatial State MobAI))
+           (clodiku.entities.components Spatial State MobAI))
   (:require [clodiku.world.maps :as maps]
             [clodiku.world.transporter :as transport]
             [clodiku.entities.util :as eu]
-            [clodiku.components :as comps]))
+            [clodiku.entities.components :as comps]))
 
 (defn intersects?
   "Tests whether or not two shapes intersect"

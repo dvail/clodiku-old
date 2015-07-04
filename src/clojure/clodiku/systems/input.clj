@@ -1,5 +1,5 @@
 (ns clodiku.systems.input
-  (:import (clodiku.components Player State))
+  (:import (clodiku.entities.components Player State))
   (:require [clodiku.util.movement :as move]
             [clodiku.util.input :as input]
             [clodiku.entities.util :as eu]

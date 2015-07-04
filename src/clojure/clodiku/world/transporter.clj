@@ -5,7 +5,7 @@
             [clodiku.world.maps :as maps]
             [brute.entity :as be])
   (:import (com.badlogic.gdx.maps.objects RectangleMapObject)
-           (clodiku.components Player Spatial MobAI)))
+           (clodiku.entities.components Player Spatial MobAI)))
 
 ; TODO Break this function down, it is looking a little dense
 (defn swap-areas

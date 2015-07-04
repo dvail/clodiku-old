@@ -1,6 +1,6 @@
 (ns clodiku.combat.calculations
   (:require [clodiku.entities.util :as eu])
-  (:import (clodiku.components Attribute)))
+  (:import (clodiku.entities.components Attribute)))
 
 (defn- attr-bonus
   "Returns the bonus gained from a certain attribute."

@@ -1,8 +1,8 @@
 (ns clodiku.combat.core
   (:require [clodiku.combat.weaponry :as weaponry]
             [clodiku.entities.util :as eu]
-            [clodiku.components :as comps])
-  (:import (clodiku.components EqWeapon State Equipment Spatial)))
+            [clodiku.entities.components :as comps])
+  (:import (clodiku.entities.components EqWeapon State Equipment Spatial)))
 
 (defn advance-attack-state
   "Updates an entity's attack state - so that it can be animated, end, etc."

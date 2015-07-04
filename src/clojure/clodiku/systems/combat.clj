@@ -1,10 +1,10 @@
 (ns clodiku.systems.combat
-  (:import (clodiku.components Spatial EqWeapon Equipment Player MobAI Attribute State))
+  (:import (clodiku.entities.components Spatial EqWeapon Equipment Player MobAI Attribute State))
   (:require [clodiku.entities.util :as eu]
             [clodiku.combat.weaponry :as weaponry]
             [clodiku.util.movement :as coll]
-            [clodiku.components :as comps]
-            [clodiku.combat.calculations :as ccalc]))
+            [clodiku.combat.calculations :as ccalc]
+            [clodiku.entities.components :as comps]))
 
 (defn aggrivate
   "Changes the behavior of all mobs sent as input to aggressive."
