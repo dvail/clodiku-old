@@ -11,6 +11,5 @@
 (defn pressed? [k]
   (-> Gdx/input (.isKeyPressed (k bound-keys))))
 
-
 (defn just-pressed? [k]
   (-> Gdx/input (.isKeyJustPressed (k bound-keys))))

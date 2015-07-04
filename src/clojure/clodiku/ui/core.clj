@@ -4,7 +4,7 @@
             [clojure.string :as s]
             [clodiku.util.input :as input])
   (:import (com.badlogic.gdx Gdx Input Files)
-           (com.badlogic.gdx.scenes.scene2d.ui Skin Table Label VerticalGroup Container Value$Fixed Image)
+           (com.badlogic.gdx.scenes.scene2d.ui Skin Table Label VerticalGroup Container Value$Fixed Image Value Cell)
            (com.badlogic.gdx.scenes.scene2d Stage Touchable)
            (com.badlogic.gdx.graphics Color Texture)
            (clodiku.components Attribute Item Inventory Player Equipment)
@@ -28,8 +28,36 @@
 ;;; Menu UI system functions.
 ;;;
 
+(defmulti populate-action-menu "Show available actions for a submenu"
+          (fn [_ _ name _] name))
+
+(defmethod populate-action-menu :equipment
+  [system events name entity])
+
+(defmethod populate-action-menu :inventory
+  [system events name entity]
+  (let [action-table (:sub-menu-actions scene)
+        equip-text (Label. "Equip" ^Skin skin)
+        drop-text (Label. "Drop" ^Skin skin)]
+    (.clear action-table)
+    (.add action-table equip-text)
+    (.pad ^Cell (.row action-table) 0.0 10.0 0.0 10.0)
+    (.add action-table drop-text)
+    (.setTouchable equip-text Touchable/enabled)
+    (.setTouchable drop-text Touchable/enabled)
+    (.addListener equip-text (proxy [ClickListener] []
+                               (clicked [& _]
+                                 (.clear (:sub-menu-actions scene))
+                                 (uutil/add-event events {:type :equip-item
+                                                          :item entity}))))
+    (.addListener drop-text (proxy [ClickListener] []
+                              (clicked [& _]
+                                (.clear (:sub-menu-actions scene))
+                                (uutil/add-event events {:type :drop-item
+                                                         :item entity}))))))
+
 (defmulti populate-sub-menu "A grouping of methods to pupulate the second level game menu"
-          (fn [_ events name] name))
+          (fn [_ _ name] name))
 
 (defmethod populate-sub-menu :equipment
   [system events _]
@@ -41,7 +69,7 @@
     (doseq [slot (keys eq)]
       (.row eq-table)
       (.add eq-table (Label. (str slot) skin))
-      (.pad (.add eq-table (Label. ^String (:name (eu/comp-data system (slot eq) Item)) skin)) (Value$Fixed. 5.0))
+      (.pad (.add eq-table (Label. ^String (:name (eu/comp-data system (slot eq) Item)) ^Skin skin)) (Value$Fixed. 5.0))
       (.add eq-table (Image. ^Texture (:image (eu/comp-data system (slot eq) Item)))))))
 
 (defmethod populate-sub-menu :inventory
@@ -53,15 +81,14 @@
     (.setActor container item-table)
     (doseq [item items]
       (let [item-comp (eu/comp-data system item Item)
-            item-text (Label. ^String (:name item-comp) skin)
+            item-text (Label. ^String (:name item-comp) ^Skin skin)
             item-img (Image. ^Texture (:image item-comp))]
         (.row item-table)
         (.add item-table item-text)
         (.add item-table item-img)
         (.setTouchable item-text Touchable/enabled)
         (.addListener item-text (proxy [ClickListener] []
-                                  (clicked [& _] (uutil/add-event events {:type :equip-item
-                                                                          :item item}))))))))
+                                  (clicked [& _] (populate-action-menu system events :inventory item))))))))
 
 (defmethod populate-sub-menu :default [_ _ name] (println (str "Uh oh - this isn't a real menu item: " name)))
 
@@ -77,7 +104,7 @@
 (defn- menu-button
   "Creates a menu button that listens for events to be passed to the UI"
   [system events ^String name]
-  (doto (Label. name skin)
+  (doto (Label. name ^Skin skin)
     (.setTouchable Touchable/enabled)
     (.addListener (proxy [ClickListener] []
                     (clicked [& _] (open-submenu system events (keyword (s/lower-case name))))))))
@@ -92,7 +119,8 @@
   "Setup the user interface components"
   [system events]
   (let [main-menu ^VerticalGroup (:main-menu scene)
-        container ^Container (:sub-menu-container scene)]
+        container ^Container (:sub-menu-container scene)
+        actions ^Table (:sub-menu-actions scene)]
     (populate-menu system events main-menu)
     (.pad main-menu 10.0)
     (doto ^Table (:menus scene)
@@ -102,6 +130,7 @@
       (.left)
       (.add main-menu)
       (.add container)
+      (.add actions)
       (.pack)))
   (.addActor (:stage scene) (:menus scene)))
 
@@ -147,17 +176,14 @@
 (defn init-ui!
   "Setup the user interface components"
   [system events]
-  (def skin ^Skin (Skin. (.internal ^Files Gdx/files ui-json)))
+  (def skin (Skin. (.internal ^Files Gdx/files ui-json)))
   (def scene {:overlay            (Table.)
               :menus              (Table.)
               :main-menu          (VerticalGroup.)
               :sub-menu-container (Container.)
-              :sub-menus          {:equipment (Table.)
-                                   :inventory (Table.)
-                                   :skills    (VerticalGroup.)
-                                   :stats     (VerticalGroup.)}
-              :hp-value           (Label. "0" skin font-name (Color. 0.0 1.0 0.0 1.0))
-              :mp-value           (Label. "0" skin font-name (Color. 0.0 0.0 1.0 1.0))
+              :sub-menu-actions   (Table.)
+              :hp-value           (Label. "0" ^Skin skin font-name (Color. 0.0 1.0 0.0 1.0))
+              :mp-value           (Label. "0" ^Skin skin font-name (Color. 0.0 0.0 1.0 1.0))
               :stage              (stage)})
   (.setInputProcessor ^Input Gdx/input (:stage scene))
   (init-hud! system events)
@@ -169,6 +195,10 @@
   "Hide or show the main menu on the screen"
   []
   (let [menu (:menus scene)]
+    (doto (:sub-menu-container scene)
+      (.clear)
+      (.setActor nil))
+    (.clear (:sub-menu-actions scene))
     (.setVisible menu (not (.isVisible menu)))))
 
 (defn update-ui!
@@ -176,7 +206,7 @@
   [system delta events]
   (update-hud! system delta)
   (update-menus! system delta)
-  (when (input/just-pressed? :toggle-menus) (toggle-menus))
+  (when (input/just-pressed? :toggle-menus) (do (println events) (toggle-menus)))
   (doto (:stage scene)
     (.act delta)
     (.draw)))
