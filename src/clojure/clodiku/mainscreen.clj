@@ -28,7 +28,7 @@
         (reset! system (reduce (fn [sys sys-fn] (sys-fn sys delta events))
                                @system (:system-fns @system)))
         (sys-rendering/render! @system delta events)
-        (ui/update-ui! @system delta))
+        (ui/update-ui! @system delta events))
     (dispose []
       (ui/dispose!))
     (hide [])

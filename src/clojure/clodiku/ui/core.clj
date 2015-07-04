@@ -1,7 +1,8 @@
 (ns clodiku.ui.core
   (:require [clodiku.entities.util :as eu]
             [clodiku.ui.util :as uutil]
-            [clojure.string :as s])
+            [clojure.string :as s]
+            [clodiku.util.input :as input])
   (:import (com.badlogic.gdx Gdx Input Files)
            (com.badlogic.gdx.scenes.scene2d.ui Skin Table Label VerticalGroup Container Value$Fixed Image)
            (com.badlogic.gdx.scenes.scene2d Stage Touchable)
@@ -166,9 +167,11 @@
 
 (defn update-ui!
   "Updates the user interface based on the state of the game entities"
-  [system delta]
+  [system delta events]
   (update-hud! system delta)
   (update-menus! system delta)
+  (if (input/pressed? :toggle-menus)
+    2 3)
   (doto (:stage scene)
     (.act delta)
     (.draw)))
