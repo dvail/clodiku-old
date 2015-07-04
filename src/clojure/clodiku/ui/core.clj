@@ -81,6 +81,8 @@
     (.setActor container item-table)
     (doseq [item items]
       (let [item-comp (eu/comp-data system item Item)
+            e (println item)
+            t (println item-comp)
             item-text (Label. ^String (:name item-comp) ^Skin skin)
             item-img (Image. ^Texture (:image item-comp))]
         (.row item-table)

@@ -3,8 +3,9 @@
 ;;;; it may be more feasible to switch out in the future e.g. for performance reasons.
 
 (ns clodiku.entities.util
-  (:import (clodiku.entities.components Player Spatial State EqWeapon Equipment EqItem Inventory AnimatedRenderable))
+  (:import (clodiku.entities.components Player Spatial State EqWeapon Equipment EqItem Inventory AnimatedRenderable Item))
   (:require [brute.entity :as be]
+            [clojure.pprint :as pp]
             [clodiku.entities.components :as comps]
             [clojure.set :refer [union]]))
 
@@ -39,13 +40,15 @@
   player entitiy."
   [system]
   ; TODO Properly dispose of resources (e.g. Textures)
+  ; TODO Properly dispose of non-player owned resources and textures
+  ; TODO This is going to be an oft-refactored sections of code...
   (let [player (first-entity-with-comp system Player)
-        safe-entities (into #{} (conj (vals (:items (comp-data system player Equipment)))
-                                      (:items (comp-data system player Inventory))
-                                      player))]
-    (reduce #(be/kill-entity %1 %2)
-            system
-            (remove safe-entities (be/get-all-entities system)))))
+        safe-entities (into #{} (concat (conj (vals (:items (comp-data system player Equipment)))
+                                              (:items (comp-data system player Inventory))
+                                              player)
+                                        (be/get-all-entities-with-component system Item)))
+        garbage-entities (remove safe-entities (be/get-all-entities system))]
+    (reduce #(be/kill-entity %1 %2) system garbage-entities)))
 
 (defn destroy-entities-with-component
   "Removes all entities with the given component from the system"
