@@ -165,13 +165,18 @@
 
 (defn dispose! [] (.dispose (:stage scene)))
 
+(defn toggle-menus
+  "Hide or show the main menu on the screen"
+  []
+  (let [menu (:menus scene)]
+    (.setVisible menu (not (.isVisible menu)))))
+
 (defn update-ui!
   "Updates the user interface based on the state of the game entities"
   [system delta events]
   (update-hud! system delta)
   (update-menus! system delta)
-  (if (input/pressed? :toggle-menus)
-    2 3)
+  (when (input/just-pressed? :toggle-menus) (toggle-menus))
   (doto (:stage scene)
     (.act delta)
     (.draw)))
