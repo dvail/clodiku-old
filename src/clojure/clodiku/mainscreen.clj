@@ -1,5 +1,6 @@
 (ns clodiku.mainscreen
   (:require [clodiku.systems.input :as sys-input]
+            [clodiku.systems.events :as sys-events]
             [clodiku.systems.mob-ai :as sys-mob-ai]
             [clodiku.systems.combat :as sys-combat]
             [clodiku.systems.rendering :as sys-rendering]
@@ -11,12 +12,13 @@
 
 (def system
   (atom (-> (be/create-system)
-            (bs/add-system-fn sys-input/update)
-            (bs/add-system-fn sys-mob-ai/update)
-            (bs/add-system-fn sys-combat/update))))
+            (bs/add-system-fn sys-events/process)
+            (bs/add-system-fn sys-input/process)
+            (bs/add-system-fn sys-mob-ai/process)
+            (bs/add-system-fn sys-combat/process))))
 
-(def events (atom {:ui-events '()
-                   :world-events {:combat '()}}))
+(def events (atom {:ui '()
+                   :combat '()}))
 
 (defn screen []
   (proxy [Screen] []
@@ -25,8 +27,7 @@
       (sys-rendering/init-resources! system)
       (ui/init-ui! system events))
     (render [delta]
-        (reset! system (reduce (fn [sys sys-fn] (sys-fn sys delta events))
-                               @system (:system-fns @system)))
+        (reset! system (reduce #(%2 %1 delta events) @system (:system-fns @system)))
         (sys-rendering/render! @system delta events)
         (ui/update-ui! @system delta events))
     (dispose []

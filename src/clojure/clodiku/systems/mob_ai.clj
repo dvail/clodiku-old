@@ -113,7 +113,7 @@
           (update-mob-timestamp mob (+ last-update delta))
           ((get ai-state-actions mob-state) delta mob)))))
 
-(defn update
+(defn process
   [system delta events]
   (let [mobs (eu/get-entities-with-components system MobAI)]
     (reduce (fn [sys mob]

@@ -97,7 +97,7 @@
   "Draw the *KICK POW BANG* verbs for attacks"
   ; TODO Probably will look better to do these as static images/animations rather than BitMap fonts
   [batch _ events]
-  (let [attacks (:combat (:world-events @events))]
+  (let [attacks (:combat @events)]
     (doseq [attack attacks]
       (let [delta (:delta attack)
             draw-x (float (:x (:location attack)))

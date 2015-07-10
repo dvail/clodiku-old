@@ -46,10 +46,10 @@
                          :location (:pos (eu/comp-data sys hit-entity Spatial))
                          :damage   damage
                          :delta    0}
-                  combat-events (:combat (:world-events @events))
+                  combat-events (:combat @events)
                   new-event-list (conj combat-events event)
                   old-hit-list (:hit-list (eu/comp-data system weapon EqWeapon))]
-              (swap! events #(assoc-in %1 [:world-events :combat] %2) new-event-list)
+              (swap! events #(assoc-in %1 [:combat] %2) new-event-list)
               (-> sys
                   (damage-entity hit-entity damage)
                   (eu/comp-update weapon EqWeapon {:hit-list (conj old-hit-list hit-entity)})))) system hit-list))
@@ -79,26 +79,16 @@
     (-> system
         (eu/comp-update weapon EqWeapon {:hit-box new-hit-box}))))
 
-(defn update-combat-events
-  "Updates information about attacks, etc."
-  [delta events]
-  (let [evts (:combat (:world-events @events))
-        updated-events (map #(assoc % :delta (+ delta (:delta %))) evts)
-        filtered-events (filter #(> 1 (:delta %)) updated-events)]
-    (swap! events #(assoc-in %1 [:world-events :combat] %2) filtered-events)))
-
 (defn apply-regen
   ; TODO Implement
   "Applies interval based regneration of hp, mp, etc. to entities"
   [system]
   system)
 
-(defn update
+(defn process
   "Apply combat events and collisions"
   [system delta events]
   ; TODO This doesn't feel right
-  ; TODO Pull the swap! from the below method out to here?
-  (update-combat-events delta events)
   (reduce
     (fn [sys attacker]
       (let [weapon-entity (-> (eu/comp-data system attacker Equipment)
