@@ -79,10 +79,11 @@
   (let [spatial (eu/comp-data system entity Spatial)
         pos (:pos spatial)
         image ^Texture (:texture (eu/comp-data system entity Renderable))]
-    (doto ^SpriteBatch batch
-      (.draw image
-             ^float (- (:x pos) (/ (.getWidth image) 2))
-             ^float (- (:y pos) (/ (.getHeight image) 2))))))
+    (when (not= pos :carry)
+      (doto ^SpriteBatch batch
+        (.draw image
+               ^float (- (:x pos) (/ (.getWidth image) 2))
+               ^float (- (:y pos) (/ (.getHeight image) 2)))))))
 
 (defn render-entities!
   "Render the player, mobs, npcs and items"
@@ -110,8 +111,9 @@
   (let [entities (eu/get-entities-with-components system Spatial)
         spatials (map (fn [ent] (eu/comp-data system ent Spatial)) entities)]
     (doseq [space spatials]
-      (doto ^ShapeRenderer renderer
-        (.circle (:x (:pos space)) (:y (:pos space)) (:size space))))))
+      (when (not= (:pos space) :carry)
+        (doto ^ShapeRenderer renderer
+          (.circle (:x (:pos space)) (:y (:pos space)) (:size space)))))))
 
 (defn render-attack-shapes!
   "Render the collision zones for entity attacks"

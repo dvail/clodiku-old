@@ -82,10 +82,10 @@
   "Returns the compass direction based on a non-zero movement vector"
   [x y]
   (cond
-    (< 0 x) (comps/directions :east)
-    (> 0 x) (comps/directions :west)
-    (< 0 y) (comps/directions :north)
-    :else (comps/directions :south)))
+    (< 0 x) :east
+    (> 0 x) :west
+    (< 0 y) :north
+    :else :south))
 
 (defn dist-between
   "The distance between two points"

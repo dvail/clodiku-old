@@ -1,13 +1,13 @@
 (ns clodiku.entities.components
   (:require [clojure.set :refer [union]]))
 
-(def states #{:walking :standing :melee :casting :stunned :dead})
-(def directions #{:east :west :north :south})
-(def eq-slots #{:held :body :head :feet :hands})
+(def ^:const states #{:walking :standing :melee :casting :stunned :dead})
+(def ^:const directions #{:east :west :north :south})
+(def ^:const eq-slots #{:held :body :head :feet :hands})
 
-(def stats #{:hp :mv})
-(def attributes #{:str :dex :vit :psy})
-(def eq-stats #{:damage :hr :dr :ms :pd :saves})
+(def ^:const stats #{:hp :mv})
+(def ^:const attributes #{:str :dex :vit :psy})
+(def ^:const eq-stats #{:damage :hr :dr :ms :pd :saves})
 
 (def mob-ai-states #{:wander :aggro})
 
