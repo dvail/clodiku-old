@@ -1,5 +1,5 @@
 (ns clodiku.util.movement
-  (:import (com.badlogic.gdx.math Circle Intersector)
+  (:import (com.badlogic.gdx.math Circle Intersector Rectangle)
            (com.badlogic.gdx.maps.objects RectangleMapObject)
            (clodiku.entities.components Spatial State MobAI))
   (:require [clodiku.world.maps :as maps]
@@ -7,10 +7,14 @@
             [clodiku.entities.util :as eu]
             [clodiku.entities.components :as comps]))
 
-(defn intersects?
-  "Tests whether or not two shapes intersect"
-  ([s1 s2]
-    (Intersector/overlaps s1 s2)))
+(defmulti intersects? "Tests whether or not two shapes intersect"
+          (fn [s1 s2] [(class s1) (class s2)] ))
+
+(defmethod intersects? [Circle Circle] [s1 s2]
+  (Intersector/overlaps ^Circle s1 ^Circle s2))
+
+(defmethod intersects? [Circle Rectangle] [s1 s2]
+  (Intersector/overlaps ^Circle s1 ^Rectangle s2))
 
 (defn spatial-as-circle
   "Gets a Circle object representation of an entities size and position"
@@ -86,8 +90,8 @@
 (defn dist-between
   "The distance between two points"
   [pos-a pos-b]
-  (+ (Math/abs (- (:x pos-a) (:x pos-b)))
-     (Math/abs (- (:y pos-a) (:y pos-b)))))
+  (+ (Math/abs (float (- (:x pos-a) (:x pos-b))))
+     (Math/abs (float (- (:y pos-a) (:y pos-b))))))
 
 (defn move-entity
   [system delta entity {:keys [x y]}]
