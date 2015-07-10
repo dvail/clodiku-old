@@ -8,7 +8,7 @@
             [clodiku.entities.components :as comps]))
 
 (defmulti intersects? "Tests whether or not two shapes intersect"
-          (fn [s1 s2] [(class s1) (class s2)] ))
+          (fn [s1 s2] [(class s1) (class s2)]))
 
 (defmethod intersects? [Circle Circle] [s1 s2]
   (Intersector/overlaps ^Circle s1 ^Circle s2))
@@ -135,4 +135,3 @@
              (> 2 (Math/abs ^float (- (:y current-pos) (:y move-pos)))))
       (eu/comp-update system mob MobAI {:path (drop-last path)})
       (move-mob system delta mob move-pos))))
-

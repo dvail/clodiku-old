@@ -7,7 +7,7 @@
            (com.badlogic.gdx.scenes.scene2d.ui Skin Table Label VerticalGroup Container Value$Fixed Image Value Cell)
            (com.badlogic.gdx.scenes.scene2d Stage Touchable)
            (com.badlogic.gdx.graphics Color Texture)
-           (clodiku.entities.components Attribute Item Inventory Player Equipment)
+           (clodiku.entities.components Attribute Item Inventory Player Equipment Renderable)
            (com.badlogic.gdx.scenes.scene2d.utils ClickListener)))
 
 
@@ -56,7 +56,7 @@
                                 (uutil/add-event events {:type :drop-item
                                                          :item entity}))))))
 
-(defmulti populate-sub-menu "A grouping of methods to pupulate the second level game menu"
+(defmulti populate-sub-menu "A grouping of methods to populate the second level game menu"
           (fn [_ _ name] name))
 
 (defmethod populate-sub-menu :equipment
@@ -70,7 +70,7 @@
       (.row eq-table)
       (.add eq-table (Label. (str slot) skin))
       (.pad (.add eq-table (Label. ^String (:name (eu/comp-data system (slot eq) Item)) ^Skin skin)) (Value$Fixed. 5.0))
-      (.add eq-table (Image. ^Texture (:image (eu/comp-data system (slot eq) Item)))))))
+      (.add eq-table (Image. ^Texture (:texture (eu/comp-data system (slot eq) Renderable)))))))
 
 (defmethod populate-sub-menu :inventory
   [system events _]
@@ -81,8 +81,9 @@
     (.setActor container item-table)
     (doseq [item items]
       (let [item-comp (eu/comp-data system item Item)
+            render-comp (eu/comp-data system item Renderable)
             item-text (Label. ^String (:name item-comp) ^Skin skin)
-            item-img (Image. ^Texture (:image item-comp))]
+            item-img (Image. ^Texture (:texture render-comp))]
         (.row item-table)
         (.add item-table item-text)
         (.add item-table item-img)

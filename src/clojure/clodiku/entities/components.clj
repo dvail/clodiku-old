@@ -18,6 +18,7 @@
 
 (defrecord Spatial [pos size])
 
+(defrecord Renderable [texture])
 (defrecord AnimatedRenderable [regions])
 
 (defrecord State [current time])
@@ -32,7 +33,7 @@
 (defrecord Inventory [items])
 
 ;A component for all basic item types
-(defrecord Item [name description image])
+(defrecord Item [name description])
 
 ; EqItem is the actual component representing a combat item
 (defrecord EqItem [slot damage hr dr ms pd saves])
