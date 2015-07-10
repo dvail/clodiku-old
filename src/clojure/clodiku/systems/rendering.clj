@@ -78,14 +78,14 @@
 (defn render-attack-verbs
   "Draw the *KICK POW BANG* verbs for attacks"
   ; TODO Probably will look better to do these as static images/animations rather than BitMap fonts
-  [batch _ events]
+  [ batch _ events]
   (let [attacks (:combat (:world-events @events))]
     (doseq [attack attacks]
       (let [delta (:delta attack)
-            draw-x (:x (:location attack))
-            draw-y (:y (:location attack))]
+            draw-x  (float (:x (:location attack)))
+            draw-y  (float (:y (:location attack)))]
         (.setColor attack-font 0.2 0.2 1 (- 1 (/ delta 2)))
-        (.draw attack-font batch "poke" draw-x (+ 25 draw-y (* 100 delta)))))))
+        (.draw attack-font ^SpriteBatch batch "poke" draw-x (+ 25 draw-y (* 100 delta)))))))
 
 (defn render-entity-shapes!
   "Render the actual spatial component of the entities"

@@ -9,7 +9,7 @@
                :equipment  {}}
 
                {:template   :orc
-                :components {:spatial #=(clodiku.entities.components/map->Spatial {:pos       {:x 1000 :y 100}
+                :components {:spatial #=(clodiku.entities.components/map->Spatial {:pos       {:x 920 :y 100}
                                                                           :size      14
                                                                           :direction #=(clodiku.entities.components/directions :west)})}
                 :inventory  ()
@@ -30,7 +30,7 @@
                 :equipment  {}}
 
                {:template   :orc
-                :components {:spatial #=(clodiku.entities.components/map->Spatial {:pos       {:x 650 :y 200}
+                :components {:spatial #=(clodiku.entities.components/map->Spatial {:pos       {:x 700 :y 200}
                                                                           :size      14
                                                                           :direction #=(clodiku.entities.components/directions :west)})}
                 :inventory  ()

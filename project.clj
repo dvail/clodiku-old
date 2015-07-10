@@ -3,10 +3,10 @@
   :url "http://dvail.com"
   :license {:name "License pending"
             :url "http://dvail.com"}
-  :dependencies [[org.clojure/clojure "1.6.0"]
-                 [com.badlogicgames.gdx/gdx "1.5.0"]
-                 [com.badlogicgames.gdx/gdx-backend-lwjgl "1.5.0"]
-                 [com.badlogicgames.gdx/gdx-platform "1.5.0"
+  :dependencies [[org.clojure/clojure "1.7.0"]
+                 [com.badlogicgames.gdx/gdx "1.6.4"]
+                 [com.badlogicgames.gdx/gdx-backend-lwjgl "1.6.4"]
+                 [com.badlogicgames.gdx/gdx-platform "1.6.4"
                   :classifier "natives-desktop"]
                  [org.clojure/data.priority-map  "0.0.5"]
                  [brute "0.3.0" :exclusions [org.clojure/clojure]]]
