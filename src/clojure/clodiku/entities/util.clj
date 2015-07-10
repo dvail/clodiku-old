@@ -7,7 +7,8 @@
   (:require [brute.entity :as be]
             [clojure.pprint :as pp]
             [clodiku.entities.components :as comps]
-            [clojure.set :refer [union]]))
+            [clojure.set :refer [union]]
+            [clojure.set :as cset]))
 
 ;;;
 ;;; General functions to access/update arbitrary entities.
@@ -57,6 +58,7 @@
   [system comp-type]
   (reduce #(be/kill-entity %1 %2) system (be/get-all-entities-with-component system comp-type)))
 
+
 (defn get-attackers
   "Gets a sequence of entities who are currently attacking"
   [system]
@@ -87,6 +89,13 @@
   "Get entities that have each of a given component list."
   [system & components]
   (reduce #(union %1 (set (be/get-all-entities-with-component system %2))) #{} components))
+
+(defn collision-entities
+  "Get all entities that cause an obstruction on the map. This includes all entities with a Spatial component
+  except for items."
+  [system]
+  (cset/difference (get-entities-with-components system Spatial)
+                   (get-entities-with-components system Item)))
 
 (defn get-player-pos
   "Get the Spatial component of the player character"

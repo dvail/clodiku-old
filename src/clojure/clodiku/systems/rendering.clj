@@ -1,8 +1,8 @@
 (ns clodiku.systems.rendering
   (:import (com.badlogic.gdx.graphics.g2d TextureRegion)
-           (clodiku.entities.components AnimatedRenderable State Spatial Attribute)
+           (clodiku.entities.components AnimatedRenderable State Spatial Attribute Renderable)
            (com.badlogic.gdx.math Circle)
-           (com.badlogic.gdx.graphics GL20 OrthographicCamera)
+           (com.badlogic.gdx.graphics GL20 OrthographicCamera Texture)
            (com.badlogic.gdx Gdx Graphics)
            (com.badlogic.gdx.maps.tiled.renderers OrthogonalTiledMapRenderer)
            (com.badlogic.gdx.graphics.g2d SpriteBatch Animation BitmapFont)
@@ -26,9 +26,14 @@
 (defn get-animated-entities
   "Get all entities with both an Animated and a Spatial component"
   [system]
-  (let [animated (eu/get-entities-with-components system AnimatedRenderable)
-        spatial (eu/get-entities-with-components system Spatial)]
-    (cset/intersection (set animated) (set spatial))))
+  (cset/intersection (eu/get-entities-with-components system AnimatedRenderable)
+                     (eu/get-entities-with-components system Spatial)))
+
+(defn get-static-entities
+  "Gets all entities with both a Renderable and a Spatial component"
+  [system]
+  (cset/intersection (eu/get-entities-with-components system Renderable)
+                     (eu/get-entities-with-components system Spatial)))
 
 (defn sort-entities-by-render-order
   "Sorts a collection of entities by 'y' value, so that entities closer
@@ -44,9 +49,7 @@
                   (.getHeight graphics)))
     (def batch (SpriteBatch.))
     (def attack-font (BitmapFont.))
-    (def map-renderer
-      (OrthogonalTiledMapRenderer.
-        ^TiledMap (maps/get-current-map @system) batch))
+    (def map-renderer (OrthogonalTiledMapRenderer. ^TiledMap (maps/get-current-map @system) batch))
     (def shape-renderer (ShapeRenderer.))))
 
 (defn update-map
@@ -55,9 +58,13 @@
   (.setMap map-renderer (maps/get-current-map system))
   system)
 
-(defn dorender
-  "Renders a single entity"
-  [entity batch system]
+(defmulti dorender
+          "Render all entities with an Animated or Static render component"
+          (fn [entity _ system]
+            (type (or (eu/comp-data system entity AnimatedRenderable)
+                      (eu/comp-data system entity Renderable)))))
+
+(defmethod dorender AnimatedRenderable [entity batch system]
   (let [spatial (eu/comp-data system entity Spatial)
         state (eu/comp-data system entity State)
         region-map (:regions (eu/comp-data system entity AnimatedRenderable))
@@ -68,22 +75,32 @@
              ^float (- (:x pos) (/ (.getRegionWidth region) 2))
              ^float (- (:y pos) (:size spatial) -2)))))
 
+(defmethod dorender Renderable [entity batch system]
+  (let [spatial (eu/comp-data system entity Spatial)
+        pos (:pos spatial)
+        image ^Texture (:texture (eu/comp-data system entity Renderable))]
+    (doto ^SpriteBatch batch
+      (.draw image
+             ^float (- (:x pos) (/ (.getWidth image) 2))
+             ^float (- (:y pos) (/ (.getHeight image) 2))))))
+
 (defn render-entities!
   "Render the player, mobs, npcs and items"
   [batch system]
-  (let [entities (sort-entities-by-render-order system (get-animated-entities system))]
+  (let [entities (sort-entities-by-render-order system (cset/union (get-animated-entities system)
+                                                                   (get-static-entities system)))]
     (doseq [entity entities]
       (dorender entity batch system))))
 
 (defn render-attack-verbs
   "Draw the *KICK POW BANG* verbs for attacks"
   ; TODO Probably will look better to do these as static images/animations rather than BitMap fonts
-  [ batch _ events]
+  [batch _ events]
   (let [attacks (:combat (:world-events @events))]
     (doseq [attack attacks]
       (let [delta (:delta attack)
-            draw-x  (float (:x (:location attack)))
-            draw-y  (float (:y (:location attack)))]
+            draw-x (float (:x (:location attack)))
+            draw-y (float (:y (:location attack)))]
         (.setColor attack-font 0.2 0.2 1 (- 1 (/ delta 2)))
         (.draw attack-font ^SpriteBatch batch "poke" draw-x (+ 25 draw-y (* 100 delta)))))))
 

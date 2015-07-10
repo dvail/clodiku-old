@@ -69,7 +69,7 @@
         entity-mov-y (Circle. (:x pos) (+ (:y pos) (:y move)) (:size spatial))
         map-objects (maps/get-map-obstacles system)
         all-entity-circles (map #(spatial-as-circle (eu/comp-data system % Spatial))
-                                (eu/get-entities-with-components system Spatial))
+                                (eu/collision-entities system))
         other-entity-spaces (remove #(= (spatial-as-circle spatial) %) all-entity-circles)
         collide-x? (or (collides-with-map? entity-mov-x map-objects) (collides-with-entities? entity-mov-x other-entity-spaces))
         collide-y? (or (collides-with-map? entity-mov-y map-objects) (collides-with-entities? entity-mov-y other-entity-spaces))

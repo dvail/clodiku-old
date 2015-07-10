@@ -68,7 +68,7 @@
     (.setActor container eq-table)
     (doseq [slot (keys eq)]
       (.row eq-table)
-      (.add eq-table (Label. (str slot) skin))
+      (.add eq-table (Label. (str slot) ^Skin skin))
       (.pad (.add eq-table (Label. ^String (:name (eu/comp-data system (slot eq) Item)) ^Skin skin)) (Value$Fixed. 5.0))
       (.add eq-table (Image. ^Texture (:texture (eu/comp-data system (slot eq) Renderable)))))))
 

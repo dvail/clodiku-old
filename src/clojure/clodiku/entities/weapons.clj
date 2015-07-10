@@ -9,6 +9,8 @@
                                                                :description "This short sword is dull"
                                                                :image       (rendering/make-texture "./assets/items/steel-sword.png")})
                                  :renderable (comps/map->Renderable {:texture (rendering/make-texture "./assets/items/emerald-spear.png")})
+                                 :spatial    (comps/map->Spatial {:pos  {:x 0 :y 0}
+                                                                  :size 10})
                                  :eqitem     (comps/map->EqItem {:hr   1
                                                                  :slot (comps/eq-slots :held)})
                                  :eqweapon   (comps/map->EqWeapon {:base-damage 2

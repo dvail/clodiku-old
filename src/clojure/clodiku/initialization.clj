@@ -37,6 +37,8 @@
         (be/add-entity weap)
         (be/add-component weap (comps/map->Item {:name        "An emerald spear"
                                                  :description "This spear doesn't look very sharp"}))
+        (be/add-component weap (comps/map->Spatial {:pos  {:x 770 :y 700}
+                                                    :size 10}))
         (be/add-component weap (comps/map->Renderable {:texture (rendering/make-texture "./assets/items/emerald-spear.png")}))
         (be/add-component weap (comps/map->EqItem {:hr   1
                                                    :slot (comps/eq-slots :held)}))
@@ -48,6 +50,8 @@
         (be/add-entity armor)
         (be/add-component armor (comps/map->Item {:name        "Silver armor"
                                                   :description "This armor is made of silver"}))
+        (be/add-component armor (comps/map->Spatial {:pos  {:x 50 :y 50}
+                                                    :size 10}))
         (be/add-component armor (comps/map->Renderable {:texture (rendering/make-texture "./assets/items/silver-scale-mail.png")}))
         (be/add-component armor (comps/map->EqItem {:ed   3
                                                     :slot (comps/eq-slots :body)}))
