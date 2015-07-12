@@ -3,9 +3,8 @@
 ;;;; it may be more feasible to switch out in the future e.g. for performance reasons.
 
 (ns clodiku.entities.util
-  (:import (clodiku.entities.components Player Spatial State EqWeapon Equipment EqItem Inventory AnimatedRenderable Item))
+  (:import (clodiku.entities.components Player Spatial State EqWeapon Equipment EqItem Inventory Item))
   (:require [brute.entity :as be]
-            [clojure.pprint :as pp]
             [clodiku.entities.components :as comps]
             [clojure.set :refer [union]]
             [clojure.set :as cset]))
@@ -102,4 +101,10 @@
   [system]
   (let [player (first-entity-with-comp system Player)]
     (:pos (comp-data system player Spatial))))
+
+(defn free-items
+  [system]
+  (filter #(not= :carry (:pos (comp-data system % Spatial)))
+          (get-entities-with-components system Item)))
+
 

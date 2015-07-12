@@ -6,7 +6,8 @@
                  :move-west    Input$Keys/A
                  :move-east    Input$Keys/D
                  :melee-attack Input$Keys/P
-                 :toggle-menus Input$Keys/TAB})
+                 :toggle-menus Input$Keys/TAB
+                 :get-item     Input$Keys/L})
 
 (defn pressed? [k]
   (-> Gdx/input (.isKeyPressed (k bound-keys))))

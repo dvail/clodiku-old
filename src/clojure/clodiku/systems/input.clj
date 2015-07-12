@@ -15,12 +15,14 @@
 
 (defn do-free-input
   [system delta]
-  (if (input/pressed? :melee-attack)
-    (->> (eu/first-entity-with-comp system Player)
-         (combat/init-attack system delta))
-    (move-player system delta)))
+  (cond
+    (input/pressed? :melee-attack) (->> (eu/first-entity-with-comp system Player)
+                                        (combat/init-attack system delta))
+    (input/just-pressed? :get-item) (->> (eu/first-entity-with-comp system Player)
+                                    (move/grab-item system))
+    :default (move-player system delta)))
 
-(defmulti update-player (fn [system & _]  (:current (eu/get-player-component system State))))
+(defmulti update-player (fn [system & _] (:current (eu/get-player-component system State))))
 
 (defmethod update-player :walking [system delta] (do-free-input system delta))
 

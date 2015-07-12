@@ -32,7 +32,23 @@
           (fn [_ _ name _] name))
 
 (defmethod populate-action-menu :equipment
-  [system events name entity])
+  [system events name entity]
+  (let [container (:sub-menu-container scene)
+        action-table (:sub-menu-actions scene)
+        equip-text (Label. "Remove" ^Skin skin)]
+    (.clear action-table)
+    (.add action-table equip-text)
+    (.pad ^Cell (.row action-table) 0.0 10.0 0.0 10.0)
+    (.setTouchable equip-text Touchable/enabled)
+    (.addListener equip-text (proxy [ClickListener] []
+                               (clicked [& _]
+                                 (.clear (:sub-menu-actions scene))
+                                 (doto container
+                                   (.clear)
+                                   (.setActor (name (:sub-menus scene))))
+                                 (uutil/add-event events {:type   :unequip-item
+                                                          :target (eu/first-entity-with-comp system Player)
+                                                          :item   entity}))))))
 
 (defmethod populate-action-menu :inventory
   [system events name entity]
@@ -52,18 +68,18 @@
                                  (doto container
                                    (.clear)
                                    (.setActor (name (:sub-menus scene))))
-                                 (uutil/add-event events {:type :equip-item
+                                 (uutil/add-event events {:type   :equip-item
                                                           :target (eu/first-entity-with-comp system Player)
-                                                          :item entity}))))
+                                                          :item   entity}))))
     (.addListener drop-text (proxy [ClickListener] []
                               (clicked [& _]
                                 (.clear (:sub-menu-actions scene))
                                 (doto container
                                   (.clear)
                                   (.setActor (name (:sub-menus scene))))
-                                (uutil/add-event events {:type :drop-item
+                                (uutil/add-event events {:type   :drop-item
                                                          :target (eu/first-entity-with-comp system Player)
-                                                         :item entity}))))))
+                                                         :item   entity}))))))
 
 (defmulti populate-sub-menu "A grouping of methods to populate the second level game menu"
           (fn [_ _ name] name))
@@ -76,10 +92,13 @@
         eq-table (Table.)]
     (.setActor container eq-table)
     (doseq [slot (keys eq)]
-      (.row eq-table)
-      (.add eq-table (Label. (str slot) ^Skin skin))
-      (.pad (.add eq-table (Label. ^String (:name (eu/comp-data system (slot eq) Item)) ^Skin skin)) (Value$Fixed. 5.0))
-      (.add eq-table (Image. ^Texture (:texture (eu/comp-data system (slot eq) Renderable)))))))
+      (let [item-text (Label. ^String (:name (eu/comp-data system (slot eq) Item)) ^Skin skin)]
+        (.row eq-table)
+        (.add eq-table (Label. (str slot) ^Skin skin))
+        (.pad (.add eq-table item-text) (Value$Fixed. 5.0))
+        (.add eq-table (Image. ^Texture (:texture (eu/comp-data system (slot eq) Renderable))))
+        (.addListener item-text (proxy [ClickListener] []
+                                  (clicked [& _] (populate-action-menu system events :equipment (slot eq)))))))))
 
 (defmethod populate-sub-menu :inventory
   [system events _]

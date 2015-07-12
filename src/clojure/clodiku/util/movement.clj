@@ -1,11 +1,16 @@
 (ns clodiku.util.movement
   (:import (com.badlogic.gdx.math Circle Intersector Rectangle)
            (com.badlogic.gdx.maps.objects RectangleMapObject)
-           (clodiku.entities.components Spatial State MobAI))
+           (clodiku.entities.components Spatial State MobAI Inventory))
   (:require [clodiku.world.maps :as maps]
             [clodiku.world.transporter :as transport]
             [clodiku.entities.util :as eu]
             [clodiku.entities.components :as comps]))
+
+(defn spatial-as-circle
+  "Gets a Circle object representation of an entities size and position"
+  [spatial-comp]
+  (Circle. (:x (:pos spatial-comp)) (:y (:pos spatial-comp)) (:size spatial-comp)))
 
 (defmulti intersects? "Tests whether or not two shapes intersect"
           (fn [s1 s2] [(class s1) (class s2)]))
@@ -16,10 +21,8 @@
 (defmethod intersects? [Circle Rectangle] [s1 s2]
   (Intersector/overlaps ^Circle s1 ^Rectangle s2))
 
-(defn spatial-as-circle
-  "Gets a Circle object representation of an entities size and position"
-  [spatial-comp]
-  (Circle. (:x (:pos spatial-comp)) (:y (:pos spatial-comp)) (:size spatial-comp)))
+(defmethod intersects? [Spatial Spatial] [s1 s2]
+  (Intersector/overlaps ^Circle (spatial-as-circle s1) ^Circle (spatial-as-circle s2)))
 
 ; TODO Implement this later to save on pathfinding?
 (defn clear-line-of-sight?
@@ -135,3 +138,16 @@
              (> 2 (Math/abs ^float (- (:y current-pos) (:y move-pos)))))
       (eu/comp-update system mob MobAI {:path (drop-last path)})
       (move-mob system delta mob move-pos))))
+
+(defn grab-item
+  "Attempt to get an item on the ground."
+  [system entity]
+  (let [target-item (first
+                      (filter #(intersects?
+                                (eu/comp-data system entity Spatial)
+                                (eu/comp-data system % Spatial)) (eu/free-items system)))]
+    (if target-item
+      (-> system
+          (eu/comp-update entity Inventory {:items (conj (:items (eu/comp-data system entity Inventory)) target-item)})
+          (eu/comp-update target-item Spatial {:pos :carry}))
+      system)))

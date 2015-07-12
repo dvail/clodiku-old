@@ -21,8 +21,8 @@
 (defn- unequip-item
   "Removes an equiped item from an entity"
   [system entity slot]
-  (let [eq (eu/comp-data system entity Equipment)
-        inv (eu/comp-data system entity Inventory)
+  (let [eq (:items (eu/comp-data system entity Equipment))
+        inv (:items (eu/comp-data system entity Inventory))
         old-item (slot eq)]
     (if old-item
       (-> system
@@ -31,6 +31,11 @@
       system)))
 
 (defmulti process-event "Process a single events with a given type" (fn [_ _ _ event _] (:type event)))
+
+(defmethod process-event :unequip-item [system delta events event category]
+  (remove-event! events event category)
+  (unequip-item system (:target event)
+                (:slot (eu/comp-data system (:item event) EqItem))))
 
 (defmethod process-event :equip-item [system delta events event category]
   (let [target (:target event)
@@ -55,7 +60,8 @@
         (eu/comp-update target Inventory {:items new-inventory})
         (eu/comp-update item Spatial {:pos target-pos}))))
 
-(defmethod process-event :default [system _ _ _ _]
+(defmethod process-event :default [system _ _ event _]
+  (println (:type event))
   system)
 
 ; TODO Limit the number of events taken per cycle here???
