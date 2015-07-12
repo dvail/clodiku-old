@@ -35,7 +35,7 @@
   [system events name entity])
 
 (defmethod populate-action-menu :inventory
-  [_ events _ entity]
+  [system events _ entity]
   (let [action-table (:sub-menu-actions scene)
         equip-text (Label. "Equip" ^Skin skin)
         drop-text (Label. "Drop" ^Skin skin)]
@@ -49,11 +49,13 @@
                                (clicked [& _]
                                  (.clear (:sub-menu-actions scene))
                                  (uutil/add-event events {:type :equip-item
+                                                          :target (eu/first-entity-with-comp system Player)
                                                           :item entity}))))
     (.addListener drop-text (proxy [ClickListener] []
                               (clicked [& _]
                                 (.clear (:sub-menu-actions scene))
                                 (uutil/add-event events {:type :drop-item
+                                                         :target (eu/first-entity-with-comp system Player)
                                                          :item entity}))))))
 
 (defmulti populate-sub-menu "A grouping of methods to populate the second level game menu"

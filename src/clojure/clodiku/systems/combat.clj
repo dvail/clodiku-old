@@ -49,7 +49,7 @@
                   combat-events (:combat @events)
                   new-event-list (conj combat-events event)
                   old-hit-list (:hit-list (eu/comp-data system weapon EqWeapon))]
-              (swap! events #(assoc-in %1 [:combat] %2) new-event-list)
+              (swap! events #(assoc %1 :combat %2) new-event-list)
               (-> sys
                   (damage-entity hit-entity damage)
                   (eu/comp-update weapon EqWeapon {:hit-list (conj old-hit-list hit-entity)})))) system hit-list))
