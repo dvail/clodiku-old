@@ -1,6 +1,6 @@
 (ns clodiku.systems.events
   (:require [clodiku.entities.util :as eu])
-  (:import (clodiku.entities.components Inventory Spatial)))
+  (:import (clodiku.entities.components Inventory Spatial EqItem Equipment)))
 
 (def ^:const event-categories '(:ui :combat))
 
@@ -18,17 +18,38 @@
        (filter #(not= event %))
        (swap! events #(assoc %1 category %2))))
 
+(defn- unequip-item
+  "Removes an equiped item from an entity"
+  [system entity slot]
+  (let [eq (eu/comp-data system entity Equipment)
+        inv (eu/comp-data system entity Inventory)
+        old-item (slot eq)]
+    (if old-item
+      (-> system
+          (eu/comp-update entity Equipment {:items (dissoc eq slot)})
+          (eu/comp-update entity Inventory {:items (conj inv old-item)}))
+      system)))
+
 (defmulti process-event "Process a single events with a given type" (fn [_ _ _ event _] (:type event)))
 
 (defmethod process-event :equip-item [system delta events event category]
-  system)
+  (let [target (:target event)
+        item (:item event)
+        slot (:slot (eu/comp-data system item EqItem))
+        new-inventory (filter #(not= item %)
+                              (:items (eu/comp-data system target Inventory)))
+        target-eq (:items (eu/comp-data system target Equipment))]
+    (remove-event! events event category)
+    (-> (unequip-item system target slot)
+        (eu/comp-update target Inventory {:items new-inventory})
+        (eu/comp-update target Equipment {:items (assoc target-eq slot item)}))))
 
-(defmethod process-event :drop-item [system delta events event category]
+(defmethod process-event :drop-item [system _ events event category]
   (let [target (:target event)
         item (:item event)
         target-pos (:pos (eu/comp-data system target Spatial))
-        inventory (eu/comp-data system target Inventory)
-        new-inventory (filter #(not= item %) (:items inventory))]
+        new-inventory (filter #(not= item %)
+                              (:items (eu/comp-data system target Inventory)))]
     (remove-event! events event category)
     (-> system
         (eu/comp-update target Inventory {:items new-inventory})

@@ -35,8 +35,9 @@
   [system events name entity])
 
 (defmethod populate-action-menu :inventory
-  [system events _ entity]
-  (let [action-table (:sub-menu-actions scene)
+  [system events name entity]
+  (let [container (:sub-menu-container scene)
+        action-table (:sub-menu-actions scene)
         equip-text (Label. "Equip" ^Skin skin)
         drop-text (Label. "Drop" ^Skin skin)]
     (.clear action-table)
@@ -48,12 +49,18 @@
     (.addListener equip-text (proxy [ClickListener] []
                                (clicked [& _]
                                  (.clear (:sub-menu-actions scene))
+                                 (doto container
+                                   (.clear)
+                                   (.setActor (name (:sub-menus scene))))
                                  (uutil/add-event events {:type :equip-item
                                                           :target (eu/first-entity-with-comp system Player)
                                                           :item entity}))))
     (.addListener drop-text (proxy [ClickListener] []
                               (clicked [& _]
                                 (.clear (:sub-menu-actions scene))
+                                (doto container
+                                  (.clear)
+                                  (.setActor (name (:sub-menus scene))))
                                 (uutil/add-event events {:type :drop-item
                                                          :target (eu/first-entity-with-comp system Player)
                                                          :item entity}))))))
