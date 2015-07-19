@@ -1,6 +1,7 @@
 (ns clodiku.entities.components
   (:require [clojure.set :refer [union]]
-            [clojure.string :as string]))
+            [clojure.string :as string]
+            [clodiku.util.rendering :as r-util]))
 
 (def ^:const states #{:walking :standing :melee :casting :stunned :dead})
 (def ^:const directions #{:east :west :north :south})
@@ -56,23 +57,34 @@
 ;;; Component construction sugar
 ;;;
 
-(def ^:const construct-fns {:worldmap map->WorldMap
-                            :player map->Player
-                            :spatial map->Spatial
-                            :renderable map->Renderable
+(def ^:const construct-fns {:worldmap            map->WorldMap
+                            :player              map->Player
+                            :spatial             map->Spatial
+                            :renderable          map->Renderable
                             :animated-renderable map->AnimatedRenderable
-                            :state map->State
-                            :attribute map->Attribute
-                            :equipment map->Equipment
-                            :inventory map->Inventory
-                            :item map->Item
-                            :eq-item map->EqItem
-                            :eq-weapon map->EqWeapon
-                            :eq-armor map->EqArmor})
+                            :state               map->State
+                            :attribute           map->Attribute
+                            :equipment           map->Equipment
+                            :inventory           map->Inventory
+                            :item                map->Item
+                            :eq-item             map->EqItem
+                            :eq-weapon           map->EqWeapon
+                            :eq-armor            map->EqArmor
+                            :mob-ai              map->MobAI})
 
 (defmulti construct "Construct a component given a key name and attribute map" (fn [key _] key))
 
-(defmethod construct :rrenderable [key val])
+(defmethod construct :renderable [_ val]
+  (map->Renderable (->> (:texture val)
+                        (r-util/make-texture)
+                        (assoc val :texture))))
+
+(defmethod construct :animated-renderable [_ val]
+  (map->AnimatedRenderable (->> (:regions val)
+                                (r-util/split-texture-pack)
+                                (assoc val :regions))))
 
 (defmethod construct :default [key val]
+  (println key)
+  (println val)
   ((key construct-fns) val))

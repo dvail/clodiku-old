@@ -12,7 +12,6 @@
 
 (def ^:const map-asset-dir "./assets/maps/")
 (def ^:const map-data-file "/data.clj")
-(def ^:const player-atlas "./assets/player/player.pack")
 
 (defn init-map [sys map-name]
   (let [tmx-map (maps/load-map map-name)
@@ -32,31 +31,30 @@
   (let [player (be/create-entity)
         weap (be/create-entity)
         armor (be/create-entity)
-        regions (rendering/split-texture-pack player-atlas)
         weap-params {:item       {:name        "An emerald spear"
                                   :description "This spear doesn't look very sharp"}
                      :spatial    {:pos  :carry
                                   :size 16}
-                     :renderable {:texture (rendering/make-texture "./assets/items/emerald-spear.png")}
-                     :eq-item     {:hr   1
-                                  :slot (comps/eq-slots :held)}
-                     :eq-weapon   {:base-damage 5
+                     :renderable {:texture "./assets/items/emerald-spear.png"}
+                     :eq-item    {:hr   1
+                                  :slot :held}
+                     :eq-weapon  {:base-damage 5
                                   :hit-box     (Circle. (float 0) (float 0) (float (:spear weaponry/weapon-sizes)))
                                   :hit-list    '()
-                                  :type        (weaponry/weapon-types :spear)}}
+                                  :type        :spear}}
         armor-params {:item       {:name        "Silver armor"
                                    :description "This armor is made of silver"}
                       :spatial    {:pos  :carry
                                    :size 16}
-                      :renderable {:texture (rendering/make-texture "./assets/items/silver-scale-mail.png")}
+                      :renderable {:texture "./assets/items/silver-scale-mail.png"}
                       :eq-item    {:ed   3
-                                   :slot (comps/eq-slots :body)}
+                                   :slot :body}
                       :eq-armor   {:bulk 2}}
         player-params {:player              {}
                        :attribute           {:hp  50 :mp 20 :mv 50
                                              :str 10 :dex 10 :vit 10 :psy 10}
-                       :animated-renderable {:regions regions}
-                       :state               {:current (comps/states :walking)
+                       :animated-renderable {:regions "./assets/player/player.pack"}
+                       :state               {:current :walking
                                              :time    0.0}
                        :equipment           {:items {:held weap}}
                        :inventory           {:items (list armor)}

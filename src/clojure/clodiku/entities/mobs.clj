@@ -8,32 +8,27 @@
             [clodiku.entities.weapons :as ew])
   (:import (clodiku.entities.components Equipment)))
 
-(def templates {:orc {:components (fn template-components []
-                                    {:state     (comps/map->State {:current :walking
-                                                                   :time    0})
-                                     :attribute (comps/map->Attribute {:hp  30
-                                                                       :mp  5
-                                                                       :mv  50
-                                                                       :str 14
-                                                                       :dex 8
-                                                                       :vit 14
-                                                                       :psy 3})
-                                     :spatial   (comps/map->Spatial {:pos       {:x 400 :y 400}
-                                                                     :size      14
-                                                                     :direction :west})
-                                     :equipable (comps/map->Equipment {:items {}})
-                                     :animated  (comps/map->AnimatedRenderable {:regions (clodiku.util.rendering/split-texture-pack "./assets/mob/orc/orc.pack")})
-                                     :mobai     (comps/map->MobAI {:last-update 0
-                                                                   :state       :wander})})
+(def templates {:orc {:components {:state               {:current :walking
+                                                         :time    0}
+                                   :attribute           {:hp  30 :mp 5 :mv 50
+                                                         :str 14 :dex 8 :vit 14 :psy 3}
+                                   :spatial             {:pos       {:x 400 :y 400}
+                                                         :size      14
+                                                         :direction :west}
+                                   :equipment           {:items {}}
+                                   :animated-renderable {:regions "./assets/mob/orc/orc.pack"}
+                                   :mob-ai              {:last-update 0
+                                                         :state       :wander}}
                       :inventory  '()
                       :equipment  {:held :sword}}})
 
-; TODO This might be a good place for a macro??
 (defn merge-default-components
   "Evaluates the default template components and overridden components and merges them into a component set."
   [mob]
   (let [mob-type (:template mob)]
-    (merge ((->> templates mob-type :components)) (:components mob))))
+    (merge (reduce-kv #(assoc %1 %2 (comps/construct %2 %3))
+                      {}
+                      (->> templates mob-type :components)) (:components mob))))
 
 (defn make-mob
   [mob]
@@ -52,7 +47,7 @@
   (reduce-kv (fn [sys-map key val]
                (let [entity (be/create-entity)
                      sys (be/add-entity (:system sys-map) entity)]
-                 (assoc sys-map :system (reduce-kv #(be/add-component %1 entity %3) sys val)
+                 (assoc sys-map :system (reduce #(be/add-component %1 entity %2) sys val)
                                 :eq (assoc (:eq sys-map) key entity))))
              {:system system :eq {}}
              eq-comps))

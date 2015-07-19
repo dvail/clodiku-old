@@ -1,27 +1,24 @@
 (ns clodiku.entities.weapons
   (:require [clodiku.combat.weaponry :as weaponry]
-            [clodiku.entities.components :as comps]
-            [clodiku.util.rendering :as rendering])
+            [clodiku.entities.components :as comps])
   (:import (com.badlogic.gdx.math Circle)))
 
-(def weapon-templates {:sword (fn template-components []
-                                {:item       (comps/map->Item {:name        "A short spear"
-                                                               :description "This short sword is dull"
-                                                               :image       (rendering/make-texture "./assets/items/steel-sword.png")})
-                                 :renderable (comps/map->Renderable {:texture (rendering/make-texture "./assets/items/emerald-spear.png")})
-                                 :spatial    (comps/map->Spatial {:pos  {:x 0 :y 0}
-                                                                  :size 10})
-                                 :eqitem     (comps/map->EqItem {:hr   1
-                                                                 :slot (comps/eq-slots :held)})
-                                 :eqweapon   (comps/map->EqWeapon {:base-damage 2
-                                                                   :hit-box     (Circle. (float 0) (float 0) (float (:sword weaponry/weapon-sizes)))
-                                                                   :hit-list    '()
-                                                                   :type        (weaponry/weapon-types :sword)})})})
+(def weapon-templates {:sword {:item       {:name        "A short spear"
+                                            :description "This short sword is dull"}
+                               :renderable {:texture "./assets/items/steel-sword.png"}
+                               :spatial    {:pos  {:x 0 :y 0}
+                                            :size 10}
+                               :eq-item     {:hr   1
+                                            :slot :held}
+                               :eq-weapon   {:base-damage 2
+                                            :hit-box     (Circle. (float 0) (float 0) (float (:sword weaponry/weapon-sizes)))
+                                            :hit-list    '()
+                                            :type        :sword}}})
 
 (defn init-weapon
   "Get a sequence of components based on a weapon keyword"
   [weapon]
   (if (keyword? weapon)
-    ((weapon weapon-templates))
-    ((weapon))))
+    (map #(apply comps/construct %) (weapon weapon-templates))
+    (map #(apply comps/construct %) weapon)))
 
