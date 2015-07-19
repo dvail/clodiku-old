@@ -140,12 +140,11 @@
       (move-mob system delta mob move-pos))))
 
 (defn grab-item
-  "Attempt to get an item on the ground."
+  "Add a free item to an entity's inventory if the entity and item intersect."
   [system entity]
-  (let [target-item (first
-                      (filter #(intersects?
-                                (eu/comp-data system entity Spatial)
-                                (eu/comp-data system % Spatial)) (eu/free-items system)))]
+  (let [target-item (first (filter #(intersects?
+                                     (eu/comp-data system entity Spatial)
+                                     (eu/comp-data system % Spatial)) (eu/free-items system)))]
     (if target-item
       (-> system
           (eu/comp-update entity Inventory {:items (conj (:items (eu/comp-data system entity Inventory)) target-item)})

@@ -9,22 +9,22 @@
   (:import (clodiku.entities.components Equipment)))
 
 (def templates {:orc {:components (fn template-components []
-                                    {:state     (comps/map->State {:current (comps/states :walking)
-                                                                                :time    0})
+                                    {:state     (comps/map->State {:current :walking
+                                                                   :time    0})
                                      :attribute (comps/map->Attribute {:hp  30
-                                                                                    :mp  5
-                                                                                    :mv  50
-                                                                                    :str 14
-                                                                                    :dex 8
-                                                                                    :vit 14
-                                                                                    :psy 3})
+                                                                       :mp  5
+                                                                       :mv  50
+                                                                       :str 14
+                                                                       :dex 8
+                                                                       :vit 14
+                                                                       :psy 3})
                                      :spatial   (comps/map->Spatial {:pos       {:x 400 :y 400}
-                                                                                  :size      14
-                                                                                  :direction (comps/directions :west)})
+                                                                     :size      14
+                                                                     :direction :west})
                                      :equipable (comps/map->Equipment {:items {}})
                                      :animated  (comps/map->AnimatedRenderable {:regions (clodiku.util.rendering/split-texture-pack "./assets/mob/orc/orc.pack")})
                                      :mobai     (comps/map->MobAI {:last-update 0
-                                                                                :state       (comps/mob-ai-states :wander)})})
+                                                                   :state       :wander})})
                       :inventory  '()
                       :equipment  {:held :sword}}})
 

@@ -15,7 +15,8 @@
   "Gets all possible entities that could be hit by an attack, excluding the
   initiator of the attack"
   [system attacker]
-  (let [defenders (eu/get-entities-with-components system Player MobAI)
+  (let [defenders (filter #(not= :dead (:current (eu/comp-data system % State)))
+                          (eu/get-entities-with-components system Player MobAI))
         filter-type (if (eu/has-comp? system attacker Player)
                       Player
                       MobAI)]

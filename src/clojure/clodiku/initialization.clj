@@ -28,51 +28,49 @@
           (eu/comp-update map-entity WorldMap {:tilemap tmx-map
                                                :grid    map-grid})))))
 
-(defn init-player [sys]
+(defn init-player [system]
   (let [player (be/create-entity)
         weap (be/create-entity)
         armor (be/create-entity)
-        regions (rendering/split-texture-pack player-atlas)]
-    (-> sys
-        (be/add-entity weap)
-        (be/add-component weap (comps/map->Item {:name        "An emerald spear"
-                                                 :description "This spear doesn't look very sharp"}))
-        (be/add-component weap (comps/map->Spatial {:pos  :carry
-                                                    :size 16}))
-        (be/add-component weap (comps/map->Renderable {:texture (rendering/make-texture "./assets/items/emerald-spear.png")}))
-        (be/add-component weap (comps/map->EqItem {:hr   1
-                                                   :slot (comps/eq-slots :held)}))
-        (be/add-component weap (comps/map->EqWeapon
-                                 {:base-damage 5
+        regions (rendering/split-texture-pack player-atlas)
+        weap-params {:item       {:name        "An emerald spear"
+                                  :description "This spear doesn't look very sharp"}
+                     :spatial    {:pos  :carry
+                                  :size 16}
+                     :renderable {:texture (rendering/make-texture "./assets/items/emerald-spear.png")}
+                     :eq-item     {:hr   1
+                                  :slot (comps/eq-slots :held)}
+                     :eq-weapon   {:base-damage 5
                                   :hit-box     (Circle. (float 0) (float 0) (float (:spear weaponry/weapon-sizes)))
                                   :hit-list    '()
-                                  :type        (weaponry/weapon-types :spear)}))
-        (be/add-entity armor)
-        (be/add-component armor (comps/map->Item {:name        "Silver armor"
-                                                  :description "This armor is made of silver"}))
-        (be/add-component armor (comps/map->Spatial {:pos  :carry
-                                                    :size 16}))
-        (be/add-component armor (comps/map->Renderable {:texture (rendering/make-texture "./assets/items/silver-scale-mail.png")}))
-        (be/add-component armor (comps/map->EqItem {:ed   3
-                                                    :slot (comps/eq-slots :body)}))
-        (be/add-component armor (comps/map->EqArmor {:bulk 2}))
-        (be/add-entity player)
-        (be/add-component player (comps/map->Attribute {:hp  50
-                                                        :mp  20
-                                                        :mv  50
-                                                        :str 10
-                                                        :dex 10
-                                                        :vit 10
-                                                        :psy 10}))
-        (be/add-component player (comps/map->Player {}))
-        (be/add-component player (comps/map->AnimatedRenderable {:regions regions}))
-        (be/add-component player (comps/map->State {:current (comps/states :walking)
-                                                    :time    0.0}))
-        (be/add-component player (comps/map->Equipment {:items {:held weap}}))
-        (be/add-component player (comps/map->Inventory {:items (list armor)}))
-        (be/add-component player (comps/map->Spatial {:pos       {:x 750 :y 660}
-                                                      :size      14
-                                                      :direction :east})))))
+                                  :type        (weaponry/weapon-types :spear)}}
+        armor-params {:item       {:name        "Silver armor"
+                                   :description "This armor is made of silver"}
+                      :spatial    {:pos  :carry
+                                   :size 16}
+                      :renderable {:texture (rendering/make-texture "./assets/items/silver-scale-mail.png")}
+                      :eq-item    {:ed   3
+                                   :slot (comps/eq-slots :body)}
+                      :eq-armor   {:bulk 2}}
+        player-params {:player              {}
+                       :attribute           {:hp  50 :mp 20 :mv 50
+                                             :str 10 :dex 10 :vit 10 :psy 10}
+                       :animated-renderable {:regions regions}
+                       :state               {:current (comps/states :walking)
+                                             :time    0.0}
+                       :equipment           {:items {:held weap}}
+                       :inventory           {:items (list armor)}
+                       :spatial             {:pos       {:x 750 :y 660}
+                                             :size      14
+                                             :direction :east}}
+        weap-comps (map #(apply comps/construct %1) weap-params)
+        armor-comps (map #(apply comps/construct %1) armor-params)
+        player-comps (map #(apply comps/construct %1) player-params)
+        bind-components (fn [entity comps sys] (reduce #(be/add-component %1 entity %2) sys comps))]
+    (->> (reduce (fn [sys entity] (be/add-entity sys entity)) system (list weap armor player))
+         (bind-components weap weap-comps)
+         (bind-components armor armor-comps)
+         (bind-components player player-comps))))
 
 (defn init-entities [system area-name]
   (binding [*read-eval* true]
