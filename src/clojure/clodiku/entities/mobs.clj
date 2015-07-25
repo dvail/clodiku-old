@@ -25,10 +25,10 @@
 (defn merge-default-components
   "Evaluates the default template components and overridden components and merges them into a component set."
   [mob]
-  (let [mob-type (:template mob)]
-    (merge (reduce-kv #(assoc %1 %2 (comps/construct %2 %3))
-                      {}
-                      (->> templates mob-type :components)) (:components mob))))
+  (let [mob-type (:template mob)
+        mob-comp-map (->> templates mob-type :components)]
+    (merge (comps/construct-map mob-comp-map)
+           (comps/construct-map (:components mob)))))
 
 (defn make-mob
   [mob]

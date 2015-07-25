@@ -1,7 +1,9 @@
 (ns clodiku.entities.components
   (:require [clojure.set :refer [union]]
             [clojure.string :as string]
-            [clodiku.util.rendering :as r-util]))
+            [clodiku.util.rendering :as r-util]
+            [clodiku.combat.weaponry :as weaponry])
+  (:import (com.badlogic.gdx.math Circle)))
 
 (def ^:const states #{:walking :standing :melee :casting :stunned :dead})
 (def ^:const directions #{:east :west :north :south})
@@ -84,7 +86,15 @@
                                 (r-util/split-texture-pack)
                                 (assoc val :regions))))
 
+(defmethod construct :eq-weapon [_ val]
+  (map->EqWeapon (let [{:keys [x y size]} (:hit-box val)
+                       size (if (keyword? size) (size weaponry/weapon-sizes) size)]
+                   (assoc val :hit-box (Circle. (float x) (float y) (float size))))))
+
 (defmethod construct :default [key val]
-  (println key)
-  (println val)
   ((key construct-fns) val))
+
+(defn construct-map
+  "Takes a map of component definitions and returns a map of constructed components"
+  [comp-defs]
+  (reduce-kv #(assoc %1 %2 (construct %2 %3)) {} comp-defs))

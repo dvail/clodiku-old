@@ -2,37 +2,37 @@
 ;; entities likes traps, NPCs, etc. in the future.
 
 {:mobs       ({:template   :orc
-               :components {:spatial #=(clodiku.entities.components/map->Spatial {:pos       {:x 300 :y 100}
-                                                                                  :size      14
-                                                                                  :direction :west})}
+               :components {:spatial {:pos       {:x 300 :y 100}
+                                      :size      14
+                                      :direction :west}}
                :inventory  ()
                :equipment  {}}
 
                {:template   :orc
-                :components {:spatial #=(clodiku.entities.components/map->Spatial {:pos       {:x 920 :y 100}
-                                                                                   :size      14
-                                                                                   :direction :west})}
+                :components {:spatial {:pos       {:x 920 :y 100}
+                                       :size      14
+                                       :direction :west}}
                 :inventory  ()
                 :equipment  {}}
 
                {:template   :orc
-                :components {:spatial #=(clodiku.entities.components/map->Spatial {:pos       {:x 100 :y 200}
-                                                                                   :size      14
-                                                                                   :direction :west})}
+                :components {:spatial {:pos       {:x 100 :y 200}
+                                       :size      14
+                                       :direction :west}}
                 :inventory  ()
                 :equipment  {}}
 
                {:template   :orc
-                :components {:spatial #=(clodiku.entities.components/map->Spatial {:pos       {:x 100 :y 500}
-                                                                                   :size      14
-                                                                                   :direction :west})}
+                :components {:spatial {:pos       {:x 100 :y 500}
+                                       :size      14
+                                       :direction :west}}
                 :inventory  ()
                 :equipment  {}}
 
                {:template   :orc
-                :components {:spatial #=(clodiku.entities.components/map->Spatial {:pos       {:x 700 :y 200}
-                                                                                   :size      14
-                                                                                   :direction :west})}
+                :components {:spatial {:pos       {:x 700 :y 200}
+                                       :size      14
+                                       :direction :west}}
                 :inventory  ()
                 :equipment  {}})
  :free-items ()}

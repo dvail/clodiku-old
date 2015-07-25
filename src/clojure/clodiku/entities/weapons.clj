@@ -1,7 +1,5 @@
 (ns clodiku.entities.weapons
-  (:require [clodiku.combat.weaponry :as weaponry]
-            [clodiku.entities.components :as comps])
-  (:import (com.badlogic.gdx.math Circle)))
+  (:require [clodiku.entities.components :as comps]))
 
 (def weapon-templates {:sword {:item       {:name        "A short spear"
                                             :description "This short sword is dull"}
@@ -11,7 +9,7 @@
                                :eq-item     {:hr   1
                                             :slot :held}
                                :eq-weapon   {:base-damage 2
-                                            :hit-box     (Circle. (float 0) (float 0) (float (:sword weaponry/weapon-sizes)))
+                                            :hit-box     {:x 0 :y 0 :size :sword}
                                             :hit-list    '()
                                             :type        :sword}}})
 

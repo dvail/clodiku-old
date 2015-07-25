@@ -3,7 +3,6 @@
            (clodiku.entities.components WorldMap))
   (:require [brute.entity :as be]
             [clodiku.entities.mobs :as em]
-            [clodiku.util.rendering :as rendering]
             [clodiku.combat.weaponry :as weaponry]
             [clodiku.world.maps :as maps]
             [clodiku.entities.util :as eu]
@@ -39,7 +38,7 @@
                      :eq-item    {:hr   1
                                   :slot :held}
                      :eq-weapon  {:base-damage 5
-                                  :hit-box     (Circle. (float 0) (float 0) (float (:spear weaponry/weapon-sizes)))
+                                  :hit-box     {:x 0 :y 0 :size :spear}
                                   :hit-list    '()
                                   :type        :spear}}
         armor-params {:item       {:name        "Silver armor"
@@ -61,23 +60,20 @@
                        :spatial             {:pos       {:x 750 :y 660}
                                              :size      14
                                              :direction :east}}
-        weap-comps (map #(apply comps/construct %1) weap-params)
-        armor-comps (map #(apply comps/construct %1) armor-params)
-        player-comps (map #(apply comps/construct %1) player-params)
+        make-comps (fn [params] (map #(apply comps/construct %) params))
         bind-components (fn [entity comps sys] (reduce #(be/add-component %1 entity %2) sys comps))]
     (->> (reduce (fn [sys entity] (be/add-entity sys entity)) system (list weap armor player))
-         (bind-components weap weap-comps)
-         (bind-components armor armor-comps)
-         (bind-components player player-comps))))
+         (bind-components weap (make-comps weap-params))
+         (bind-components armor (make-comps armor-params))
+         (bind-components player (make-comps player-params)))))
 
 (defn init-entities [system area-name]
-  (binding [*read-eval* true]
-    (let [area-data (->> (str map-asset-dir area-name map-data-file)
-                         (slurp)
-                         (read-string))
-          items (:free-items area-data)
-          mobs (:mobs area-data)]
-      (reduce #(em/init-mob %1 %2) system mobs))))
+  (let [area-data (->> (str map-asset-dir area-name map-data-file)
+                       (slurp)
+                       (read-string))
+        items (:free-items area-data)
+        mobs (:mobs area-data)]
+    (reduce #(em/init-mob %1 %2) system mobs)))
 
 (defn init-main
   [system]
