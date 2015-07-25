@@ -1,9 +1,8 @@
 (ns clodiku.initialization
-  (:import (com.badlogic.gdx.math Circle)
-           (clodiku.entities.components WorldMap))
+  (:import (clodiku.entities.components WorldMap))
   (:require [brute.entity :as be]
             [clodiku.entities.mobs :as em]
-            [clodiku.combat.weaponry :as weaponry]
+            [clodiku.entities.weapons :as ew]
             [clodiku.world.maps :as maps]
             [clodiku.entities.util :as eu]
             [clodiku.entities.components :as comps]))
@@ -71,9 +70,11 @@
   (let [area-data (->> (str map-asset-dir area-name map-data-file)
                        (slurp)
                        (read-string))
-        items (:free-items area-data)
-        mobs (:mobs area-data)]
-    (reduce #(em/init-mob %1 %2) system mobs)))
+        ; TODO Fix this to merge overrides with defaults
+        item-comps-seq (map #(ew/init-item-comps %) (:free-items area-data))
+        mobs (:mobs area-data)
+        sys-with-items (reduce #(ew/bind-item %1 %2) system item-comps-seq)]
+    (reduce #(em/init-mob %1 %2) sys-with-items mobs)))
 
 (defn init-main
   [system]

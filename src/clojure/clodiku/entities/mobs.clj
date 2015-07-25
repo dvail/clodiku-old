@@ -38,7 +38,7 @@
   "Construct the mob's equipment set"
   [mob]
   (let [eq (merge (:equipment ((:template mob) templates)) (:equipment mob))]
-    (reduce-kv #(assoc %1 %2 (ew/init-weapon %3)) {} eq)))
+    (reduce-kv #(assoc %1 %2 (ew/init-item-comps %3)) {} eq)))
 
 (defn bind-eq
   "Create entities for eq components and add to the system.
@@ -80,6 +80,3 @@
   (let [eq-comps (make-equipment mob)
         mob-comps (make-mob mob)]
     (bind-to-system system eq-comps mob-comps)))
-
-
-

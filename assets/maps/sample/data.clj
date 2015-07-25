@@ -35,4 +35,10 @@
                                        :direction :west}}
                 :inventory  ()
                 :equipment  {}})
- :free-items ()}
+ :free-items ({:template   :sword
+               :components {:spatial   {:pos  {:x 780 :y 680}
+                                        :size 10}
+                            :eq-weapon {:base-damage 25
+                                        :hit-box     {:x 0 :y 0 :size :sword}
+                                        :hit-list    '()
+                                        :type        :sword}}})}
