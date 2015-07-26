@@ -1,44 +1,52 @@
 ;;; This is a collection of functions that define mobs available in the game
 ;;; Each function should return a seqence of data components to be attached to an entity
-(ns clodiku.entities.mobs
+(ns clodiku.entities.loader
   (:require [clodiku.entities.components :as comps]
             [clodiku.util.rendering]
             [brute.entity :as be]
             [clodiku.entities.util :as eu]
-            [clodiku.entities.weapons :as ew])
+            [clodiku.entities.templates :as et])
   (:import (clodiku.entities.components Equipment)))
 
-(def templates {:orc {:components {:state               {:current :walking
-                                                         :time    0}
-                                   :attribute           {:hp  30 :mp 5 :mv 50
-                                                         :str 14 :dex 8 :vit 14 :psy 3}
-                                   :spatial             {:pos       {:x 400 :y 400}
-                                                         :size      14
-                                                         :direction :west}
-                                   :equipment           {:items {}}
-                                   :animated-renderable {:regions "./assets/mob/orc/orc.pack"}
-                                   :mob-ai              {:last-update 0
-                                                         :state       :wander}}
-                      :inventory  '()
-                      :equipment  {:held :sword}}})
+; TODO This is duplicated from the 'mobs' namespace
+(defn merge-default-item-components
+  "Evaluates the default template components and overridden components and merges them into a component set."
+  [item]
+  (let [item-type (:template item)
+        item-comp-map (->> et/item-templates item-type :components)]
+    (merge (comps/construct-map item-comp-map)
+           (comps/construct-map (:components item)))))
 
-(defn merge-default-components
+(defn init-item-comps
+  "Get a sequence of components based on an item keyword"
+  [item]
+  (if (keyword? item)
+    (map #(apply comps/construct %) (:components (item et/item-templates)))
+    (vals (merge-default-item-components item))))
+
+(defn bind-item
+  "Binds a list of components to an entity and adds it to the system"
+  [system item-comps]
+  (let [item (be/create-entity)]
+    (reduce #(be/add-component %1 item %2) system item-comps)))
+
+(defn merge-default-mob-components
   "Evaluates the default template components and overridden components and merges them into a component set."
   [mob]
   (let [mob-type (:template mob)
-        mob-comp-map (->> templates mob-type :components)]
+        mob-comp-map (->> et/mob-templates mob-type :components)]
     (merge (comps/construct-map mob-comp-map)
            (comps/construct-map (:components mob)))))
 
 (defn make-mob
   [mob]
-  (reduce-kv #(assoc %1 %2 %3) {} (merge-default-components mob)))
+  (reduce-kv #(assoc %1 %2 %3) {} (merge-default-mob-components mob)))
 
 (defn make-equipment
   "Construct the mob's equipment set"
   [mob]
-  (let [eq (merge (:equipment ((:template mob) templates)) (:equipment mob))]
-    (reduce-kv #(assoc %1 %2 (ew/init-item-comps %3)) {} eq)))
+  (let [eq (merge (:equipment ((:template mob) et/mob-templates)) (:equipment mob))]
+    (reduce-kv #(assoc %1 %2 (init-item-comps %3)) {} eq)))
 
 (defn bind-eq
   "Create entities for eq components and add to the system.
