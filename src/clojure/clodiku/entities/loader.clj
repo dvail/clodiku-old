@@ -8,6 +8,11 @@
             [clodiku.entities.templates :as et])
   (:import (clodiku.entities.components Equipment EqItem)))
 
+(defn entities->eq
+  [system entities]
+  "Constructs a map of eq based on a list of entities with EqItem components"
+  (reduce #(assoc %1 (:slot (eu/comp-data system %2 EqItem)) %2) {} entities))
+
 (defn make-entity-components
   "Evaluates the default template components and overridden components and merges them into a component set."
   [entity templates]
@@ -40,9 +45,9 @@
   (let [entity (be/create-entity)
         sys-map (bind-comps system (make-mob-equipment mob))
         sys (be/add-entity (:system sys-map) entity)
-        eq-map (reduce #(assoc %1 (:slot (eu/comp-data sys %2 EqItem)) %2) {} (:entities sys-map))]
+        eq (entities->eq sys (:entities sys-map))]
     (-> (reduce #(be/add-component %1 entity %2) sys (make-entity-components mob et/mob-templates))
-        (eu/comp-update entity Equipment {:items eq-map}))))
+        (eu/comp-update entity Equipment {:items eq}))))
 
 (defmulti init-entities
           "Initialize components and bind data file entities to the system"
@@ -54,7 +59,9 @@
 
 (defmethod init-entities :free-items
   [system data _]
-  (reduce #(:system (bind-comps %1 (list %2))) system (map #(make-entity-components % et/item-templates) (:free-items data))))
+  (reduce #(:system (bind-comps %1 (list %2)))
+          system
+          (map #(make-entity-components % et/item-templates) (:free-items data))))
 
 (defmethod init-entities :default [system _ _] system)
 
