@@ -30,7 +30,7 @@
           (eu/comp-update entity Inventory {:items (conj inv old-item)}))
       system)))
 
-(defmulti process-event "Process a single events with a given type" (fn [_ _ _ event _] (:type event)))
+(defmulti process-event "Process a single event with a given type" (fn [_ _ _ event _] (:type event)))
 
 (defmethod process-event :unequip-item [system delta events event category]
   (remove-event! events event category)
@@ -41,11 +41,11 @@
   (let [target (:target event)
         item (:item event)
         slot (:slot (eu/comp-data system item EqItem))
+        new-system (unequip-item system target slot)
         new-inventory (filter #(not= item %)
-                              (:items (eu/comp-data system target Inventory)))
-        target-eq (:items (eu/comp-data system target Equipment))]
-    (remove-event! events event category)
-    (-> (unequip-item system target slot)
+                              (:items (eu/comp-data new-system target Inventory)))
+        target-eq (:items (eu/comp-data new-system target Equipment))]
+    (-> new-system
         (eu/comp-update target Inventory {:items new-inventory})
         (eu/comp-update target Equipment {:items (assoc target-eq slot item)}))))
 

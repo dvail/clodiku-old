@@ -1,6 +1,5 @@
 (ns clodiku.entities.components
   (:require [clojure.set :refer [union]]
-            [clojure.string :as string]
             [clodiku.util.rendering :as r-util]
             [clodiku.combat.weaponry :as weaponry])
   (:import (com.badlogic.gdx.math Circle)))
