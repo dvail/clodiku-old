@@ -69,7 +69,6 @@
   (let [area-data (->> (str map-asset-dir area-name map-data-file)
                        (slurp)
                        (read-string))
-        ; TODO Fix this to merge overrides with defaults
         item-comps-seq (map #(el/init-item-comps %) (:free-items area-data))
         mobs (:mobs area-data)
         sys-with-items (reduce #(el/bind-item %1 %2) system item-comps-seq)]

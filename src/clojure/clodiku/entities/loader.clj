@@ -8,12 +8,11 @@
             [clodiku.entities.templates :as et])
   (:import (clodiku.entities.components Equipment)))
 
-; TODO This is duplicated from the 'mobs' namespace
-(defn merge-default-item-components
+(defn merge-default-components
   "Evaluates the default template components and overridden components and merges them into a component set."
-  [item]
+  [item templates]
   (let [item-type (:template item)
-        item-comp-map (->> et/item-templates item-type :components)]
+        item-comp-map (->> templates item-type :components)]
     (merge (comps/construct-map item-comp-map)
            (comps/construct-map (:components item)))))
 
@@ -22,7 +21,7 @@
   [item]
   (if (keyword? item)
     (map #(apply comps/construct %) (:components (item et/item-templates)))
-    (vals (merge-default-item-components item))))
+    (vals (merge-default-components item et/item-templates))))
 
 (defn bind-item
   "Binds a list of components to an entity and adds it to the system"
@@ -30,19 +29,11 @@
   (let [item (be/create-entity)]
     (reduce #(be/add-component %1 item %2) system item-comps)))
 
-(defn merge-default-mob-components
-  "Evaluates the default template components and overridden components and merges them into a component set."
-  [mob]
-  (let [mob-type (:template mob)
-        mob-comp-map (->> et/mob-templates mob-type :components)]
-    (merge (comps/construct-map mob-comp-map)
-           (comps/construct-map (:components mob)))))
-
 (defn make-mob
   [mob]
-  (reduce-kv #(assoc %1 %2 %3) {} (merge-default-mob-components mob)))
+  (reduce-kv #(assoc %1 %2 %3) {} (merge-default-components mob et/mob-templates)))
 
-(defn make-equipment
+(defn make-mob-equipment
   "Construct the mob's equipment set"
   [mob]
   (let [eq (merge (:equipment ((:template mob) et/mob-templates)) (:equipment mob))]
@@ -85,6 +76,4 @@
 (defn init-mob
   "Get a sequence of components based on a mob keyword"
   [system mob]
-  (let [eq-comps (make-equipment mob)
-        mob-comps (make-mob mob)]
-    (bind-to-system system eq-comps mob-comps)))
+  (bind-to-system system (make-mob-equipment mob) (make-mob mob)))
