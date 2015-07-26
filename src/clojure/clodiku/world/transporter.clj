@@ -22,4 +22,4 @@
         (init/init-map new-area)
         (eu/comp-update player Spatial {:pos (maps/tile-to-pixel system tile-x tile-y)})
         (sys-rendering/update-map new-area)
-        (init/init-entities new-area))))
+        (init/init-area new-area))))

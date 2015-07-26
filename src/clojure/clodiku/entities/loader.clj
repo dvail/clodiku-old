@@ -6,74 +6,59 @@
             [brute.entity :as be]
             [clodiku.entities.util :as eu]
             [clodiku.entities.templates :as et])
-  (:import (clodiku.entities.components Equipment)))
+  (:import (clodiku.entities.components Equipment EqItem)))
 
-(defn merge-default-components
+(defn make-entity-components
   "Evaluates the default template components and overridden components and merges them into a component set."
-  [item templates]
-  (let [item-type (:template item)
-        item-comp-map (->> templates item-type :components)]
-    (merge (comps/construct-map item-comp-map)
-           (comps/construct-map (:components item)))))
-
-(defn init-item-comps
-  "Get a sequence of components based on an item keyword"
-  [item]
-  (if (keyword? item)
-    (map #(apply comps/construct %) (:components (item et/item-templates)))
-    (vals (merge-default-components item et/item-templates))))
-
-(defn bind-item
-  "Binds a list of components to an entity and adds it to the system"
-  [system item-comps]
-  (let [item (be/create-entity)]
-    (reduce #(be/add-component %1 item %2) system item-comps)))
-
-(defn make-mob
-  [mob]
-  (reduce-kv #(assoc %1 %2 %3) {} (merge-default-components mob et/mob-templates)))
+  [entity templates]
+  (let [entity-type (:template entity)
+        entity-comp-map (->> templates entity-type :components)]
+    (vals (merge (comps/construct-map entity-comp-map)
+                 (comps/construct-map (:components entity))))))
 
 (defn make-mob-equipment
-  "Construct the mob's equipment set"
   [mob]
-  (let [eq (merge (:equipment ((:template mob) et/mob-templates)) (:equipment mob))]
-    (reduce-kv #(assoc %1 %2 (init-item-comps %3)) {} eq)))
+  "Creates a collection of equipment items for a mob"
+  (map #(make-entity-components % et/item-templates)
+       (-> ((:template mob) et/mob-templates) :equipment vals)))
 
-(defn bind-eq
-  "Create entities for eq components and add to the system.
-  Must return a map with the entity IDs and the updated system"
-  [system eq-comps]
-  (reduce-kv (fn [sys-map key val]
-               (let [entity (be/create-entity)
-                     sys (be/add-entity (:system sys-map) entity)]
-                 (assoc sys-map :system (reduce #(be/add-component %1 entity %2) sys val)
-                                :eq (assoc (:eq sys-map) key entity))))
-             {:system system :eq {}}
-             eq-comps))
-
-(defn bind-inv
-  "Creates general inventory entities and adds them to the system. Then returns a map with the entity
-  IDs, the eq IDs, and the updated system"
-  [sys-map inv-comps])
+(defn bind-comps
+  "Binds a collection of component lists to the system, returns a map with the new system
+  and a list of newly created entitiesb"
+  [system comp-lists]
+  (reduce (fn [sys-map comp]
+            (let [entity (be/create-entity)
+                  sys (be/add-entity (:system sys-map) entity)]
+              (assoc sys-map :system (reduce #(be/add-component %1 entity %2) sys comp)
+                             :entities (conj (:entities sys-map) entity))))
+          {:system system :entities '()}
+          comp-lists))
 
 (defn bind-mob
-  "Receives the system map with eq and inventoty entities and binds the mob components to the system
-  and the eq/inventory entities to the corresponding mob components."
-  [sys-map mob-comps]
-  (let [entity (be/create-entity)
-        sys (be/add-entity (:system sys-map) entity)]
-    (eu/comp-update (reduce #(be/add-component %1 entity %2) sys (vals mob-comps))
-                    entity
-                    Equipment
-                    {:items (:eq sys-map)})))
-
-(defn bind-to-system
-  [system eq-comps mob-comps]
-  (-> system
-      (bind-eq eq-comps)
-      (bind-mob mob-comps)))
-
-(defn init-mob
-  "Get a sequence of components based on a mob keyword"
+  "Creates an entity for a mob and initilizes nested components (inv, eq)"
   [system mob]
-  (bind-to-system system (make-mob-equipment mob) (make-mob mob)))
+  (let [entity (be/create-entity)
+        sys-map (bind-comps system (make-mob-equipment mob))
+        sys (be/add-entity (:system sys-map) entity)
+        eq-map (reduce #(assoc %1 (:slot (eu/comp-data sys %2 EqItem)) %2) {} (:entities sys-map))]
+    (-> (reduce #(be/add-component %1 entity %2) sys (make-entity-components mob et/mob-templates))
+        (eu/comp-update entity Equipment {:items eq-map}))))
+
+(defmulti init-entities
+          "Initialize components and bind data file entities to the system"
+          (fn [_ _ type] type))
+
+(defmethod init-entities :mobs
+  [system data _]
+  (reduce #(bind-mob %1 %2) system (:mobs data)))
+
+(defmethod init-entities :free-items
+  [system data _]
+  (reduce #(:system (bind-comps %1 (list %2))) system (map #(make-entity-components % et/item-templates) (:free-items data))))
+
+(defmethod init-entities :default [system _ _] system)
+
+(defn init-area
+  "Initializes all entities from a given area data file"
+  [system area-data]
+  (reduce #(init-entities %1 area-data %2) system (keys area-data)))

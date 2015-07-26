@@ -55,7 +55,7 @@
                                              :time    0.0}
                        :equipment           {:items {:held weap}}
                        :inventory           {:items (list armor)}
-                       :spatial             {:pos       {:x 750 :y 660}
+                       :spatial             {:pos       {:x 750 :y 460}
                                              :size      14
                                              :direction :east}}
         make-comps (fn [params] (map #(apply comps/construct %) params))
@@ -65,19 +65,15 @@
          (bind-components armor (make-comps armor-params))
          (bind-components player (make-comps player-params)))))
 
-(defn init-entities [system area-name]
-  (let [area-data (->> (str map-asset-dir area-name map-data-file)
-                       (slurp)
-                       (read-string))
-        item-comps-seq (map #(el/init-item-comps %) (:free-items area-data))
-        mobs (:mobs area-data)
-        sys-with-items (reduce #(el/bind-item %1 %2) system item-comps-seq)]
-    (reduce #(el/init-mob %1 %2) sys-with-items mobs)))
+(defn init-area [system area-name]
+  (el/init-area system (->> (str map-asset-dir area-name map-data-file)
+                            (slurp)
+                            (read-string))))
 
 (defn init-main
   [system]
   (-> system
       (init-player)
       (init-map "sample")
-      (init-entities "sample")))
+      (init-area "sample")))
 
