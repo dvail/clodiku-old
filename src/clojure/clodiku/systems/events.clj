@@ -45,6 +45,7 @@
         new-inventory (filter #(not= item %)
                               (:items (eu/comp-data new-system target Inventory)))
         target-eq (:items (eu/comp-data new-system target Equipment))]
+    (remove-event! events event category)
     (-> new-system
         (eu/comp-update target Inventory {:items new-inventory})
         (eu/comp-update target Equipment {:items (assoc target-eq slot item)}))))
