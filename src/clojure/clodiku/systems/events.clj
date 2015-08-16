@@ -62,7 +62,6 @@
         (eu/comp-update item Spatial {:pos target-pos}))))
 
 (defmethod process-event :default [system _ _ event _]
-  (println (:type event))
   system)
 
 ; TODO Limit the number of events taken per cycle here???

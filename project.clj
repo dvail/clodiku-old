@@ -10,8 +10,7 @@
                   :classifier "natives-desktop"]
                  [org.clojure/data.priority-map  "0.0.5"]
                  [brute "0.3.0" :exclusions [org.clojure/clojure]]]
-  :repositories [["sonatype"
-                  "https://oss.sonatype.org/content/repositories/releases/"]]
+  :repositories [["sonatype" "https://oss.sonatype.org/content/repositories/releases/"] ]
   :main clodiku.core
   :source-paths      ["src/clojure"]
   :java-source-paths ["src/java"]
