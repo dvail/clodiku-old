@@ -8,7 +8,8 @@
            (com.badlogic.gdx.graphics.g2d SpriteBatch Animation BitmapFont)
            (com.badlogic.gdx.maps.tiled TiledMap)
            (com.badlogic.gdx.math Vector3)
-           (com.badlogic.gdx.graphics.glutils ShapeRenderer))
+           (com.badlogic.gdx.graphics.glutils ShapeRenderer)
+           (com.brashmonkey.spriter SCMLReader Player LibGdxDrawer LibGdxLoader LibGdxAtlasLoader))
   (:require [clodiku.world.maps :as maps]
             [clojure.set :as cset]
             [clodiku.entities.util :as eu]))
@@ -18,6 +19,9 @@
 (declare ^OrthogonalTiledMapRenderer map-renderer)
 (declare ^ShapeRenderer shape-renderer)
 (declare ^BitmapFont attack-font)
+
+(declare ^Player player)
+(declare ^LibGdxDrawer drawer)
 
 (def map-background-layers (int-array 2 [0, 1]))
 (def map-foreground-layers (int-array 1 [2]))
@@ -41,16 +45,30 @@
   [system entities]
   (reverse (sort-by #(:y (:pos (eu/comp-data system % Spatial))) entities)))
 
+(defn TEST-SPRITER
+  []
+  (let [handle (.internal (Gdx/files) "./assets/monster/basic_002.scml")
+        atlas-handle (.internal (Gdx/files) "./assets/monster/monster.atlas")
+        data (.getData (SCMLReader. (.read handle)))
+        loader (LibGdxAtlasLoader. data atlas-handle "_")]
+    (.load loader (.file handle))
+    (def drawer (LibGdxDrawer. loader batch shape-renderer))
+    (def player (Player. (.getEntity data 0)))
+    (.setScale player 0.3)))
+
+(defn RENDER-SKELETAL [_]
+  (.draw drawer player))
+
 (defn init-resources!
   [system]
   (let [graphics ^Graphics Gdx/graphics]
-    (def camera (OrthographicCamera.
-                  (.getWidth graphics)
-                  (.getHeight graphics)))
+    (def camera (OrthographicCamera. (.getWidth graphics) (.getHeight graphics)))
     (def batch (SpriteBatch.))
     (def attack-font (BitmapFont.))
-    (def map-renderer (OrthogonalTiledMapRenderer. ^TiledMap (maps/get-current-map @system) batch))
-    (def shape-renderer (ShapeRenderer.))))
+    (def map-renderer (OrthogonalTiledMapRenderer. ^TiledMap (maps/get-current-map @system) ^SpriteBatch batch))
+    (def shape-renderer (ShapeRenderer.))
+    (TEST-SPRITER)))
+
 
 (defn update-map
   "Swap the map to be rendered"
@@ -129,6 +147,7 @@
 
 (defn render! [system delta events]
   (let [camera-pos (.position camera)]
+     (.update player)
     (doto (Gdx/gl)
       (.glClearColor 0 0 0.2 0.3)
       (.glClear GL20/GL_COLOR_BUFFER_BIT))
@@ -143,6 +162,7 @@
       (.setProjectionMatrix (.combined camera))
       (render-entities! system)
       (render-attack-verbs system events)
+      (RENDER-SKELETAL)
       (.end))
     (doto shape-renderer
       (.setAutoShapeType true)

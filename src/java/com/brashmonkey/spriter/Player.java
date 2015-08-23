@@ -695,6 +695,11 @@ public class Player {
 		this.speed = prevSpeed;
 		return this;
 	}
+
+	public Player setSpeed(int speed) {
+		this.speed = speed;
+		return this;
+	}
 	
 	/**
 	 * Sets the scale of this player to the given one.
