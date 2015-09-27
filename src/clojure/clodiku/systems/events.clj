@@ -10,14 +10,14 @@
 
 (defn- advance-event-times
   "Update the time counter on all events. Events with a total time of > 1 are expired and removed."
-  [delta events event-type]
+  [delta event-type]
   (->> (event-type @events)
        (map #(assoc % :delta (+ delta (:delta %))))
        (filter #(> 1 (:delta %)))
        (swap! events #(assoc %1 event-type %2))))
 
 (defn- remove-event!
-  [events event category]
+  [event category]
   (->> (category @events)
        (filter #(not= event %))
        (swap! events #(assoc %1 category %2))))
@@ -40,17 +40,17 @@
          (conj (category @events) event)))
 
 (defn get-events
-  ([] events)
+  ([] @events)
   ([category] (category @events)))
 
-(defmulti process-event "Process a single event with a given type" (fn [_ _ _ event _] (:type event)))
+(defmulti process-event "Process a single event with a given type" (fn [_ _ event _] (:type event)))
 
-(defmethod process-event :unequip-item [system delta events event category]
-  (remove-event! events event category)
+(defmethod process-event :unequip-item [system delta event category]
+  (remove-event! event category)
   (unequip-item system (:target event)
                 (:slot (eu/comp-data system (:item event) EqItem))))
 
-(defmethod process-event :equip-item [system delta events event category]
+(defmethod process-event :equip-item [system delta event category]
   (let [target (:target event)
         item (:item event)
         slot (:slot (eu/comp-data system item EqItem))
@@ -58,40 +58,45 @@
         new-inventory (filter #(not= item %)
                               (:items (eu/comp-data new-system target Inventory)))
         target-eq (:items (eu/comp-data new-system target Equipment))]
-    (remove-event! events event category)
+    (remove-event! event category)
     (-> new-system
         (eu/comp-update target Inventory {:items new-inventory})
         (eu/comp-update target Equipment {:items (assoc target-eq slot item)}))))
 
-(defmethod process-event :drop-item [system _ events event category]
+(defmethod process-event :drop-item [system _ event category]
   (let [target (:target event)
         item (:item event)
         target-pos (:pos (eu/comp-data system target Spatial))
         new-inventory (filter #(not= item %)
                               (:items (eu/comp-data system target Inventory)))]
-    (remove-event! events event category)
+    (remove-event! event category)
     (-> system
         (eu/comp-update target Inventory {:items new-inventory})
         (eu/comp-update item Spatial {:pos target-pos}))))
 
-(defmethod process-event :default [system _ _ event _]
+(defmethod process-event :state-change [system _ event category]
+  (println event)
+  (remove-event! event category)
+  system)
+
+(defmethod process-event :default [system _ event _]
   system)
 
 ; TODO Limit the number of events taken per cycle here???
-(defmulti process-event-list "Apply any effects of game events." (fn [_ _ _ event-category] event-category))
+(defmulti process-event-list "Apply any effects of game events." (fn [_ _ event-category] event-category))
 
-(defmethod process-event-list :combat [system delta events event-category]
-  (advance-event-times delta events event-category)
+(defmethod process-event-list :combat [system delta event-category]
+  (advance-event-times delta event-category)
   system)
 
 ; TODO Generalize these better
-(defmethod process-event-list :ui [system delta events event-category]
-  (reduce #(process-event %1 delta events %2 :ui) system (:ui @events)))
+(defmethod process-event-list :ui [system delta event-category]
+  (reduce #(process-event %1 delta %2 :ui) system (:ui @events)))
 
-(defmethod process-event-list :animation [system delta events event-category]
-  (reduce #(process-event %1 delta events %2 :animation) system (:animation @events)))
+(defmethod process-event-list :animation [system delta event-category]
+  (reduce #(process-event %1 delta %2 :animation) system (:animation @events)))
 
 (defn process
   "Process the event queue"
   [system delta]
-  (reduce #(process-event-list %1 delta events %2) system event-categories))
+  (reduce #(process-event-list %1 delta %2) system event-categories))
