@@ -50,7 +50,11 @@
         player-params {:player              {}
                        :attribute           {:hp  50 :mp 20 :mv 50
                                              :str 10 :dex 10 :vit 10 :psy 10}
-                       :animated-renderable {:regions "./assets/player/player.pack"}
+                       :skeletal-renderable {:scml "./assets/animation/humanoid/humanoid.scml"
+                                             :atlas "./assets/animation/humanoid/humanoid.pack"
+                                             :player nil
+                                             :loader nil
+                                             :drawer nil}
                        :state               {:current :walking
                                              :time    0.0}
                        :equipment           {:items {:held weap}}

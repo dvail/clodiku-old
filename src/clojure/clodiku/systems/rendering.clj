@@ -1,6 +1,6 @@
 (ns clodiku.systems.rendering
   (:import (com.badlogic.gdx.graphics.g2d TextureRegion)
-           (clodiku.entities.components AnimatedRenderable State Spatial Attribute Renderable)
+           (clodiku.entities.components AnimatedRenderable State Spatial Renderable SkeletalRenderable)
            (com.badlogic.gdx.math Circle)
            (com.badlogic.gdx.graphics GL20 OrthographicCamera Texture)
            (com.badlogic.gdx Gdx Graphics)
@@ -9,20 +9,17 @@
            (com.badlogic.gdx.maps.tiled TiledMap)
            (com.badlogic.gdx.math Vector3)
            (com.badlogic.gdx.graphics.glutils ShapeRenderer)
-           (com.brashmonkey.spriter SCMLReader Player LibGdxDrawer LibGdxLoader LibGdxAtlasLoader))
+           (com.brashmonkey.spriter Drawer Player))
   (:require [clodiku.world.maps :as maps]
             [clojure.set :as cset]
-            [clodiku.entities.util :as eu]))
+            [clodiku.entities.util :as eu]
+            [clodiku.util.rendering :as ru]))
 
 (declare ^OrthographicCamera camera)
 (declare ^SpriteBatch batch)
 (declare ^OrthogonalTiledMapRenderer map-renderer)
 (declare ^ShapeRenderer shape-renderer)
 (declare ^BitmapFont attack-font)
-
-(declare ^Player player)
-(declare ^LibGdxDrawer drawer)
-(declare ^LibGdxAtlasLoader loader)
 
 (def map-background-layers (int-array 2 [0, 1]))
 (def map-foreground-layers (int-array 1 [2]))
@@ -40,25 +37,17 @@
   (cset/intersection (eu/get-entities-with-components system Renderable)
                      (eu/get-entities-with-components system Spatial)))
 
+(defn get-skeletal-entities
+  "Gets all entities with both a Skeletal and a Spatial component"
+  [system]
+  (cset/intersection (eu/get-entities-with-components system SkeletalRenderable)
+                     (eu/get-entities-with-components system Spatial)))
+
 (defn sort-entities-by-render-order
   "Sorts a collection of entities by 'y' value, so that entities closer
   to the bottom of the screen are drawn first"
   [system entities]
   (reverse (sort-by #(:y (:pos (eu/comp-data system % Spatial))) entities)))
-
-(defn TEST-SPRITER
-  []
-  (let [handle (.internal (Gdx/files) "./assets/animation/humanoid/humanoid.scml")
-        atlas-handle (.internal (Gdx/files) "./assets/animation/humanoid/humanoid.pack")
-        data (.getData (SCMLReader. (.read handle)))]
-    (def loader (LibGdxAtlasLoader. data atlas-handle "_"))
-    (.load loader (.file handle))
-    (def drawer (LibGdxDrawer. loader batch shape-renderer))
-    (def player (Player. (.getEntity data 0)))
-    (.setScale player 0.7)))
-
-(defn RENDER-SKELETAL [_]
-  (.draw drawer player))
 
 (defn init-resources!
   [system]
@@ -67,21 +56,29 @@
     (def batch (SpriteBatch.))
     (def attack-font (BitmapFont.))
     (def map-renderer (OrthogonalTiledMapRenderer. ^TiledMap (maps/get-current-map @system) ^SpriteBatch batch))
-    (def shape-renderer (ShapeRenderer.))
-    (TEST-SPRITER)))
+    (def shape-renderer (ShapeRenderer.))))
 
+(defn init-skel-animation!
+  [system]
+  (reduce (fn [system entity]
+            (let [skeletal (eu/comp-data system entity SkeletalRenderable)
+                  size (:size (eu/comp-data system entity Spatial))
+                  initialized-skeletal (ru/init-skeletal skeletal batch shape-renderer size)]
+              (eu/comp-update system entity SkeletalRenderable initialized-skeletal)))
+          system
+          (eu/get-entities-with-components system SkeletalRenderable)))
 
 (defn update-map
   "Swap the map to be rendered"
   [system map-name]
   (.setMap map-renderer (maps/get-current-map system))
-  (.swapAtlas loader (.internal (Gdx/files) "./assets/animation/humanoid/humanoid-test.pack"))
   system)
 
 (defmulti dorender
           "Render all entities with an Animated or Static render component"
           (fn [entity _ system]
-            (type (or (eu/comp-data system entity AnimatedRenderable)
+            (type (or (eu/comp-data system entity SkeletalRenderable)
+                      (eu/comp-data system entity AnimatedRenderable)
                       (eu/comp-data system entity Renderable)))))
 
 (defmethod dorender AnimatedRenderable [entity batch system]
@@ -94,6 +91,15 @@
       (.draw region
              ^float (- (:x pos) (/ (.getRegionWidth region) 2))
              ^float (- (:y pos) (:size spatial) -2)))))
+
+(defmethod dorender SkeletalRenderable [entity _ system]
+  (let [skel (eu/comp-data system entity SkeletalRenderable)
+        spatial (eu/comp-data system entity Spatial)
+        pos (:pos spatial)
+        player ^Player (:player skel)]
+    (.setPosition player (:x pos) (:y pos))
+    (.update player)
+    (.draw ^Drawer (:drawer skel) player)))
 
 (defmethod dorender Renderable [entity batch system]
   (let [spatial (eu/comp-data system entity Spatial)
@@ -109,7 +115,8 @@
   "Render the player, mobs, npcs and items"
   [batch system]
   (let [entities (sort-entities-by-render-order system (cset/union (get-animated-entities system)
-                                                                   (get-static-entities system)))]
+                                                                   (get-static-entities system)
+                                                                   (get-skeletal-entities system)))]
     (doseq [entity entities]
       (dorender entity batch system))))
 
@@ -149,7 +156,6 @@
 
 (defn render! [system delta events]
   (let [camera-pos (.position camera)]
-     (.update player)
     (doto (Gdx/gl)
       (.glClearColor 0 0 0.2 0.3)
       (.glClear GL20/GL_COLOR_BUFFER_BIT))
@@ -164,7 +170,6 @@
       (.setProjectionMatrix (.combined camera))
       (render-entities! system)
       (render-attack-verbs system events)
-      (RENDER-SKELETAL)
       (.end))
     (doto shape-renderer
       (.setAutoShapeType true)

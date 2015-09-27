@@ -1,7 +1,10 @@
 (ns clodiku.util.rendering
   (:import (com.badlogic.gdx.graphics.g2d Animation$PlayMode Animation TextureAtlas$AtlasRegion TextureAtlas)
            (com.badlogic.gdx.graphics Texture)
-           (com.badlogic.gdx Gdx Files)))
+           (com.badlogic.gdx Gdx Files)
+           (com.brashmonkey.spriter SCMLReader LibGdxAtlasLoader LibGdxDrawer Player)))
+
+(def ^:const scale-factor 30.0)
 
 ; TODO This might need a more elegant/efficient/readable way of packing up entity animations
 (defn split-texture-pack
@@ -31,6 +34,21 @@
                                    (key dir-map)
                                    (doto animation
                                      (.setPlayMode Animation$PlayMode/LOOP))))) fv)))) {} raw-map)))
+
+(defn init-skeletal
+  "Initialize a Spriter Skeletal animation and set its scale based
+  on the size of the entity."
+  [skeletal-comp batch shape-renderer size]
+  (let [handle (.internal (Gdx/files) (:scml skeletal-comp))
+        atlas-handle (.internal (Gdx/files) (:atlas skeletal-comp))
+        data (.getData (SCMLReader. (.read handle)))
+        loader (LibGdxAtlasLoader. data atlas-handle "_")
+        player (Player. (.getEntity data 0))]
+    (.load loader (.file handle))
+    (.setScale player (/ size scale-factor))
+    (assoc skeletal-comp :drawer (LibGdxDrawer. loader batch shape-renderer)
+                         :loader loader
+                         :player player)))
 
 (defn make-texture
   [image-location]

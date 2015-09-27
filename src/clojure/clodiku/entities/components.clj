@@ -27,6 +27,7 @@
 
 (defrecord Renderable [texture])
 (defrecord AnimatedRenderable [regions])
+(defrecord SkeletalRenderable [scml atlas player loader drawer])
 
 (defrecord State [current time])
 
@@ -63,6 +64,7 @@
                             :spatial             map->Spatial
                             :renderable          map->Renderable
                             :animated-renderable map->AnimatedRenderable
+                            :skeletal-renderable map->SkeletalRenderable
                             :state               map->State
                             :attribute           map->Attribute
                             :equipment           map->Equipment

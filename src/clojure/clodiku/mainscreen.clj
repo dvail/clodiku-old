@@ -18,13 +18,15 @@
             (bs/add-system-fn sys-combat/process))))
 
 (def events (atom {:ui '()
-                   :combat '()}))
+                   :combat '()
+                   :animation '()}))
 
 (defn screen []
   (proxy [Screen] []
     (show []
       (reset! system (init/init-main @system))
       (sys-rendering/init-resources! system)
+      (reset! system (sys-rendering/init-skel-animation! @system))
       (ui/init-ui! system events))
     (render [delta]
         (reset! system (reduce #(%2 %1 delta events) @system (:system-fns @system)))

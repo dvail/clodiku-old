@@ -25,7 +25,11 @@
                                                               :size      14
                                                               :direction :west}
                                         :equipment           {:items {}}
-                                        :animated-renderable {:regions "./assets/mob/orc/orc.pack"}
+                                        :skeletal-renderable {:scml "./assets/animation/humanoid/humanoid.scml"
+                                                              :atlas "./assets/animation/humanoid/humanoid.pack"
+                                                              :player nil
+                                                              :loader nil
+                                                              :drawer nil}
                                         :mob-ai              {:last-update 0
                                                               :state       :wander}}
                            :inventory  '()

@@ -2,7 +2,7 @@
   (:require [clodiku.entities.util :as eu])
   (:import (clodiku.entities.components Inventory Spatial EqItem Equipment)))
 
-(def ^:const event-categories '(:ui :combat))
+(def ^:const event-categories '(:ui :combat :animation))
 
 (defn- advance-event-times
   "Update the time counter on all events. Events with a total time of > 1 are expired and removed."
@@ -71,8 +71,12 @@
   (advance-event-times delta events event-category)
   system)
 
+; TODO Generalize these better
 (defmethod process-event-list :ui [system delta events event-category]
   (reduce #(process-event %1 delta events %2 :ui) system (:ui @events)))
+
+(defmethod process-event-list :animation [system delta events event-category]
+  (reduce #(process-event %1 delta events %2 :animation) system (:animation @events)))
 
 (defn process
   "Process the event queue"
