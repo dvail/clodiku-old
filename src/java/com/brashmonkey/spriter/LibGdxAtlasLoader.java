@@ -26,11 +26,27 @@ public class LibGdxAtlasLoader extends Loader<Sprite>{
 		this(data, atlas, "_");
 	}
 
+	public void swapAtlas(FileHandle atlas) {
+		swapAtlas(atlas, "_");
+	}
+
+	public void swapAtlas(FileHandle atlas, String indexPrefix) {
+		dispose();
+		this.atlas = new TextureAtlas(atlas);
+		Array<AtlasRegion> array = this.atlas.getRegions();
+		for(AtlasRegion region: array){
+			if(region.index != -1) region.name = region.name + indexPrefix + region.index;
+		}
+
+		reloadResources();
+	}
+
 	@Override
 	protected Sprite loadResource(FileReference ref) {
 		return this.atlas.createSprite((data.getFile(ref).name).replace(".png",""));
 	}
-	
+
+
 	@Override
 	public void dispose(){
 		this.atlas.dispose();

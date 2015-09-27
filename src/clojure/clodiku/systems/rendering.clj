@@ -22,6 +22,7 @@
 
 (declare ^Player player)
 (declare ^LibGdxDrawer drawer)
+(declare ^LibGdxAtlasLoader loader)
 
 (def map-background-layers (int-array 2 [0, 1]))
 (def map-foreground-layers (int-array 1 [2]))
@@ -47,14 +48,14 @@
 
 (defn TEST-SPRITER
   []
-  (let [handle (.internal (Gdx/files) "./assets/monster/basic_002.scml")
-        atlas-handle (.internal (Gdx/files) "./assets/monster/monster.atlas")
-        data (.getData (SCMLReader. (.read handle)))
-        loader (LibGdxAtlasLoader. data atlas-handle "_")]
+  (let [handle (.internal (Gdx/files) "./assets/animation/humanoid/humanoid.scml")
+        atlas-handle (.internal (Gdx/files) "./assets/animation/humanoid/humanoid.pack")
+        data (.getData (SCMLReader. (.read handle)))]
+    (def loader (LibGdxAtlasLoader. data atlas-handle "_"))
     (.load loader (.file handle))
     (def drawer (LibGdxDrawer. loader batch shape-renderer))
     (def player (Player. (.getEntity data 0)))
-    (.setScale player 0.3)))
+    (.setScale player 0.7)))
 
 (defn RENDER-SKELETAL [_]
   (.draw drawer player))
@@ -74,6 +75,7 @@
   "Swap the map to be rendered"
   [system map-name]
   (.setMap map-renderer (maps/get-current-map system))
+  (.swapAtlas loader (.internal (Gdx/files) "./assets/animation/humanoid/humanoid-test.pack"))
   system)
 
 (defmulti dorender

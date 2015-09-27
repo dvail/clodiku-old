@@ -114,4 +114,18 @@ public abstract class Loader<R> {
 		return disposed;
 	}
 
+	protected void reloadResources() {
+		resources.clear();
+
+		beginLoading();
+		for(Folder folder: data.folders){
+			for(File file: folder.files){
+				FileReference ref = new FileReference(folder.id, file.id);
+				resources.put(ref, loadResource(ref));
+			}
+		}
+		disposed = false;
+		finishLoading();
+	}
+
 }
