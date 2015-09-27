@@ -17,21 +17,17 @@
             (bs/add-system-fn sys-mob-ai/process)
             (bs/add-system-fn sys-combat/process))))
 
-(def events (atom {:ui '()
-                   :combat '()
-                   :animation '()}))
-
 (defn screen []
   (proxy [Screen] []
     (show []
       (reset! system (init/init-main @system))
       (sys-rendering/init-resources! system)
       (reset! system (sys-rendering/init-skel-animation! @system))
-      (ui/init-ui! system events))
+      (ui/init-ui! system))
     (render [delta]
-        (reset! system (reduce #(%2 %1 delta events) @system (:system-fns @system)))
-        (sys-rendering/render! @system delta events)
-        (ui/update-ui! @system delta events))
+        (reset! system (reduce #(%2 %1 delta) @system (:system-fns @system)))
+        (sys-rendering/render! @system delta)
+        (ui/update-ui! @system delta))
     (dispose []
       (ui/dispose!))
     (hide [])

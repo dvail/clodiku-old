@@ -4,6 +4,10 @@
 
 (def ^:const event-categories '(:ui :combat :animation))
 
+(def events (atom {:ui '()
+                   :combat '()
+                   :animation '()}))
+
 (defn- advance-event-times
   "Update the time counter on all events. Events with a total time of > 1 are expired and removed."
   [delta events event-type]
@@ -29,6 +33,15 @@
           (eu/comp-update entity Equipment {:items (dissoc eq slot)})
           (eu/comp-update entity Inventory {:items (conj inv old-item)}))
       system)))
+
+(defn add-event
+  [category event]
+  (swap! events #(assoc %1 category %2)
+         (conj (category @events) event)))
+
+(defn get-events
+  ([] events)
+  ([category] (category @events)))
 
 (defmulti process-event "Process a single event with a given type" (fn [_ _ _ event _] (:type event)))
 
@@ -80,5 +93,5 @@
 
 (defn process
   "Process the event queue"
-  [system delta events]
+  [system delta]
   (reduce #(process-event-list %1 delta events %2) system event-categories))

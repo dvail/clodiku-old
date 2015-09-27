@@ -7,11 +7,15 @@
 
 (defn move-player [system delta]
   (let [player (eu/first-entity-with-comp system Player)
-        move {:x (+ (if (input/pressed? :move-east) 2 0) (if (input/pressed? :move-west) -2 0))
-              :y (+ (if (input/pressed? :move-north) 2 0) (if (input/pressed? :move-south) -2 0))}]
-    (-> system
-        (move/move-entity delta player move)
-        (move/try-transport player move))))
+        move-x (+ (if (input/pressed? :move-east) 2 0) (if (input/pressed? :move-west) -2 0))
+        move-y (+ (if (input/pressed? :move-north) 2 0) (if (input/pressed? :move-south) -2 0))
+        move-vec {:x move-x :y move-y}]
+    (if (= 0 move-x move-y)
+      system
+      (-> system
+          (move/update-position delta player move-vec)
+          (move/update-state delta player move-vec)
+          (move/try-transport player move-vec)))))
 
 (defn do-free-input
   [system delta]
@@ -26,8 +30,7 @@
 
 (defmethod update-player :walking [system delta] (do-free-input system delta))
 
-(defmethod update-player :standing [system delta]
-  (do-free-input system delta))
+(defmethod update-player :standing [system delta] (do-free-input system delta))
 
 (defmethod update-player :melee [system delta]
   (->> (eu/first-entity-with-comp system Player)
@@ -35,6 +38,6 @@
 
 (defmethod update-player :default [system _] system)
 
-(defn process [system delta events]
+(defn process [system delta]
   (update-player system delta))
 

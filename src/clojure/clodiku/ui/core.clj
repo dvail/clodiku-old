@@ -1,8 +1,8 @@
 (ns clodiku.ui.core
   (:require [clodiku.entities.util :as eu]
-            [clodiku.ui.util :as uutil]
             [clojure.string :as s]
-            [clodiku.util.input :as input])
+            [clodiku.util.input :as input]
+            [clodiku.systems.events :as events])
   (:import (com.badlogic.gdx Gdx Input Files)
            (com.badlogic.gdx.scenes.scene2d.ui Skin Table Label VerticalGroup Container Value$Fixed Image Value Cell)
            (com.badlogic.gdx.scenes.scene2d Stage Touchable)
@@ -29,10 +29,10 @@
 ;;;
 
 (defmulti populate-action-menu "Show available actions for a submenu"
-          (fn [_ _ name _] name))
+          (fn [_ name _] name))
 
 (defmethod populate-action-menu :equipment
-  [system events name entity]
+  [system name entity]
   (let [container (:sub-menu-container scene)
         action-table (:sub-menu-actions scene)
         equip-text (Label. "Remove" ^Skin skin)]
@@ -46,12 +46,12 @@
                                  (doto container
                                    (.clear)
                                    (.setActor (name (:sub-menus scene))))
-                                 (uutil/add-event events {:type   :unequip-item
-                                                          :target (eu/first-entity-with-comp system Player)
-                                                          :item   entity}))))))
+                                 (events/add-event :ui {:type   :unequip-item
+                                                        :target (eu/first-entity-with-comp system Player)
+                                                        :item   entity}))))))
 
 (defmethod populate-action-menu :inventory
-  [system events name entity]
+  [system name entity]
   (let [container (:sub-menu-container scene)
         action-table (:sub-menu-actions scene)
         equip-text (Label. "Equip" ^Skin skin)
@@ -68,24 +68,24 @@
                                  (doto container
                                    (.clear)
                                    (.setActor (name (:sub-menus scene))))
-                                 (uutil/add-event events {:type   :equip-item
-                                                          :target (eu/first-entity-with-comp system Player)
-                                                          :item   entity}))))
+                                 (events/add-event :ui {:type   :equip-item
+                                                        :target (eu/first-entity-with-comp system Player)
+                                                        :item   entity}))))
     (.addListener drop-text (proxy [ClickListener] []
                               (clicked [& _]
                                 (.clear (:sub-menu-actions scene))
                                 (doto container
                                   (.clear)
                                   (.setActor (name (:sub-menus scene))))
-                                (uutil/add-event events {:type   :drop-item
-                                                         :target (eu/first-entity-with-comp system Player)
-                                                         :item   entity}))))))
+                                (events/add-event :ui {:type   :drop-item
+                                                       :target (eu/first-entity-with-comp system Player)
+                                                       :item   entity}))))))
 
 (defmulti populate-sub-menu "A grouping of methods to populate the second level game menu"
-          (fn [_ _ name] name))
+          (fn [_ name] name))
 
 (defmethod populate-sub-menu :equipment
-  [system events _]
+  [system _]
   (let [player (eu/first-entity-with-comp system Player)
         eq (:items (eu/comp-data system player Equipment))
         container (:sub-menu-container scene)
@@ -98,10 +98,10 @@
         (.pad (.add eq-table item-text) (Value$Fixed. 5.0))
         (.add eq-table (Image. ^Texture (:texture (eu/comp-data system (slot eq) Renderable))))
         (.addListener item-text (proxy [ClickListener] []
-                                  (clicked [& _] (populate-action-menu system events :equipment (slot eq)))))))))
+                                  (clicked [& _] (populate-action-menu system :equipment (slot eq)))))))))
 
 (defmethod populate-sub-menu :inventory
-  [system events _]
+  [system _]
   (let [player (eu/first-entity-with-comp system Player)
         items (:items (eu/comp-data system player Inventory))
         container (:sub-menu-container scene)
@@ -117,40 +117,40 @@
         (.add item-table item-img)
         (.setTouchable item-text Touchable/enabled)
         (.addListener item-text (proxy [ClickListener] []
-                                  (clicked [& _] (populate-action-menu system events :inventory item))))))))
+                                  (clicked [& _] (populate-action-menu system :inventory item))))))))
 
-(defmethod populate-sub-menu :default [_ _ name] (println (str "Uh oh - this isn't a real menu item: " name)))
+(defmethod populate-sub-menu :default [_ name] (println (str "Uh oh - this isn't a real menu item: " name)))
 
 (defn- open-submenu
   "Clears the existing menu pane and replaces with the pane referenced by the given name"
-  [system events name]
+  [system name]
   (let [container (:sub-menu-container scene)]
     (doto container
       (.clear)
       (.setActor (name (:sub-menus scene))))
-    (populate-sub-menu @system events name)))
+    (populate-sub-menu @system name)))
 
 (defn- menu-button
   "Creates a menu button that listens for events to be passed to the UI"
-  [system events ^String name]
+  [system ^String name]
   (doto (Label. name ^Skin skin)
     (.setTouchable Touchable/enabled)
     (.addListener (proxy [ClickListener] []
-                    (clicked [& _] (open-submenu system events (keyword (s/lower-case name))))))))
+                    (clicked [& _] (open-submenu system (keyword (s/lower-case name))))))))
 
 (defn- populate-menu
   "Sets up the main menu options"
-  [system events menu]
+  [system menu]
   (doseq [name sub-menus]
-    (.addActor menu (menu-button system events name))))
+    (.addActor menu (menu-button system name))))
 
 (defn init-menus!
   "Setup the user interface components"
-  [system events]
+  [system]
   (let [main-menu ^VerticalGroup (:main-menu scene)
         container ^Container (:sub-menu-container scene)
         actions ^Table (:sub-menu-actions scene)]
-    (populate-menu system events main-menu)
+    (populate-menu system main-menu)
     (.pad main-menu 10.0)
     (doto ^Table (:menus scene)
       (.setDebug true)
@@ -173,7 +173,7 @@
 
 (defn init-hud!
   "Initializes the always on HUD"
-  [system events]
+  [system]
   (let [attributes (Table.)]
     (.pad (.add attributes ^Label (:hp-value scene)) (Value$Fixed. 5.0))
     (.pad (.add attributes (Label. "HP" ^Skin skin)) (Value$Fixed. 5.0))
@@ -204,7 +204,7 @@
 
 (defn init-ui!
   "Setup the user interface components"
-  [system events]
+  [system]
   (def skin (Skin. (.internal ^Files Gdx/files ui-json)))
   (def scene {:overlay            (Table.)
               :menus              (Table.)
@@ -215,8 +215,8 @@
               :mp-value           (Label. "0" ^Skin skin font-name (Color. 0.0 0.0 1.0 1.0))
               :stage              (stage)})
   (.setInputProcessor ^Input Gdx/input (:stage scene))
-  (init-hud! system events)
-  (init-menus! system events))
+  (init-hud! system)
+  (init-menus! system))
 
 (defn dispose! [] (.dispose (:stage scene)))
 
@@ -232,7 +232,7 @@
 
 (defn update-ui!
   "Updates the user interface based on the state of the game entities"
-  [system delta events]
+  [system delta]
   (update-hud! system delta)
   (update-menus! system delta)
   (when (input/just-pressed? :toggle-menus) (toggle-menus))

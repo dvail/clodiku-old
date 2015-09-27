@@ -2,7 +2,8 @@
   (:import (com.badlogic.gdx.math Circle Intersector Rectangle)
            (com.badlogic.gdx.maps.objects RectangleMapObject)
            (clodiku.entities.components Spatial State MobAI Inventory))
-  (:require [clodiku.world.maps :as maps]
+  (:require [clodiku.systems.events :as events]
+    [clodiku.world.maps :as maps]
             [clodiku.world.transporter :as transport]
             [clodiku.entities.util :as eu]
             [clodiku.entities.components :as comps]))
@@ -96,22 +97,30 @@
   (+ (Math/abs (float (- (:x pos-a) (:x pos-b))))
      (Math/abs (float (- (:y pos-a) (:y pos-b))))))
 
-(defn move-entity
+(defn update-state
   [system delta entity {:keys [x y]}]
-  (let [spatial (eu/comp-data system entity Spatial)
-        state (eu/comp-data system entity State)
+  (let [state (eu/comp-data system entity State)
         newstate (if (= x y 0)
                    (comps/states :standing)
                    (comps/states :walking))
-        newdelta (if (= newstate (:current state)) (+ delta (:time state)) 0)
+        state-changed? (= newstate (:current state))
+        newdelta (if (not state-changed?) (+ delta (:time state)) 0)]
+    (when state-changed?
+      (events/add-event :animation {:type      :state-change
+                                    :entity    entity
+                                    :new-state newstate}))
+    (-> system
+        (eu/comp-update entity State {:current newstate
+                                      :time    newdelta}))))
+
+(defn update-position
+  [system _ entity {:keys [x y]}]
+  (let [spatial (eu/comp-data system entity Spatial)
         newdirection (if (= x y 0)
                        (:direction spatial)
                        (vector->direction x y))]
-    (-> system
-        (eu/comp-update entity Spatial {:pos       (get-movement-map system spatial {:x x :y y})
-                                        :direction newdirection})
-        (eu/comp-update entity State {:current newstate
-                                      :time    newdelta}))))
+    (eu/comp-update system entity Spatial {:pos       (get-movement-map system spatial {:x x :y y})
+                                           :direction newdirection})))
 
 (defn move-mob
   "Move an entity towards a position"
@@ -126,7 +135,9 @@
               :y (if (> (:y move-pos) (:y pos))
                    (min delta-y 2)
                    (* -1 (min delta-y 2)))}]
-    (move-entity system delta entity move)))
+    (-> system
+        (update-position delta entity move)
+        (update-state delta entity move))))
 
 (defn navigate-path
   "Move an entity along a prediscovered path."

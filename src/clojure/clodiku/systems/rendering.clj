@@ -13,7 +13,8 @@
   (:require [clodiku.world.maps :as maps]
             [clojure.set :as cset]
             [clodiku.entities.util :as eu]
-            [clodiku.util.rendering :as ru]))
+            [clodiku.util.rendering :as ru]
+            [clodiku.systems.events :as events]))
 
 (declare ^OrthographicCamera camera)
 (declare ^SpriteBatch batch)
@@ -123,8 +124,8 @@
 (defn render-attack-verbs
   "Draw the *KICK POW BANG* verbs for attacks"
   ; TODO Probably will look better to do these as static images/animations rather than BitMap fonts
-  [batch _ events]
-  (let [attacks (:combat @events)]
+  [batch _]
+  (let [attacks (events/get-events :combat)]
     (doseq [attack attacks]
       (let [delta (:delta attack)
             draw-x (float (:x (:location attack)))
@@ -154,7 +155,7 @@
                  (.radius ^Circle circle))))))
 
 
-(defn render! [system delta events]
+(defn render! [system delta]
   (let [camera-pos (.position camera)]
     (doto (Gdx/gl)
       (.glClearColor 0 0 0.2 0.3)
@@ -169,7 +170,7 @@
       (.begin)
       (.setProjectionMatrix (.combined camera))
       (render-entities! system)
-      (render-attack-verbs system events)
+      (render-attack-verbs system)
       (.end))
     (doto shape-renderer
       (.setAutoShapeType true)

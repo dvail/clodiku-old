@@ -1,6 +1,7 @@
 (ns clodiku.systems.combat
   (:import (clodiku.entities.components Spatial EqWeapon Equipment Player MobAI Attribute State))
-  (:require [clodiku.entities.util :as eu]
+  (:require [clodiku.systems.events :as events]
+            [clodiku.entities.util :as eu]
             [clodiku.combat.weaponry :as weaponry]
             [clodiku.util.movement :as coll]
             [clodiku.combat.calculations :as ccalc]
@@ -36,21 +37,18 @@
 
 (defn process-attack
   "Dispatch events attack and apply damage to affected entities."
-  [system events attacker weapon hit-list]
+  [system attacker weapon hit-list]
   ; TODO Apply damage, etc. here
   ; TODO separate the event handling part out of here if possible
   (reduce (fn [sys hit-entity]
             (let [damage (ccalc/attack-damage sys attacker hit-entity)
-                  event {:type     :melee
-                         :attacker attacker
-                         :defender hit-entity
-                         :location (:pos (eu/comp-data sys hit-entity Spatial))
-                         :damage   damage
-                         :delta    0}
-                  combat-events (:combat @events)
-                  new-event-list (conj combat-events event)
                   old-hit-list (:hit-list (eu/comp-data system weapon EqWeapon))]
-              (swap! events #(assoc %1 :combat %2) new-event-list)
+              (events/add-event :combat {:type     :melee
+                                         :attacker attacker
+                                         :defender hit-entity
+                                         :location (:pos (eu/comp-data sys hit-entity Spatial))
+                                         :damage   damage
+                                         :delta    0})
               (-> sys
                   (damage-entity hit-entity damage)
                   (eu/comp-update weapon EqWeapon {:hit-list (conj old-hit-list hit-entity)})))) system hit-list))
@@ -58,7 +56,7 @@
 (defn check-attack-collisions
   "Tests is any entities are hit by a weapon. Does not allow an entity
   to hit him/herself when attacking"
-  [system events attacker weapon]
+  [system attacker weapon]
   (let [weapon-comp (eu/comp-data system weapon EqWeapon)
         defenders (get-defenders system attacker)
         old-hit-list (:hit-list weapon-comp)
@@ -67,7 +65,7 @@
         hit-mobs (filter #(not= nil (eu/comp-data system % MobAI)) new-hit-list)]
     (if (not (empty? new-hit-list))
       (-> system
-          (process-attack events attacker weapon new-hit-list)
+          (process-attack attacker weapon new-hit-list)
           (aggrivate hit-mobs))
       system)))
 
@@ -88,7 +86,7 @@
 
 (defn process
   "Apply combat events and collisions"
-  [system delta events]
+  [system delta]
   ; TODO This doesn't feel right
   (reduce
     (fn [sys attacker]
@@ -98,4 +96,4 @@
         (-> sys
             (apply-regen)
             (update-entity-attacks attacker weapon-entity)
-            (check-attack-collisions events attacker weapon-entity)))) system (eu/get-attackers system)))
+            (check-attack-collisions attacker weapon-entity)))) system (eu/get-attackers system)))

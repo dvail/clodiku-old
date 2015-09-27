@@ -114,7 +114,7 @@
           ((get ai-state-actions mob-state) delta mob)))))
 
 (defn process
-  [system delta events]
+  [system delta]
   (let [mobs (eu/get-entities-with-components system MobAI)]
     (reduce (fn [sys mob]
               (let [main-state (:current (eu/comp-data sys mob State))]
